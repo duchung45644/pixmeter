@@ -15,6 +15,7 @@ export default defineConfig({
         features: 'features.html',
         ai: 'ai.html',
         faq: 'faq.html',
+        changelog: 'changelog.html',
       },
     },
   },

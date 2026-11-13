@@ -28,6 +28,7 @@ const en = {
     faq: 'FAQ',
     docs: 'Docs',
     privacy: 'Privacy',
+    changelog: 'Changelog',
   },
   hero: {
     title: 'The All-in-One Toolkit for Web Inspection and Design',
@@ -46,7 +47,7 @@ const en = {
   stats: [
     ['30+', 'tools in one dock'],
     ['52', 'MCP commands for AI agents'],
-    ['1.4 MB', 'total size, loads only when you turn it on'],
+    ['1.26 MB', 'total size, loads only when you turn it on'],
     ['0', 'trackers, accounts or servers'],
   ],
   how: {
@@ -316,6 +317,57 @@ const en = {
     ctaTitle: 'Stop digging through DevTools',
     ctaBody: 'Install PixelLens, press Ctrl+Shift+F on any page, and start hovering.',
   },
+  changelog: {
+    title: 'Changelog',
+    lead: 'What changed in each version of PixelLens.',
+    releases: [
+      {
+        version: '1.1.0',
+        date: 'November 13, 2026',
+        groups: [
+          {
+            name: 'New',
+            items: [
+              'AI agents can click, type, press keys and scroll on the page through the local MCP server (click_element, type_text, press_key, scroll_page).',
+              'A new setting, off by default, lets the agent turn PixelLens on in a tab by itself (enable_tab).',
+              'Default shortcut is now Ctrl+Shift+F on Windows and Linux; Alt+Shift combinations were swallowed by Vietnamese input methods such as Unikey. macOS keeps Alt+Shift+S.',
+            ],
+          },
+          {
+            name: 'Improved',
+            items: [
+              'Smoother on large pages: dragging, typing and hovering repaint only what changed; Find and Tab order draw at most 1000 boxes.',
+              'Selecting a very large element in the side panel no longer stalls the page.',
+              'Smaller package: technology logos are about 30% lighter.',
+            ],
+          },
+          {
+            name: 'Fixed',
+            items: [
+              'Contrast was wrong under a design overlay image or the before/after split bar.',
+              'The floating CSS panel no longer reappears over a pinned element, while the side panel is open, or after Parent/Child in the side panel.',
+            ],
+          },
+        ],
+      },
+      {
+        version: '1.0.0',
+        date: 'November 12, 2026',
+        groups: [
+          {
+            name: 'First release',
+            items: [
+              'Inspector, distances, X-Ray, Find, side panel with box model, matched CSS rules, fonts, colors and assets.',
+              'Rulers and guides, measure tool, layout grid and design overlay.',
+              'Live CSS and text editing, forced states, CSS variables, copy changes as CSS, Tailwind or an AI prompt.',
+              'Accessibility audit, contrast fixes, vision simulation, tab order and Core Web Vitals.',
+              'Responsive preview, screenshots, command palette and the local MCP server for AI agents.',
+            ],
+          },
+        ],
+      },
+    ],
+  },
   pages: {
     features: 'Every tool in PixelLens, what it does and how to reach it.',
     ai: 'Connect your coding agent to the page in front of you.',
@@ -334,6 +386,7 @@ const vi: Dict = {
     faq: 'Hỏi đáp',
     docs: 'Tài liệu',
     privacy: 'Quyền riêng tư',
+    changelog: 'Thay đổi',
   },
   hero: {
     title: 'Bộ công cụ tất cả trong một để kiểm tra và thiết kế web',
@@ -352,7 +405,7 @@ const vi: Dict = {
   stats: [
     ['30+', 'công cụ trong một dock'],
     ['52', 'lệnh MCP cho AI agent'],
-    ['1,4 MB', 'tổng dung lượng, chỉ chạy khi bạn bật'],
+    ['1,26 MB', 'tổng dung lượng, chỉ chạy khi bạn bật'],
     ['0', 'trình theo dõi, tài khoản hay máy chủ'],
   ],
   how: {
@@ -624,6 +677,57 @@ const vi: Dict = {
     featuresEyebrow: 'Bạn có gì',
     ctaTitle: 'Thôi lục lọi trong DevTools',
     ctaBody: 'Cài PixelLens, nhấn Ctrl+Shift+F ở trang bất kỳ, rồi rê chuột.',
+  },
+  changelog: {
+    title: 'Nhật ký thay đổi',
+    lead: 'Những gì thay đổi trong từng phiên bản PixelLens.',
+    releases: [
+      {
+        version: '1.1.0',
+        date: '13/11/2026',
+        groups: [
+          {
+            name: 'Mới',
+            items: [
+              'AI agent có thể click, gõ, nhấn phím và cuộn trang qua MCP server chạy trên máy (click_element, type_text, press_key, scroll_page).',
+              'Tuỳ chọn mới, mặc định tắt, cho agent tự bật PixelLens trên một tab (enable_tab).',
+              'Phím tắt mặc định đổi thành Ctrl+Shift+F trên Windows và Linux, vì bộ gõ tiếng Việt như Unikey nuốt tổ hợp Alt+Shift. macOS vẫn là Alt+Shift+S.',
+            ],
+          },
+          {
+            name: 'Cải thiện',
+            items: [
+              'Mượt hơn trên trang lớn: kéo, gõ phím và rê chuột chỉ vẽ lại phần thay đổi; Tìm kiếm và Thứ tự Tab vẽ tối đa 1000 ô.',
+              'Chọn một phần tử rất lớn trong side panel không còn làm trang khựng.',
+              'Gói nhẹ hơn: logo công nghệ giảm khoảng 30%.',
+            ],
+          },
+          {
+            name: 'Sửa lỗi',
+            items: [
+              'Độ tương phản bị sai khi bật ảnh thiết kế chồng lên trang hoặc thanh so trước/sau.',
+              'Bảng CSS nổi không còn hiện lại trên phần tử đã ghim, khi side panel đang mở, hoặc sau khi bấm Cha/Con trong side panel.',
+            ],
+          },
+        ],
+      },
+      {
+        version: '1.0.0',
+        date: '12/11/2026',
+        groups: [
+          {
+            name: 'Phát hành đầu tiên',
+            items: [
+              'Soi phần tử, khoảng cách, X-Ray, Tìm kiếm, side panel với box model, rule CSS khớp, font, màu và tài nguyên.',
+              'Thước và đường gióng, công cụ đo, lưới layout và ảnh thiết kế chồng lên trang.',
+              'Sửa CSS và chữ trực tiếp, ép trạng thái, biến CSS, copy thay đổi dạng CSS, Tailwind hoặc prompt cho AI.',
+              'Audit trợ năng, gợi ý màu đạt chuẩn, mô phỏng thị lực, thứ tự Tab và Core Web Vitals.',
+              'Xem responsive, chụp màn hình, bảng lệnh và MCP server cho AI agent.',
+            ],
+          },
+        ],
+      },
+    ],
   },
   pages: {
     features: 'Mọi công cụ trong PixelLens, làm được gì và gọi ra thế nào.',

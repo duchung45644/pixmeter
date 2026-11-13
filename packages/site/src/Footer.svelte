@@ -15,6 +15,7 @@
     <div class="flex gap-5 sm:ml-auto">
       <a class="hover:text-fg" href="./index.html">{t().footer.home}</a>
       <a class="hover:text-fg" href="./docs.html">{t().nav.docs}</a>
+      <a class="hover:text-fg" href="./changelog.html">{t().nav.changelog}</a>
       <a class="hover:text-fg" href="./privacy.html">{t().nav.privacy}</a>
     </div>
   </div>
