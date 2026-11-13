@@ -11,6 +11,7 @@
     "dev": "wxt",
     "build": "wxt build",
     "zip": "PIXELLENS_STORE=1 wxt zip",
+    "zip:edge": "PIXELLENS_STORE=1 wxt zip -b edge",
     "test": "vitest run && pnpm --filter ./packages/mcp-server test",
     "postinstall": "wxt prepare",
     "typecheck": "wxt prepare && svelte-check --tsconfig ./tsconfig.json",
