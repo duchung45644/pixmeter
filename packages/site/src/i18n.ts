@@ -6,7 +6,7 @@ export const EDGE_URL =
 export const EXTENSION_ID = 'bkgdfebicmlicjnkgbemlidlnpbnaofh';
 /** Chrome Web Store listing; empty until it exists (Chrome visitors then see a 'coming soon' note). */
 export const CHROME_URL = '';
-export const VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 
 /** Showcase rows: id → screenshot in public/img (null: no image, icon only). */
 export const SHOWCASE_IMAGES: Record<string, string | null> = {
