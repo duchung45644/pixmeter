@@ -202,11 +202,12 @@
     typeof CSS === 'undefined' || typeof CSS.supports !== 'function' || CSS.supports(p, v);
   const badProperty = (r: Row) =>
     !!r.property && !r.property.startsWith('--') && !supports(r.property, 'inherit');
-  const badValue = (r: Row) =>
+  /** `badProp`: badProperty(r), computed once per row by the caller (each is a CSS.supports call). */
+  const badValue = (r: Row, badProp: boolean) =>
     !!r.value.trim() &&
     !!r.property &&
     !r.property.startsWith('--') &&
-    !badProperty(r) &&
+    !badProp &&
     !supports(r.property, r.value.replace(/\s*!\s*important\s*$/i, ''));
 </script>
 
@@ -214,8 +215,10 @@
   {#each rows as row (row.id)}
     {@const m = row.property ? mark?.(row.property) : null}
     {@const typing = open?.id === row.id && open.field === 'property' && items.length > 0}
-    {@const bp = !typing && badProperty(row)}
-    {@const bv = badValue(row)}
+    {@const badProp = badProperty(row)}
+    {@const bp = !typing && badProp}
+    {@const bv = badValue(row, badProp)}
+    {@const color = colorOf(row)}
     {@const title = bp
       ? i18n.t('edit.invalidProperty')
       : bv
@@ -261,10 +264,10 @@
         onkeydown={(e) => onkeydown(e, row, 'property')}
         {onblur}
       /><span class="text-fg-muted" class:opacity-0={!row.property && !row.value}>:</span>
-      {#if colorOf(row)}
+      {#if color}
         <span
           class="ml-1 inline-block size-2.5 shrink-0 rounded-xs border border-line-strong"
-          style:background={colorOf(row)}
+          style:background={color}
           data-swatch
         ></span>
       {/if}

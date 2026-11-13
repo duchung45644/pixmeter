@@ -4,6 +4,9 @@ import { addPainter, drawBoxes, requestPaint } from '../../core/overlay';
 import { registerItem, togglePopover } from '../../core/registry.svelte';
 import { onStop } from '../../core/session';
 import { state } from '../../core/state.svelte';
+
+/** Boxes drawn at once (audit caps its highlights at 400 for the same reason). */
+const MAX_BOXES = 1000;
 import FindPopover from './FindPopover.svelte';
 
 /** 3.08 / 3.09, port of the find popover (legacy-src/content.js:38404). */
@@ -78,12 +81,18 @@ export function initFind(): void {
     isActive: () => state.findOn,
   });
   onStop(clearFind);
-  addPainter('find', (box) =>
+  addPainter('find', (box) => {
+    if (state.paused) return;
+    // a broad selector can match thousands: box at most MAX_BOXES around the current match
+    // (each box costs a getBoundingClientRect on every scroll frame); the count stays complete
+    const n = find.results.length;
+    const from =
+      n <= MAX_BOXES ? 0 : Math.max(0, Math.min(find.index - MAX_BOXES / 2, n - MAX_BOXES));
     drawBoxes(
       box,
-      find.results,
+      find.results.slice(from, from + MAX_BOXES),
       (i) =>
-        `background:color-mix(in srgb,var(--color-accent) ${i === find.index ? 45 : 20}%,transparent)`,
-    ),
-  );
+        `background:color-mix(in srgb,var(--color-accent) ${i + from === find.index ? 45 : 20}%,transparent)`,
+    );
+  });
 }

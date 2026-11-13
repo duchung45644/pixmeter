@@ -94,6 +94,7 @@ async function crop(dataUrl: string, rect: DeviceRect): Promise<string> {
     const bmp = await createImageBitmap(await (await fetch(dataUrl)).blob());
     const c = new OffscreenCanvas(w, h);
     c.getContext('2d')!.drawImage(bmp, x, y, w, h, 0, 0, w, h);
+    bmp.close(); // the full-screen bitmap is tens of MB; don't wait for GC
     const blob = await c.convertToBlob({ type: 'image/png' });
     return await toDataUrl(blob);
   } catch {
@@ -122,11 +123,15 @@ async function captureForAi(tab?: { id?: number; windowId?: number }): Promise<A
     const dataUrl = await captureVisible(tab.windowId ?? browser.windows.WINDOW_ID_CURRENT);
     const bmp = await createImageBitmap(await (await fetch(dataUrl)).blob());
     const { width, height } = fitSize(bmp.width, bmp.height);
-    if (width === bmp.width && height === bmp.height) return { ok: true, dataUrl, width, height };
+    if (width === bmp.width && height === bmp.height) {
+      bmp.close();
+      return { ok: true, dataUrl, width, height };
+    }
     const c = new OffscreenCanvas(width, height);
     const g = c.getContext('2d')!;
     g.imageSmoothingQuality = 'high';
     g.drawImage(bmp, 0, 0, width, height);
+    bmp.close();
     return {
       ok: true,
       dataUrl: await toDataUrl(await c.convertToBlob({ type: 'image/png' })),

@@ -66,6 +66,9 @@ export async function enableCrossOriginStyles(el: Element | null): Promise<{ suc
 }
 
 /** Fetched copy of a cross-origin sheet, if we have one. */
+/** Drop the fetched copies (session stop): SPAs that rotate hashed CSS would keep old sheets alive. */
+export const clearFetched = (): void => fetched.clear();
+
 export const fetchedCopy = (href: string | null): CSSStyleSheet | undefined =>
   href ? fetched.get(href) : undefined;
 

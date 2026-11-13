@@ -24,7 +24,7 @@ function makeBar(onDrop: () => void): HTMLDivElement {
         e,
         (m) => {
           overlay.prefs.splitPos = clampPos((m.clientX / innerWidth) * 100);
-          requestPaint();
+          requestPaint('overlay');
         },
         onDrop,
       );

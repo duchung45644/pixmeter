@@ -131,7 +131,7 @@ function onPointerDown(e: PointerEvent): void {
     e,
     (m) => {
       for (const g of drag) snap(g, m.clientX, m.clientY);
-      requestPaint();
+      requestPaint('ruler');
     },
     (u) => {
       // dropped back on the strip it came from: remove

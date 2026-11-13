@@ -34,7 +34,7 @@ const page = () => ({
 
 export function setBox(b: Box | null): void {
   measure.box = b;
-  requestPaint();
+  requestPaint('measure'); // only the measure box changes; a full repaint per drag move rebuilt every tool
 }
 
 export function setField(k: Field, v: number): void {

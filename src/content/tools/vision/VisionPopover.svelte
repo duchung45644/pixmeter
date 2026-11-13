@@ -1,3 +1,6 @@
+<!-- no runes used here: without this the whole bundle carries Svelte's legacy-mode code -->
+<svelte:options runes={true} />
+
 <script lang="ts">
   import { i18n } from '#i18n';
   import { VISION_MODES } from '../../../lib/style/vision';

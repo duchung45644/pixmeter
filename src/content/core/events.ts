@@ -1,7 +1,14 @@
+import { isOwnHost } from '../../lib/dom/dom';
 /** Our elements living in the page DOM (overlay images, …); legacy ownNodes() in bd/core.js. */
 export const ownNodes = new Set<Element>();
 
-const isOwnNode = (n: Element): boolean => [...ownNodes].some((o) => o.contains(n));
+const isOwnNode = (n: Element): boolean => {
+  if (!ownNodes.size) return false; // the common case: no overlay image or split bar
+  for (const o of ownNodes) if (o.contains(n)) return true;
+  return false;
+};
+/** Our UI host or one of our nodes in the page DOM (overlay images, split bar). */
+export const isOwn = (n: Element): boolean => isOwnHost(n) || isOwnNode(n);
 
 /**
  * Input events the agent dispatched (MCP click_element / type_text / press_key). PixelLens's own

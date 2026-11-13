@@ -302,7 +302,7 @@ export async function initInspector(): Promise<void> {
     shadow.append(pinBox, box);
     const app = mount(InspectPanel, { target: box });
     const pinApp = mount(PinnedInspector, { target: pinBox, props: {} });
-    const ro = new ResizeObserver(() => requestPaint()); // async content (image size) changes height
+    const ro = new ResizeObserver(() => requestPaint('inspect-panel')); // async content (image size) changes height; only the panel's position depends on it
     ro.observe(box);
     onStop(() => {
       ro.disconnect();
@@ -332,6 +332,8 @@ export async function initInspector(): Promise<void> {
 
   // hover only changes these painters (panelTarget, the hovered box, distances to it)
   const hover = (el: Element | null) => {
+    // same element: only the panel follows the pointer; its box and distances are unchanged
+    if (el === state.hovered) return requestPaint('inspect-panel');
     state.hovered = el;
     requestPaint('inspector', 'inspect-panel', 'distance');
   };
@@ -401,9 +403,11 @@ export async function initInspector(): Promise<void> {
   const refresh = () => (live() ? hitTest() : requestPaint());
   window.addEventListener('scroll', refresh, opts);
   // 1.24 arrow keys scroll like the wheel; any key (e.g. Esc) may change the selection
-  window.addEventListener('keydown', () => requestPaint(), opts);
+  // only the selection painters: a full repaint per key (30/s on auto-repeat) cost every tool
+  const keyPaint = () => requestPaint('inspector', 'inspect-panel', 'distance');
+  window.addEventListener('keydown', keyPaint, opts);
   // isolateEvents stops keys typed in our UI at the shadow root (routeKey listens there too)
-  layer.getRootNode().addEventListener('keydown', () => requestPaint(), opts);
+  layer.getRootNode().addEventListener('keydown', keyPaint, opts);
   window.addEventListener(
     'keyup',
     (e) => {

@@ -127,7 +127,7 @@ function onPointerDown(e: PointerEvent): void {
           ? resizeFromCorner(start, nat(img), corner, m.clientX, m.clientY, scroll())
           : { x: start.x + m.clientX - cx, y: start.y + m.clientY - cy },
       );
-      requestPaint();
+      requestPaint('overlay');
     },
     undefined,
     () => {

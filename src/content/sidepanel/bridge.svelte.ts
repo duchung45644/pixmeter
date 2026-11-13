@@ -30,7 +30,7 @@ import {
   subscribeWeight,
   unsubscribeWeight,
 } from './page';
-import { enableCrossOriginStyles, getMatchedRules } from './rules';
+import { enableCrossOriginStyles, getMatchedRules, clearFetched } from './rules';
 
 export const bridge = $state({ panelOpen: false, panelApi: true });
 
@@ -226,6 +226,7 @@ export async function initSidePanelBridge(): Promise<void> {
   onStop(() => {
     stopEffect();
     forgetSelection();
+    clearFetched();
     void sendToSidePanel('clear').catch(() => {});
   });
   void sendToSidePanel('content_script_loaded').catch(() => {});

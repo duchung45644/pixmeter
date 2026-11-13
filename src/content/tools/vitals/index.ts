@@ -119,6 +119,8 @@ export function initVitals(): void {
   onStop(() => setVitals(false));
   addPainter('vitals', (box) => {
     if (state.paused || !state.vitalsOn) return;
+    // removed nodes: drop them so the map doesn't keep detached trees alive or take top slots
+    for (const el of data.sources.keys()) if (!el.isConnected) data.sources.delete(el);
     const shifted = [...data.sources].sort((a, b) => b[1] - a[1]).slice(0, MAX_SHIFT_BOXES);
     const lcpEl = data.lcp?.el ?? null;
     // every read before the first write

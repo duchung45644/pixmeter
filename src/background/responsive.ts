@@ -23,7 +23,10 @@ const removeRule = (tabId: number) =>
 /** Tabs whose shell asked for the header rule: they get it (and reload) once access is granted. */
 const tabsItem = storage.defineItem<number[]>('session:responsiveTabs', { fallback: [] });
 async function track(tabId: number, on: boolean): Promise<void> {
-  const tabs = (await tabsItem.getValue().catch(() => [])).filter((t) => t !== tabId);
+  const before = await tabsItem.getValue().catch(() => [] as number[]);
+  // most navigations are in tabs that were never responsive: no write, no storage.onChanged
+  if (before.includes(tabId) === on) return;
+  const tabs = before.filter((t) => t !== tabId);
   if (on) tabs.push(tabId);
   await tabsItem.setValue(tabs).catch(() => {});
 }

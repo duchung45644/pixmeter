@@ -18,6 +18,9 @@ import { backgroundOf, isTextHeavy, type LayerMemo } from '../core/contrast';
 import { canHighlight } from './highlight';
 
 const MAX_DEPTH = 100;
+/** Elements one contrast scan visits at most (each costs a getComputedStyle and, if text-heavy, a check). */
+const MAX_SCAN = 3000;
+const MAX_SVGS = 300;
 const hex = (c: Rgba) => formatColor(c, 'HEX');
 const hexOrNone = (c: Rgba | null) => (c ? hex(c) : undefined);
 
@@ -129,9 +132,10 @@ const join = (x: Colours, y: Colours): Colours =>
 /** Text-heavy elements under root with legacy's tree of text ancestors (content.js:40926). */
 function textNodes(root: Element): TextNode[] {
   const all: TextNode[] = [];
+  let seen = 0;
   // returns the colour summary of the text nodes at and below el (O(n), no list copies)
   const walk = (el: Element, depth: number, parent: TextNode | null): Colours => {
-    if (depth > MAX_DEPTH || !canHighlight(el)) return NO_COLOURS;
+    if (depth > MAX_DEPTH || ++seen > MAX_SCAN || !canHighlight(el)) return NO_COLOURS;
     let node: TextNode | null = null;
     if (isTextHeavy(el)) {
       node = { el, color: getComputedStyle(el).color, parent, mixed: false };
@@ -194,7 +198,9 @@ export function collectIssues(root: Element, elementId: (el: Element) => string)
       continue;
     add(n.el);
   }
+  let svgs = 0;
   for (const svg of root.querySelectorAll('svg')) {
+    if (++svgs > MAX_SVGS) break;
     if (!canHighlight(svg)) continue;
     const s = getComputedStyle(svg);
     const paint = s.fill && s.fill !== 'none' ? s.fill : s.stroke;

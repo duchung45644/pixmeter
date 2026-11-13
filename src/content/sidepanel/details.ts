@@ -26,6 +26,8 @@ import { collectIssues } from './issues';
 import { skippedCrossOriginCount } from './rules';
 
 const MAX_DEPTH = 100;
+/** Elements a selection's colour walk styles at most: selecting <body> on a big page took 100s of ms. */
+const MAX_COLOR_ELEMENTS = 3000;
 
 /**
  * What each element under the selection contributed, for the panel's hover highlights
@@ -92,8 +94,9 @@ function canvasColors(el: HTMLCanvasElement): string[] {
 /** getSelectionColors walk (content.js:41459): hidden subtrees are skipped whole. */
 function collectColors(root: Element, mark: Mark): ElementColors {
   const parts: ElementColors[] = [];
+  let seen = 0;
   const walk = (el: Element, depth: number) => {
-    if (depth > MAX_DEPTH || isOwnHost(el)) return;
+    if (depth > MAX_DEPTH || isOwnHost(el) || ++seen > MAX_COLOR_ELEMENTS) return;
     const s = getComputedStyle(el);
     if (s.display === 'none' || s.visibility === 'hidden' || s.opacity === '0') return;
     const own = colorsOf(s);

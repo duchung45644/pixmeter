@@ -15,8 +15,14 @@ const isOwn = (el: Element) => isOwnHost(el) || ownNodes.has(el);
 let order: HTMLElement[] = [];
 let observer: MutationObserver | null = null;
 let timer = 0;
+/** When the first pending change arrived: a page that never stops mutating still rescans every second. */
+let pendingSince = 0;
+const MAX_WAIT_MS = 1000;
+/** Numbered stops drawn at once; each costs a getBoundingClientRect on every scroll frame. */
+const MAX_STOPS = 1000;
 
 function rescan(): void {
+  pendingSince = 0;
   order = tabOrder(document.documentElement, isOwn);
   requestPaint();
 }
@@ -24,8 +30,13 @@ function rescan(): void {
 function scheduleRescan(records: MutationRecord[]): void {
   // our overlay images / split bar restyle on every paint: reacting to them would loop
   if (!touchesPage(records, isOwn)) return;
+  // the cursor PixelLens sets on <html> is not a tab-order change
+  if (records.every((r) => r.target === document.documentElement && r.attributeName === 'style'))
+    return;
+  const now = Date.now();
+  pendingSince ||= now;
   clearTimeout(timer);
-  timer = window.setTimeout(rescan, 250);
+  timer = window.setTimeout(rescan, now - pendingSince >= MAX_WAIT_MS ? 0 : 250);
 }
 
 export function setTabOrder(on: boolean): void {
@@ -83,7 +94,7 @@ export function initTabOrder(): void {
   onStop(() => setTabOrder(false));
   addPainter('taborder', (box) => {
     if (state.paused || !order.length) return;
-    const rects = visibleRects(order); // every read before the first write
+    const rects = visibleRects(order.slice(0, MAX_STOPS)); // every read before the first write
     const frag = document.createDocumentFragment();
     rects.forEach((r, i) => {
       if (!r) return;

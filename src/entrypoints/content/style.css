@@ -4,5 +4,6 @@
 @source '../../lib';
 @source not '../../lib/css/tailwind.ts';
 @source not '../../lib/tech';
+@source not '../../**/*.test.ts';
 @source './';
 @import '../../ui/theme.css';

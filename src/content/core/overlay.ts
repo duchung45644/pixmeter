@@ -1,3 +1,5 @@
+import { state } from './state.svelte';
+
 export const layer = document.createElement('div');
 layer.style.cssText = 'position:fixed;inset:0;pointer-events:none';
 
@@ -11,6 +13,8 @@ export const CHIP =
 
 const painters = new Map<string, { box: HTMLElement; paint: (layer: HTMLElement) => void }>();
 let raf = 0;
+/** Paused: the layer is display:none, so after the one frame that hides things, painting is skipped. */
+let pausedPainted = false;
 
 export function addPainter(id: string, paint: (layer: HTMLElement) => void): () => void {
   const box = document.createElement('div');
@@ -38,6 +42,10 @@ export function requestPaint(...ids: (string | Event)[]): void {
   if (raf) return;
   raf = requestAnimationFrame(() => {
     raf = 0;
+    if (state.paused) {
+      if (pausedPainted) return; // keep the dirty flags for the resume repaint
+      pausedPainted = true;
+    } else pausedPainted = false;
     const every = all;
     all = false;
     for (const [id, { box, paint }] of painters) {
