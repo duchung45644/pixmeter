@@ -1,6 +1,6 @@
 # Edge Add-ons — nội dung đăng
 
-Gói: `corepack pnpm zip` → `.output/pixellens-<version>-chrome.zip`.
+Gói: `corepack pnpm zip:edge` → `.output/pixellens-<version>-edge.zip`.
 
 Ảnh:
 - Logo store: `docs/store/logo-300.png` (300×300).
@@ -45,9 +45,11 @@ Responsive and capture
 • Screenshots of the view, an element, or the full page
 
 For AI agents
-• Optional local MCP server lets coding agents (Claude Code, Cursor…) inspect and capture the page you are on
+• Optional local MCP server lets coding agents (Claude Code, Cursor…) inspect, edit and capture the page you are on
+• Agents can click, type, press keys and scroll to test your page like a user
+• If you allow it in the settings, the agent can turn PixelLens on in a tab by itself
 
-Keyboard first: number keys 1–0 switch tools, Ctrl+K searches every command.
+Keyboard first: Ctrl+Shift+F turns PixelLens on, number keys 1–0 switch tools, Ctrl+K searches every command.
 
 Private by design: no tracking, no account, nothing leaves your browser.
 
@@ -86,9 +88,11 @@ Responsive và chụp ảnh
 • Chụp màn hình khung nhìn, một phần tử hoặc cả trang
 
 Cho AI agent
-• MCP server chạy trên máy (tuỳ chọn) cho phép agent lập trình (Claude Code, Cursor…) kiểm tra và chụp trang bạn đang mở
+• MCP server chạy trên máy (tuỳ chọn) cho phép agent lập trình (Claude Code, Cursor…) kiểm tra, sửa và chụp trang bạn đang mở
+• Agent có thể click, gõ phím và cuộn trang để thử trang như người dùng thật
+• Nếu bạn cho phép trong cài đặt, agent tự bật PixelLens trên tab cần dùng
 
-Ưu tiên bàn phím: phím số 1–0 chuyển công cụ, Ctrl+K tìm mọi lệnh.
+Ưu tiên bàn phím: Ctrl+Shift+F bật PixelLens, phím số 1–0 chuyển công cụ, Ctrl+K tìm mọi lệnh.
 
 Riêng tư: không theo dõi, không tài khoản, không dữ liệu nào rời khỏi trình duyệt.
 
@@ -96,4 +100,4 @@ Riêng tư: không theo dõi, không tài khoản, không dữ liệu nào rời
 
 ## Ghi chú cho người kiểm duyệt (Notes for certification)
 
-PixelLens has no content scripts in the manifest; it is injected with `scripting.executeScript` only when the user clicks the toolbar button on a tab. To test: open any page, click the PixelLens icon, a dock appears at the bottom; press 1 to inspect, hover elements. The `debugger` permission is used only for full-page screenshots (Capture → Full page) and is detached immediately. The MCP feature is optional and only connects to 127.0.0.1.
+PixelLens has no content scripts in the manifest; it is injected with `scripting.executeScript` only when the user clicks the toolbar button on a tab. To test: open any page, click the PixelLens icon, a dock appears at the bottom; press 1 to inspect, hover elements. The `debugger` permission is used only for full-page screenshots (Capture → Full page) and is detached immediately. The MCP feature is optional, off by default, and only connects to a server on 127.0.0.1 that the user starts, authenticated with a pairing token and the extension origin. Version 1.1.0 adds agent page interaction (click, type, scroll) over that same local channel, and a settings switch, off by default, that lets the agent turn PixelLens on in a tab; turning the switch on requests the optional `<all_urls>` host permission at that moment. No new install-time permissions.
