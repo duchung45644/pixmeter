@@ -9,7 +9,8 @@
  */
 import { isOwnHost } from '../../lib/dom/dom';
 import { FOCUSABLE, tabOrder } from '../../lib/dom/tab-order';
-import { agentEvents } from '../core/events';
+import { agentEvents, pageElementAt } from '../core/events';
+import { host } from '../core/overlay';
 import { buildElementSummary } from './ai-data';
 import { elementOf, fail, type Commands } from './command';
 import { elementId } from '../sidepanel/bridge.svelte';
@@ -28,9 +29,8 @@ function bringIntoView(el: Element): { x: number; y: number } {
 
 /** What a real click at (x, y) would hit; the target itself or one of its descendants is fine. */
 function topAt(el: Element, x: number, y: number): Element {
-  const hit = document
-    .elementsFromPoint(x, y)
-    .find((n) => !n.closest('pixellens-ui') && !n.hasAttribute('data-pixellens'));
+  // same hit test as the inspector: skips PixelLens's own host, overlay nodes, html and body
+  const hit = pageElementAt(x, y, host());
   if (!hit || hit === el || el.contains(hit)) return hit ?? el;
   // a label for this control is a real click target too
   if (hit instanceof HTMLLabelElement && hit.control === el) return hit;
