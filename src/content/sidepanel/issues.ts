@@ -108,25 +108,40 @@ interface TextNode {
   el: Element;
   color: string;
   parent: TextNode | null;
-  descendants: TextNode[];
+  /** Text descendants disagree on colour (more than one, not all equal). */
+  mixed: boolean;
 }
 
-const mixed = (list: TextNode[]) => list.length > 1 && list.some((n) => n.color !== list[0]!.color);
+/** Colours of a list of text nodes: how many, the first, and whether all are equal. */
+interface Colours {
+  count: number;
+  first: string;
+  same: boolean;
+}
+const NO_COLOURS: Colours = { count: 0, first: '', same: true };
+const join = (x: Colours, y: Colours): Colours =>
+  !x.count
+    ? y
+    : !y.count
+      ? x
+      : { count: x.count + y.count, first: x.first, same: x.same && y.same && x.first === y.first };
 
 /** Text-heavy elements under root with legacy's tree of text ancestors (content.js:40926). */
 function textNodes(root: Element): TextNode[] {
   const all: TextNode[] = [];
-  const walk = (el: Element, depth: number, parent: TextNode | null): TextNode[] => {
-    if (depth > MAX_DEPTH || !canHighlight(el)) return [];
+  // returns the colour summary of the text nodes at and below el (O(n), no list copies)
+  const walk = (el: Element, depth: number, parent: TextNode | null): Colours => {
+    if (depth > MAX_DEPTH || !canHighlight(el)) return NO_COLOURS;
     let node: TextNode | null = null;
     if (isTextHeavy(el)) {
-      node = { el, color: getComputedStyle(el).color, parent, descendants: [] };
+      node = { el, color: getComputedStyle(el).color, parent, mixed: false };
       all.push(node);
     }
-    const below = childrenOf(el).flatMap((c) => walk(c, depth + 1, node ?? parent));
+    let below = NO_COLOURS;
+    for (const c of childrenOf(el)) below = join(below, walk(c, depth + 1, node ?? parent));
     if (!node) return below;
-    node.descendants = below;
-    return [node, ...below];
+    node.mixed = below.count > 1 && !below.same;
+    return join({ count: 1, first: node.color, same: true }, below);
   };
   walk(root, 0, null);
   return all;
@@ -173,8 +188,8 @@ export function collectIssues(root: Element, elementId: (el: Element) => string)
     if (!inViewport(el)) offscreen.set(el, id);
   };
   for (const n of textNodes(root)) {
-    if (mixed(n.descendants)) continue;
-    if (n.parent && !mixed(n.parent.descendants) && n.parent.color === n.color) continue;
+    if (n.mixed) continue;
+    if (n.parent && !n.parent.mixed && n.parent.color === n.color) continue;
     if ((n.el as HTMLButtonElement).disabled || n.el.getAttribute('aria-disabled') === 'true')
       continue;
     add(n.el);

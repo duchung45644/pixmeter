@@ -84,6 +84,17 @@ function a(sel: string, root?: ParentNode): any[] {
   return out;
 }
 const c = () => a('*');
+/** c().some without copying every element first; stops at the first hit. */
+function someEl(pred: (el: any) => unknown): boolean {
+  for (const el of document.getElementsByTagName('*')) if (pred(el)) return true;
+  for (const r of l()) for (const el of r.querySelectorAll('*')) if (pred(el)) return true;
+  return false;
+}
+/** c().slice(0, k) without copying every element first. */
+function firstEls(k: number): any[] {
+  const all = document.getElementsByTagName('*');
+  return all.length >= k ? Array.from({ length: k }, (_, i) => all[i]) : c().slice(0, k);
+}
 const e = (x: Iterable<any> | ArrayLike<any>): any[] => Array.from(x);
 const n = (x: unknown) => typeof x;
 
@@ -858,7 +869,7 @@ export const SIGNATURES: Record<string, Signature> = {
     icon: 'nuxt',
     url: 'https://nuxtjs.org/',
     test: function (t: Probe) {
-      return !!(t.__NUXT__ || t.$nuxt || c().some((t) => t.__vue__?.nuxt)) && NONE;
+      return !!(t.__NUXT__ || t.$nuxt || someEl((t) => t.__vue__?.nuxt)) && NONE;
     },
   },
   Two: {
@@ -1296,7 +1307,12 @@ export const SIGNATURES: Record<string, Signature> = {
     icon: 'svelte',
     url: 'https://kit.svelte.dev/',
     test: function () {
-      return !!document.body.innerHTML.includes('__sveltekit_') && NONE;
+      // inline scripts only: serializing the whole body was O(page size)
+      return (
+        [...document.body.getElementsByTagName('script')].some((s) =>
+          s.textContent?.includes('__sveltekit_'),
+        ) && NONE
+      );
     },
   },
   Astro: {
@@ -2051,8 +2067,7 @@ export const SIGNATURES: Record<string, Signature> = {
     icon: null,
     url: 'https://tachyons.io/',
     test: function () {
-      const n = `${document.body.className} ${c()
-        .slice(0, 100)
+      const n = `${document.body.className} ${firstEls(100)
         .map((t) => t.className)
         .join(' ')}`;
       return (

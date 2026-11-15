@@ -49,7 +49,9 @@ export function groupVars(vars: CssVar[]): VarGroup[] {
   const by = new Map<string, CssVar[]>();
   for (const v of vars) {
     const k = groupKey(v.name);
-    by.set(k, [...(by.get(k) ?? []), v]);
+    let list = by.get(k);
+    if (!list) by.set(k, (list = []));
+    list.push(v);
   }
   const other = by.get('') ?? [];
   const groups: VarGroup[] = [];

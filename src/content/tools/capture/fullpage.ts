@@ -43,19 +43,21 @@ function findScroller(): HTMLElement | null {
 
 /** Fixed/sticky elements would repeat in every slice; hidden after the first one (:10). */
 function hideFixed(): [HTMLElement, string, string][] {
-  const out: [HTMLElement, string, string][] = [];
-  for (const el of document.body?.getElementsByTagName('*') ?? []) {
+  // all reads first: a write between getComputedStyle calls forces a style recalc each time
+  const hits = [...(document.body?.getElementsByTagName('*') ?? [])].filter((el) => {
     const pos = getComputedStyle(el).position;
-    if (pos !== 'fixed' && pos !== 'sticky') continue;
-    const s = (el as HTMLElement).style;
-    out.push([
-      el as HTMLElement,
+    return pos === 'fixed' || pos === 'sticky';
+  }) as HTMLElement[];
+  return hits.map((el) => {
+    const s = el.style;
+    const saved: [HTMLElement, string, string] = [
+      el,
       s.getPropertyValue('visibility'),
       s.getPropertyPriority('visibility'),
-    ]);
+    ];
     s.setProperty('visibility', 'hidden', 'important');
-  }
-  return out;
+    return saved;
+  });
 }
 
 /** Cover kept up so the page jumping underneath is never seen. Pixel size: vh changes while enlarged. */

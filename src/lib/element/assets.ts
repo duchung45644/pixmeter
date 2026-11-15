@@ -78,7 +78,8 @@ export function collectAssetRefs(
         renderedWidth: r.width,
         renderedHeight: r.height,
       });
-    if (depth < maxDepth) for (const c of childrenOf(el)) walk(c, depth + 1);
+    // an <svg>'s markup already holds its parts: no per-path style/layout reads
+    if (tag !== 'svg' && depth < maxDepth) for (const c of childrenOf(el)) walk(c, depth + 1);
   };
   walk(root, 0);
   const seen = new Set<string>();
