@@ -10,7 +10,7 @@ import {
   stitchHeight,
   useScroller,
 } from '../../../lib/capture/fullpage';
-import { shadowRoots } from '../../../lib/dom/dom';
+import { isOwnHost, shadowRoots } from '../../../lib/dom/dom';
 import { sendToBackground } from '../../../lib/ext/messaging';
 import { pinViewportUnits } from '../../../lib/dom/viewport-units';
 import { mountUi } from '../../../ui/mount';
@@ -95,10 +95,7 @@ async function fullPageViaDebugger(): Promise<HTMLCanvasElement> {
   el?.setAttribute('data-pixellens-scroll', '');
   const ih = innerHeight;
   // the viewport grows to the page height below: keep 100vh heroes at one screen
-  const unpin = pinViewportUnits([
-    document,
-    ...shadowRoots(document, (e) => e.localName.startsWith('pixellens')),
-  ]);
+  const unpin = pinViewportUnits([document, ...shadowRoots(document, isOwnHost)]);
   const plan = fullPagePlan({
     winTotal: winTotal(),
     ih,

@@ -5,6 +5,7 @@ import { parseDecls, serializeDecls } from '../../lib/edit/decls';
 import { addressOf, locate, scopeAddressOf, type RuleAddress } from '../../lib/edit/rule-address';
 import type { SerializedEdit } from '../../lib/edit/serialize';
 import type { RuleChange } from '../../lib/edit/types';
+import { isOwnHost, shadowRoots } from '../../lib/dom/dom';
 import { ID_ATTR, uniquePath } from '../../lib/dom/selector';
 import { OWN_SOURCE, rulesOf } from '../sidepanel/rules';
 
@@ -521,9 +522,8 @@ export class RuleTracker {
   }
 
   private shadowRootsWithOwnStyle(): ShadowRoot[] {
-    return [...document.querySelectorAll('*')].flatMap((el) =>
-      el.shadowRoot?.querySelector(`#${CSS.escape(this.styleId)}`) ? [el.shadowRoot] : [],
-    );
+    const sel = `#${CSS.escape(this.styleId)}`;
+    return shadowRoots(document, isOwnHost).filter((r) => r.querySelector(sel));
   }
 
   // ---- page stylesheet churn ----

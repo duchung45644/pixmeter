@@ -204,7 +204,17 @@ export async function initRuler(): Promise<void> {
     },
     opts,
   );
-  window.addEventListener('resize', () => state.rulerOn && buildRulers(), { signal });
+  let resizeRaf = 0;
+  window.addEventListener(
+    'resize',
+    () =>
+      (resizeRaf ||= requestAnimationFrame(() => {
+        resizeRaf = 0;
+        if (state.rulerOn) buildRulers();
+      })),
+    { signal },
+  );
+  signal.addEventListener('abort', () => cancelAnimationFrame(resizeRaf));
   onStop(() => {
     apply(false); // not persisted: next session restores it (1.43)
     guides = [];

@@ -7,6 +7,8 @@
  * put in {@link agentEvents} so PixelLens's own listeners (inspector click-to-select, measure,
  * shortcuts) let it through to the page. Sites that check `event.isTrusted` will ignore them.
  */
+import { isOwnHost } from '../../lib/dom/dom';
+import { FOCUSABLE, tabOrder } from '../../lib/dom/tab-order';
 import { agentEvents } from '../core/events';
 import { buildElementSummary } from './ai-data';
 import { elementOf, fail, type Commands } from './command';
@@ -65,8 +67,6 @@ const mouse = (type: string, x: number, y: number, buttons: number, detail = 1) 
       view: window,
     }),
   );
-
-const FOCUSABLE = 'a[href],button,input,select,textarea,summary,[tabindex],[contenteditable]';
 
 /** The full sequence a browser fires for one left click. */
 export function clickAt(target: Element, x: number, y: number, double = false): void {
@@ -168,9 +168,7 @@ export function pressKey(
 }
 
 function moveFocus(from: Element, step: 1 | -1): void {
-  const all = [...document.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
-    (e) => e.tabIndex >= 0 && !(e as HTMLButtonElement).disabled && e.getClientRects().length,
-  );
+  const all = tabOrder(document, isOwnHost);
   const i = all.indexOf(from as HTMLElement);
   all.at((i + step + all.length) % all.length)?.focus();
 }

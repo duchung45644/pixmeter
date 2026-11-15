@@ -260,7 +260,16 @@ function placePanel(
   const pinned = !!t && pins.some((p) => p.el === t);
   // the side panel already shows the selection: the floating panel is only for live hover then
   const selOnly = state.sidePanelOpen && !(state.inspectOn && state.hovered);
-  if (!t || !box.firstElementChild || panelHidden || pinned || selOnly || picker || state.paused || !state.inspectOn) {
+  if (
+    !t ||
+    !box.firstElementChild ||
+    panelHidden ||
+    pinned ||
+    selOnly ||
+    picker ||
+    state.paused ||
+    !state.inspectOn
+  ) {
     box.style.visibility = 'hidden';
     return;
   }
@@ -331,7 +340,9 @@ export async function initInspector(): Promise<void> {
   const live = () => state.inspectOn && !state.paused && !state.capturing && !state.textEditOn;
   const opts = { signal, capture: true };
 
-  // 2.06 hover
+  // 2.06 hover: hit-test once per frame (elementsFromPoint is the costly part)
+  let hoverRaf = 0;
+  signal.addEventListener('abort', () => cancelAnimationFrame(hoverRaf));
   document.addEventListener(
     'mousemove',
     (e) => {
@@ -340,11 +351,16 @@ export async function initInspector(): Promise<void> {
       if (isOwnEvent(e, host())) {
         // over a pin / the dock: hide the floating panel; over the panel itself keep it (Copy)
         if (!panelBox || !e.composedPath().includes(panelBox)) panelHidden = true;
+        cancelAnimationFrame(hoverRaf);
+        hoverRaf = 0;
         return hover(null);
       }
       panelHidden = false;
       mouse = { x: e.clientX, y: e.clientY };
-      hitTest();
+      hoverRaf ||= requestAnimationFrame(() => {
+        hoverRaf = 0;
+        if (live()) hitTest();
+      });
     },
     opts,
   );
