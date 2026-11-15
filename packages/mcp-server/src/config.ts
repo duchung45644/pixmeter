@@ -23,7 +23,9 @@ export function parseConfig(argv: string[], env: NodeJS.ProcessEnv): CliConfig {
     throw new Error('--extension-id <32 letters a-p> is required (copy it from PixelLens).');
   const token = env.PIXELLENS_MCP_TOKEN ?? '';
   if (!TOKEN_RE.test(token))
-    throw new Error('Environment variable PIXELLENS_MCP_TOKEN must hold the token copied from PixelLens.');
+    throw new Error(
+      'Environment variable PIXELLENS_MCP_TOKEN must hold the token copied from PixelLens.',
+    );
   const portRaw = arg('--port');
   const port = portRaw === undefined ? MCP_PORT : Number(portRaw);
   if (!Number.isInteger(port) || port < 1 || port > 65535)

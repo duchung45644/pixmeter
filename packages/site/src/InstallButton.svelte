@@ -14,8 +14,10 @@
   const browser: Browser = detect();
   /** alt: also show the "Using Edge?" line for Chrome visitors */
   let { alt = false }: { alt?: boolean } = $props();
-  const live = 'inline-flex items-center gap-2.5 rounded-xl bg-accent px-6 py-3.5 font-medium text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:bg-indigo-500';
-  const soon = 'inline-flex items-center gap-2.5 rounded-xl border border-line bg-tint px-6 py-3.5 font-medium text-fg';
+  const live =
+    'inline-flex items-center gap-2.5 rounded-xl bg-accent px-6 py-3.5 font-medium text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 hover:bg-indigo-500';
+  const soon =
+    'inline-flex items-center gap-2.5 rounded-xl border border-line bg-tint px-6 py-3.5 font-medium text-fg';
 </script>
 
 <div class="flex flex-col items-center gap-3">
@@ -31,8 +33,9 @@
   {#if alt && browser === 'chrome' && EDGE_URL}
     <p class="flex flex-wrap items-center justify-center gap-x-1.5 text-sm text-muted">
       {t().hero.edgeAlt}
-      <a class="inline-flex items-center gap-1.5 text-accent-fg hover:text-accent-fg-strong" href={EDGE_URL}
-        ><BrowserIcon name="edge" size={14} />{t().hero.edgeAltLink}</a
+      <a
+        class="inline-flex items-center gap-1.5 text-accent-fg hover:text-accent-fg-strong"
+        href={EDGE_URL}><BrowserIcon name="edge" size={14} />{t().hero.edgeAltLink}</a
       >
     </p>
   {/if}

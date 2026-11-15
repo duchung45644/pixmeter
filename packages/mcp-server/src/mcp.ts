@@ -57,7 +57,9 @@ export function createMcpServer(bridge: Bridge, version: string): Server {
     const { name, arguments: args } = req.params;
     if (name === PING_TOOL.name) {
       const ext = bridge.connected;
-      return ext ? text(`pong: PixelLens ${ext.extVersion} is connected.`) : text(NOT_CONNECTED, true);
+      return ext
+        ? text(`pong: PixelLens ${ext.extVersion} is connected.`)
+        : text(NOT_CONNECTED, true);
     }
     if (!isMcpType(name)) return text(ERR.unknown, true);
     const v = validateCall(name, args ?? {});

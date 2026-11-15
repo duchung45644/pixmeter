@@ -260,8 +260,16 @@ const SPECS: Record<McpType, Spec> = {
     {
       ...EL,
       text: str(LIMITS.text, 'Text to type.'),
-      clear: { type: 'boolean', default: true, description: 'Replace the current value (default) instead of appending.' },
-      submit: { type: 'boolean', default: false, description: 'Press Enter afterwards (submits a form).' },
+      clear: {
+        type: 'boolean',
+        default: true,
+        description: 'Replace the current value (default) instead of appending.',
+      },
+      submit: {
+        type: 'boolean',
+        default: false,
+        description: 'Press Enter afterwards (submits a form).',
+      },
     },
     ['elementId', 'text'],
   ],
@@ -306,6 +314,7 @@ export const COMMAND_TOOLS: ToolDef[] = MCP_TYPES.map((name) => {
 
 export const PING_TOOL: ToolDef = {
   name: 'ping',
-  description: 'Check the link to the PixelLens extension: whether it is connected and its version.',
+  description:
+    'Check the link to the PixelLens extension: whether it is connected and its version.',
   inputSchema: { type: 'object', properties: {} },
 };

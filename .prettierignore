@@ -3,3 +3,4 @@
 .superpowers/
 docs/**/*.md
 pnpm-lock.yaml
+promo/

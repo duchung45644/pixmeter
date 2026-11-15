@@ -287,7 +287,9 @@ describe('config', () => {
     for (const port of [MCP_PORT, 5000]) {
       const prompt = connectPrompt(TOKEN, EXT_ID, port);
       const cmd =
-        /Command: npx -y (\S+) (.*?) with environment variable PIXELLENS_MCP_TOKEN=(\S+) /.exec(prompt);
+        /Command: npx -y (\S+) (.*?) with environment variable PIXELLENS_MCP_TOKEN=(\S+) /.exec(
+          prompt,
+        );
       expect(cmd?.[1]).toBe('@pixellens/mcp-server');
       expect(parseConfig(cmd![2]!.split(' '), { PIXELLENS_MCP_TOKEN: cmd![3] })).toEqual({
         token: TOKEN,
@@ -304,7 +306,8 @@ describe('config', () => {
       port: MCP_PORT,
     });
     expect(
-      parseConfig([`--extension-id=${EXT_ID}`, '--port', '5000'], { PIXELLENS_MCP_TOKEN: TOKEN }).port,
+      parseConfig([`--extension-id=${EXT_ID}`, '--port', '5000'], { PIXELLENS_MCP_TOKEN: TOKEN })
+        .port,
     ).toBe(5000);
     expect(() => parseConfig(['--extension-id', EXT_ID], {})).toThrow(/PIXELLENS_MCP_TOKEN/);
     expect(() => parseConfig([], { PIXELLENS_MCP_TOKEN: TOKEN })).toThrow(/extension-id/);
