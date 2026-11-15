@@ -1,15 +1,1 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_2816_2402)">
-<path d="M0.0751953 11.5391H6.54839V13.1573H0.0751953V11.5391Z" fill="#FF4040" fill-opacity="0.33" stroke="#FF4040" stroke-width="0.27907"/>
-<path d="M2.50293 9.10938H4.12122V15.5826H2.50293V9.10938Z" fill="#FF4040" fill-opacity="0.33" stroke="#FF4040" stroke-width="0.27907"/>
-<path d="M10.3118 15.291L13.5484 9.40625H7.0752L10.3118 15.291Z" fill="#FF8000" fill-opacity="0.33" stroke="#FF8000" stroke-width="0.27907"/>
-<path d="M13.5481 15.291L16.7847 9.40625H10.3115L13.5481 15.291Z" fill="#FF8000" fill-opacity="0.33" stroke="#FF8000" stroke-width="0.27907"/>
-<path d="M23.7847 12.346C23.7847 14.1334 22.3356 15.5826 20.5481 15.5826C18.7605 15.5826 17.3115 14.1334 17.3115 12.346C17.3114 10.5583 18.7605 9.10938 20.548 9.10938C22.3356 9.10923 23.7847 10.5583 23.7847 12.346Z" fill="#00BFA8" fill-opacity="0.33" stroke="#00BFA8" stroke-width="0.27907"/>
-<path d="M21.3576 12.3482C21.3576 12.795 20.9952 13.1573 20.5484 13.1573C20.1015 13.1573 19.7393 12.795 19.7393 12.3482C19.7391 11.9013 20.1015 11.5391 20.5483 11.5391C20.9952 11.5389 21.3576 11.9013 21.3576 12.3482Z" fill="#00BFA8" fill-opacity="0.33" stroke="#00BFA8" stroke-width="0.27907"/>
-</g>
-<defs>
-<clipPath id="clip0_2816_2402">
-<rect width="24" height="6.69767" fill="white" transform="translate(0 9)"/>
-</clipPath>
-</defs>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><g fill-opacity=".33" stroke-width=".279" clip-path="url(#a)"><path fill="#ff4040" stroke="#ff4040" d="M.075 11.54h6.473v1.617H.075z"/><path fill="#ff4040" stroke="#ff4040" d="M2.503 9.11H4.12v6.473H2.503z"/><path fill="#ff8000" stroke="#ff8000" d="m10.312 15.291 3.236-5.885H7.075z"/><path fill="#ff8000" stroke="#ff8000" d="m13.548 15.291 3.237-5.885h-6.473z"/><path fill="#00bfa8" stroke="#00bfa8" d="M23.785 12.346a3.237 3.237 0 1 1-6.474 0 3.237 3.237 0 0 1 6.474 0Z"/><path fill="#00bfa8" stroke="#00bfa8" d="M21.358 12.348a.81.81 0 1 1-1.619 0 .81.81 0 0 1 1.619 0Z"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 9h24v6.698H0z"/></clipPath></defs></svg>
