@@ -11,7 +11,7 @@
     "dev": "wxt",
     "build": "wxt build",
     "zip": "PIXELLENS_STORE=1 wxt zip",
-    "test": "vitest run",
+    "test": "vitest run && pnpm --filter ./packages/mcp-server test",
     "postinstall": "wxt prepare",
     "typecheck": "wxt prepare && svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint .",

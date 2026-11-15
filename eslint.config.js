@@ -6,7 +6,14 @@ import ts from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: ['.output/', '.wxt/', '.superpowers/', 'packages/*/dist/', 'packages/*/src/*.gen.ts'],
+    ignores: [
+      '.output/',
+      '.wxt/',
+      '.superpowers/',
+      'promo/', // video tooling and a copied build
+      'packages/*/dist/',
+      'packages/*/src/*.gen.ts',
+    ],
   },
   js.configs.recommended,
   ts.configs.recommended,
