@@ -24,8 +24,8 @@ const LEGACY_10_15 =
 const ruleRef = { stylesheet: 'a.css', selector: '.x', wrappers: [], occ: 0, scopeAddress: null };
 
 describe('commands', () => {
-  it('has the 47 legacy names first, then the agent-control commands', () => {
-    expect(MCP_TYPES).toHaveLength(52);
+  it('has the 47 legacy names first, then the agent-control and measuring commands', () => {
+    expect(MCP_TYPES).toHaveLength(54);
     expect(MCP_TYPES.slice(0, 47)).toEqual(LEGACY_10_15);
     expect(MCP_TYPES.slice(47)).toEqual([
       'enable_tab',
@@ -33,6 +33,8 @@ describe('commands', () => {
       'type_text',
       'press_key',
       'scroll_page',
+      'measure_distance',
+      'check_contrast',
     ]);
     expect(isMcpType('get_page_info')).toBe(true);
     expect(isMcpType('toString')).toBe(false);
@@ -218,6 +220,13 @@ describe('validateCall', () => {
     });
   });
   it('checks the agent-control payloads', () => {
+    expect(validateCall('measure_distance', { tabId: 1, elementId: 'v-a' })).toEqual({
+      ok: true,
+      payload: { tabId: 1, elementId: 'v-a' },
+    });
+    expect(
+      validateCall('measure_distance', { tabId: 1, elementId: 'v-a', toElementId: 'x' }).ok,
+    ).toBe(false);
     expect(validateCall('click_element', { tabId: 1, elementId: 'v-a' })).toEqual({
       ok: true,
       payload: { tabId: 1, elementId: 'v-a', double: false },

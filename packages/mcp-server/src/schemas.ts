@@ -255,6 +255,18 @@ const SPECS: Record<McpType, Spec> = {
     { ...EL, double: { type: 'boolean', description: 'Double-click.' } },
     ['elementId'],
   ],
+  measure_distance: [
+    'Distance in CSS px between two elements (what the PixelLens Distance tool draws): gaps when apart, ' +
+      'insets from each edge when one is inside the other. Without toElementId, measures against the parent.',
+    { ...EL, toElementId: elementIdS('The other element; omit to use the parent.') },
+    ['elementId'],
+  ],
+  check_contrast: [
+    "WCAG contrast of an element's text against the background actually painted under it: ratio, level (AAA/AA/fail), " +
+      'large-text rule, and a suggested text colour when it fails.',
+    EL,
+    ['elementId'],
+  ],
   type_text: [
     'Type into an input, textarea, contenteditable or <select> (option value or label). Fires key/input/change events so frameworks see it.',
     {

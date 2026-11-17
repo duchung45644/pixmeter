@@ -79,7 +79,7 @@ Server → extension
 
 ## Commands
 
-`MCP_TYPES` lists the 52 command names (the 47 legacy ones, then 5 agent-control ones); `validateCall(command, payload)` is the schema. Every
+`MCP_TYPES` lists the 54 command names (the 47 legacy ones, 5 agent-control ones, then measure_distance and check_contrast); `validateCall(command, payload)` is the schema. Every
 command except `list_tabs` and `fetch_stylesheet` needs `tabId` (an integer from `list_tabs`);
 without it the error is "`<command>` requires a numeric tabId.". Unknown fields are dropped.
 An unknown command gives "Unknown action. Update the PixelLens extension to the latest version.".
@@ -136,6 +136,8 @@ Common fields:
 | `type_text` | `elementId`, `text`, `clear?` (default true), `submit?` | input / textarea / contenteditable, or a `<select>` option by value or label; native value setter + key/input/change events |
 | `press_key` | `key` (one character or a name such as `Enter`), `elementId?`, `shift?` `ctrl?` `alt?` `meta?` | on the focused element; Enter submits a form, Tab moves focus |
 | `scroll_page` | `elementId?` or `to?` (`top`/`bottom`) or `deltaX?`/`deltaY?` | returns `{scrollX, scrollY, scrollHeight, viewportHeight}` |
+| `measure_distance` | `elementId`, `toElementId?` (default: the parent) | `{from, to, relation: apart\|overlapping\|inside\|contains, gap{horizontal,vertical} or insets{top,right,bottom,left}, direction}` in CSS px |
+| `check_contrast` | `elementId` | `{foreground, background, ratio, level: AAA\|AA\|fail, largeText, required, suggestedForeground?}`; `background: null` over an image |
 
 Agent input is synthetic (`isTrusted` is false): sites that check it ignore these events. PixelLens's
 own listeners (inspector click-to-select, measure, ruler, keyboard shortcuts, drag guard) let agent

@@ -48,7 +48,9 @@ claude mcp add PixelLens -e PIXELLENS_MCP_TOKEN=<token> -- npx -y @pixellens/mcp
 - **Tabs:** list tabs, focus one, and (if you allow it in PixelLens settings) turn PixelLens on.
 - **Inspect:** element details and outline, matched CSS rules and specificity, layout, Tailwind
   classes, typography, colors, CSS variables, assets, breakpoints, detected technologies.
-- **Check:** accessibility and SEO issues, meta tags, page weight.
+- **Measure:** distance in px between two elements (or to the parent's edges).
+- **Check:** text contrast against the real background (WCAG ratio, AA/AAA, suggested fix),
+  accessibility and SEO issues, meta tags, page weight.
 - **See:** screenshots of the page or an element, returned as images; responsive mode with several
   viewports at once.
 - **Edit:** apply styles, add rules, change classes, text or HTML live, and revert every edit.
@@ -64,4 +66,4 @@ claude mcp add PixelLens -e PIXELLENS_MCP_TOKEN=<token> -- npx -y @pixellens/mcp
 
 ## Requirements
 
-Node.js 18 or newer.
+Node.js 18 or newer. `measure_distance` and `check_contrast` need PixelLens 1.2 or newer.

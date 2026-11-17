@@ -14,6 +14,7 @@ import { McpFail, type Commands } from './command';
 import { editCommands } from './edits';
 import { elementCommands } from './elements';
 import { interactCommands } from './interact';
+import { measureCommands } from './measure';
 import { pageCommands } from './page';
 import { responsiveCommands } from './responsive';
 
@@ -23,6 +24,7 @@ const COMMANDS: Commands = {
   ...editCommands,
   ...responsiveCommands,
   ...interactCommands,
+  ...measureCommands,
 };
 
 /** Top page only (Ig + the screenshot). */

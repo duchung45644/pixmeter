@@ -248,6 +248,8 @@ export const MCP_TYPES = [
   'type_text',
   'press_key',
   'scroll_page',
+  'measure_distance',
+  'check_contrast',
 ] as const;
 export type McpType = (typeof MCP_TYPES)[number];
 export const isMcpType = (v: unknown): v is McpType =>
@@ -418,6 +420,8 @@ export interface McpPayloads {
   duplicate_element: El & InFrame;
   enable_tab: Tab;
   click_element: El & InFrame & { double: boolean };
+  measure_distance: El & InFrame & { toElementId?: string };
+  check_contrast: El & InFrame;
   type_text: El & InFrame & { text: string; clear: boolean; submit: boolean };
   press_key: Tab &
     InFrame & {
@@ -693,6 +697,8 @@ const RULES: { [K in McpType]: (r: Reader, p: Record<string, unknown>, t: K) => 
   duplicate_element: el,
   enable_tab: tab,
   click_element: (r) => ({ ...el(r), double: r.optBool('double') ?? false }),
+  measure_distance: (r) => defined({ ...el(r), toElementId: r.optEl('toElementId') }),
+  check_contrast: el,
   type_text: (r) => ({
     ...el(r),
     text: r.str('text', LIMITS.text, { empty: true }),
