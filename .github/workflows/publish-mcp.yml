@@ -1,7 +1,8 @@
 name: Publish MCP server
 
 # Push a tag like mcp-v1.0.1 (matching packages/mcp-server/package.json) to publish.
-# Uses npm Trusted Publishing (OIDC): no npm token is stored anywhere.
+# Uses npm Trusted Publishing (OIDC). The very first publish (before the package exists on npm)
+# falls back to a temporary NPM_TOKEN repo secret; delete that secret afterwards.
 on:
   push:
     tags: ['mcp-v*']
@@ -31,3 +32,5 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - run: npm publish --access public --provenance --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
