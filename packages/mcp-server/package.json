@@ -1,7 +1,17 @@
 {
   "name": "@pixellens/mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Local MCP server for the PixelLens browser extension (stdio MCP <-> WebSocket on 127.0.0.1).",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pixellens",
+    "browser",
+    "devtools",
+    "css",
+    "inspector",
+    "ai-agent"
+  ],
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
