@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/duchung45644/ruler.git",
+    "url": "git+https://github.com/duchung45644/pixellens.git",
     "directory": "packages/mcp-server"
   },
   "publishConfig": {
