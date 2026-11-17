@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Local MCP server for the PixelLens browser extension (stdio MCP <-> WebSocket on 127.0.0.1).",
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duchung45644/ruler.git",
+    "directory": "packages/mcp-server"
+  },
   "publishConfig": {
     "access": "public"
   },
