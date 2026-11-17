@@ -38,7 +38,7 @@ function place(el: Element) {
 }
 
 beforeEach(async () => {
-  const host = document.body.appendChild(document.createElement('pixellens-ui'));
+  const host = document.body.appendChild(document.createElement('pixmeter-ui'));
   host.attachShadow({ mode: 'open' }).append(layer);
   state.active = true;
   sessionSignal();
@@ -87,9 +87,9 @@ it('gets through the inspector, which swallows real clicks while inspecting', as
   const btn = document.body.appendChild(document.createElement('button'));
   place(btn);
   document.elementsFromPoint = () => [btn];
-  // a PixelLens-style window capture blocker that skips own/agent events
+  // a Pixmeter-style window capture blocker that skips own/agent events
   const { isOwnEvent } = await import('../core/events');
-  const host = document.querySelector('pixellens-ui')!;
+  const host = document.querySelector('pixmeter-ui')!;
   const blocker = (e: Event) => {
     if (isOwnEvent(e, host)) return;
     e.stopImmediatePropagation();
@@ -138,7 +138,7 @@ it('refuses to type into something that is not a field', async () => {
   });
 });
 
-it('press_key goes to the page, never to PixelLens shortcuts', async () => {
+it('press_key goes to the page, never to Pixmeter shortcuts', async () => {
   const input = document.body.appendChild(document.createElement('input'));
   place(input);
   const keys: string[] = [];

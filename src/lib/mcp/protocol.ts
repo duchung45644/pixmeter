@@ -1,5 +1,5 @@
 /**
- * PixelLens ⇄ local MCP server wire protocol, version 1 (Đợt 8, inventory 10.01–10.16).
+ * Pixmeter ⇄ local MCP server wire protocol, version 1 (Đợt 8, inventory 10.01–10.16).
  *
  * This module is the single source of truth for the channel. It has no extension imports, so the
  * server package can copy or import it as is. The human-readable spec is docs/mcp-protocol.md.
@@ -7,7 +7,7 @@
  * ## Transport
  * - The MCP server (stdio towards the agent) runs a WebSocket **server** bound to `127.0.0.1` only,
  *   port {@link MCP_PORT}, path {@link MCP_PATH}. The extension's background worker is the
- *   WebSocket **client** and only ever dials `ws://127.0.0.1:<port>/pixellens` (never `localhost`).
+ *   WebSocket **client** and only ever dials `ws://127.0.0.1:<port>/pixmeter` (never `localhost`).
  * - Frames are UTF-8 JSON text messages, one object per message, at most {@link MAX_FRAME_BYTES}.
  *   Anything larger, non-JSON, or not matching a frame shape below is dropped without reply.
  *
@@ -15,7 +15,7 @@
  * 1. **Origin.** Chrome sets `Origin: chrome-extension://<extension id>` on the upgrade request; a
  *    web page cannot forge it. The server MUST reject (HTTP 403, no upgrade) any Origin other than
  *    `chrome-extension://<id>`, where `<id>` comes from the copied prompt (`--extension-id`).
- *    A page opening `ws://127.0.0.1:47347/pixellens` is therefore refused before any frame.
+ *    A page opening `ws://127.0.0.1:47347/pixmeter` is therefore refused before any frame.
  * 2. **Token.** First frame from the extension is {@link HelloFrame} with the pairing token. The
  *    extension makes the token once (32 random bytes, base64url, see {@link TOKEN_RE}) when the user
  *    first presses Connect, and only shows it inside the copy prompt. The server compares it in
@@ -37,16 +37,16 @@
  * ## Commands
  * {@link MCP_TYPES} lists every command; {@link validateCall} defines each payload exactly. Tab
  * commands need a numeric `tabId` from `list_tabs`. By default it lists only tabs where the user
- * turned PixelLens on and commands to any other tab fail. When the user allows it in the settings
- * ("Let the agent turn PixelLens on", which also grants `<all_urls>`), `list_tabs` lists every
- * open web page with `enabled`, `enable_tab` turns PixelLens on, and a command sent to a tab where
+ * turned Pixmeter on and commands to any other tab fail. When the user allows it in the settings
+ * ("Let the agent turn Pixmeter on", which also grants `<all_urls>`), `list_tabs` lists every
+ * open web page with `enabled`, `enable_tab` turns Pixmeter on, and a command sent to a tab where
  * it is off turns it on first. Element ids (`v-…`) come from command results.
  */
 
 export const PROTOCOL = 1;
 /** Fixed port (decision Q2 a). The server reports clearly when it is taken. */
 export const MCP_PORT = 47347;
-export const MCP_PATH = '/pixellens';
+export const MCP_PATH = '/pixmeter';
 export const MCP_HOST = '127.0.0.1';
 export const mcpUrl = (port = MCP_PORT): string => `ws://${MCP_HOST}:${port}${MCP_PATH}`;
 /** Older servers connect but show the "outdated" warning (legacy background.js:759). */
@@ -67,7 +67,7 @@ export function generateToken(): string {
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 /** npm package of the server in packages/mcp-server, named in the copy prompt (Q8 b). */
-export const MCP_PACKAGE = '@pixellens/mcp-server';
+export const MCP_PACKAGE = '@pixmeter/mcp-server';
 
 // ---------------------------------------------------------------- frames
 
@@ -273,17 +273,17 @@ export const SLOW_TIMEOUT_MS = 40_000;
 export const CALL_TIMEOUT_MS = 12_000;
 
 export const ERR = {
-  unknown: 'Unknown action. Update the PixelLens extension to the latest version.',
-  pageInactive: 'PixelLens is not active on this page.',
-  tabInactive: 'PixelLens is not active on this tab.',
+  unknown: 'Unknown action. Update the Pixmeter extension to the latest version.',
+  pageInactive: 'Pixmeter is not active on this page.',
+  tabInactive: 'Pixmeter is not active on this tab.',
   tabInactiveHint:
-    'PixelLens is not active on this tab. Ask the user to click the PixelLens toolbar icon on that tab, ' +
-    'or to turn on "Let the agent turn PixelLens on" in the PixelLens settings so you can do it yourself.',
+    'Pixmeter is not active on this tab. Ask the user to click the Pixmeter toolbar icon on that tab, ' +
+    'or to turn on "Let the agent turn Pixmeter on" in the Pixmeter settings so you can do it yourself.',
   autoEnableOff:
-    'The user has not allowed the agent to turn PixelLens on. Ask them to click the PixelLens toolbar ' +
-    'icon on that tab, or to turn on "Let the agent turn PixelLens on" in the PixelLens settings.',
+    'The user has not allowed the agent to turn Pixmeter on. Ask them to click the Pixmeter toolbar ' +
+    'icon on that tab, or to turn on "Let the agent turn Pixmeter on" in the Pixmeter settings.',
   notInjectable:
-    'PixelLens cannot run on this tab (browser pages, the extension store and file:// are off limits).',
+    'Pixmeter cannot run on this tab (browser pages, the extension store and file:// are off limits).',
   stylesheetBlocked:
     'fetch_stylesheet rejected: URL must be http(s) and not a private/localhost host.',
   notResponsive: 'Not in responsive mode. Call enter_responsive_mode first.',
@@ -773,9 +773,9 @@ export function validateCall(type: string, payload: unknown): Validated {
 /** The text the user pastes into the agent: package, token and extension id (decision Q3 a). */
 export function connectPrompt(token: string, extensionId: string, port = MCP_PORT): string {
   return (
-    `Add the PixelLens MCP server to this agent. Command: npx -y ${MCP_PACKAGE} ` +
+    `Add the Pixmeter MCP server to this agent. Command: npx -y ${MCP_PACKAGE} ` +
     `--extension-id ${extensionId}${port === MCP_PORT ? '' : ` --port ${port}`} ` +
-    `with environment variable PIXELLENS_MCP_TOKEN=${token} (stdio transport, requires Node 18 or newer). ` +
+    `with environment variable PIXMETER_MCP_TOKEN=${token} (stdio transport, requires Node 18 or newer). ` +
     'After adding it, call its ping tool to verify the connection.'
   );
 }

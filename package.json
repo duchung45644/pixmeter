@@ -1,6 +1,6 @@
 {
-  "name": "pixellens",
-  "version": "1.1.0",
+  "name": "pixmeter",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.7.0",
@@ -10,8 +10,8 @@
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
-    "zip": "PIXELLENS_STORE=1 wxt zip",
-    "zip:edge": "PIXELLENS_STORE=1 wxt zip -b edge",
+    "zip": "PIXMETER_STORE=1 wxt zip",
+    "zip:edge": "PIXMETER_STORE=1 wxt zip -b edge",
     "test": "vitest run && pnpm --filter ./packages/mcp-server test",
     "postinstall": "wxt prepare",
     "typecheck": "wxt prepare && svelte-check --tsconfig ./tsconfig.json",

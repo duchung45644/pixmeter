@@ -2,7 +2,7 @@
 
 ## Thước trang và đường gióng
 
-Nhấn `6` hoặc bấm **Thước Trang** để hiện thước đo pixel dọc cạnh trên và cạnh trái cửa sổ. Trên mỗi thước có một vạch chữ thập chạy theo con trỏ. PixelLens nhớ thước đang bật hay tắt.
+Nhấn `6` hoặc bấm **Thước Trang** để hiện thước đo pixel dọc cạnh trên và cạnh trái cửa sổ. Trên mỗi thước có một vạch chữ thập chạy theo con trỏ. Pixmeter nhớ thước đang bật hay tắt.
 
 Tạo đường gióng:
 
@@ -19,7 +19,7 @@ Sửa và xoá đường gióng:
 - Bấm đúp vào đường gióng để xoá.
 - Bấm vào đường gióng để chọn, rồi nhấn `Delete` hoặc `Backspace`. Nhấn `Esc` hoặc bấm chỗ khác để bỏ chọn.
 
-Đường gióng được giữ suốt thời gian PixelLens bật trên tab, nhưng chỉ hiện khi thước đang bật.
+Đường gióng được giữ suốt thời gian Pixmeter bật trên tab, nhưng chỉ hiện khi thước đang bật.
 
 ## Đo vùng
 
@@ -53,7 +53,7 @@ Nhấn `4` hoặc bấm **Lưới Bố cục** để hiện lưới cột trên 
 | **Màu sắc**           | bảng chọn màu hoặc mã hex      | `#FC48FF` |
 | **Độ mờ**             | 5% đến 100%                    | 30%       |
 
-Lưới được canh giữa cửa sổ. Cài đặt được lưu lại, và nếu bạn để lưới bật thì lần sau bật PixelLens lưới sẽ hiện lại.
+Lưới được canh giữa cửa sổ. Cài đặt được lưu lại, và nếu bạn để lưới bật thì lần sau bật Pixmeter lưới sẽ hiện lại.
 
 ## Breakpoint
 

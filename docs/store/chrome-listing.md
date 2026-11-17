@@ -4,7 +4,7 @@ Mô tả, ảnh và gói dùng chung với [edge-listing.md](edge-listing.md). C
 
 ## Single purpose
 
-PixelLens is a toolkit for inspecting, measuring and adjusting the layout and styles of the web page the user is viewing.
+Pixmeter is a toolkit for inspecting, measuring and adjusting the layout and styles of the web page the user is viewing.
 
 ## Permission justifications
 

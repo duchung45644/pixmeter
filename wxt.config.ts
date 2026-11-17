@@ -15,8 +15,8 @@ export default defineConfig({
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     default_locale: 'en',
-    // store packages must not carry `key` (pnpm zip sets PIXELLENS_STORE)
-    ...(!process.env.PIXELLENS_STORE && { key: EDGE_PUBLIC_KEY }),
+    // store packages must not carry `key` (pnpm zip sets PIXMETER_STORE)
+    ...(!process.env.PIXMETER_STORE && { key: EDGE_PUBLIC_KEY }),
     minimum_chrome_version: '116',
     action: {
       default_title: '__MSG_extNameShort__',
@@ -66,7 +66,7 @@ export default defineConfig({
     'build:manifestGenerated': (_wxt, manifest) => {
       if (manifest.host_permissions?.length || manifest.content_scripts?.length) {
         throw new Error(
-          'PixelLens: manifest không được có host_permissions/content_scripts — inject bằng scripting.executeScript (spec §3)',
+          'Pixmeter: manifest không được có host_permissions/content_scripts — inject bằng scripting.executeScript (spec §3)',
         );
       }
     },

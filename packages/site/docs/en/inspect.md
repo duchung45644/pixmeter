@@ -2,7 +2,7 @@
 
 ## Inspector
 
-Press `1` or click **Inspector** to turn hover inspecting on. PixelLens remembers this choice for the next time you turn it on.
+Press `1` or click **Inspector** to turn hover inspecting on. Pixmeter remembers this choice for the next time you turn it on.
 
 While the inspector is on:
 
@@ -45,11 +45,11 @@ Until you pin your first panel, the floating panel ends with the hint **Press Sp
 
 ## Distances
 
-With an element selected and the inspector on, hover another element: PixelLens draws the gaps between the two, with the distance in pixels on each line.
+With an element selected and the inspector on, hover another element: Pixmeter draws the gaps between the two, with the distance in pixels on each line.
 
 ## X-Ray Mode
 
-Press `3` or click **X-Ray Mode** to outline every element on the page, one color per nesting level. Hidden elements and SVG internals are skipped. It also reaches into open shadow roots. PixelLens remembers whether X-Ray was on.
+Press `3` or click **X-Ray Mode** to outline every element on the page, one color per nesting level. Hidden elements and SVG internals are skipped. It also reaches into open shadow roots. Pixmeter remembers whether X-Ray was on.
 
 ## Find Element
 

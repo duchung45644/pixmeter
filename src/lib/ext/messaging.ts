@@ -70,7 +70,7 @@ export interface BackgroundApi {
   /** Turns the stored intent on and dials the local server now (also after a reject). */
   mcp_connect(): McpStatus;
   mcp_disconnect(): McpStatus;
-  /** Copy prompt with the pairing token; null unless asked by an extension page or a PixelLens tab. */
+  /** Copy prompt with the pairing token; null unless asked by an extension page or a Pixmeter tab. */
   mcp_prompt(): string | null;
   /** get_screenshot: the sender's visible tab as PNG, longest side ≤ 2000 px (Q6 a). */
   capture_for_ai(): AiCapture;
@@ -146,7 +146,7 @@ export interface ContentApi {
   start_frame_mode(): void;
   /** Host permission granted: the responsive shell reloads every frame (8.15). */
   reload_frames(): void;
-  /** Background → tabs with PixelLens on: MCP connection changed (legacy mcp_status_changed). */
+  /** Background → tabs with Pixmeter on: MCP connection changed (legacy mcp_status_changed). */
   mcp_status(s: McpStatus): void;
   /**
    * One MCP command for this tab, already validated by the background (lib/mcp/protocol.ts).
@@ -298,7 +298,7 @@ export function handleMessages<T extends Target>(
       }
     } else result = Promise.resolve().then(run);
     result.then(sendResponse, (e) => {
-      console.error(`[pixellens] handler "${p.type}" failed`, e);
+      console.error(`[pixmeter] handler "${p.type}" failed`, e);
       sendResponse(undefined); // ponytail: sender gets undefined, not a hung promise
     });
     return true;

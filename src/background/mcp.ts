@@ -38,29 +38,29 @@ const onCall: McpSocketOptions['onCall'] = (c, reply) =>
     reply({ ok: false, error: String((e as Error)?.message ?? e) }),
   );
 
-/** Is PixelLens on in this tab's top frame? Only those tabs see MCP at all (Q4 a). */
-export async function isPixelLensTab(tabId: number): Promise<boolean> {
+/** Is Pixmeter on in this tab's top frame? Only those tabs see MCP at all (Q4 a). */
+export async function isPixmeterTab(tabId: number): Promise<boolean> {
   const r = await sendToFrame(tabId, 0, 'ping').catch(() => undefined);
   return r?.active === true;
 }
 
-/** Web-page tabs (PixelLens can run there) with whether it is on, in tab order. */
+/** Web-page tabs (Pixmeter can run there) with whether it is on, in tab order. */
 async function injectableTabs(): Promise<{ tab: Browser.tabs.Tab; on: boolean }[]> {
   const tabs = (await browser.tabs.query({})).filter(
     (t) => t.id !== undefined && !t.discarded && isInjectable(t.url),
   );
-  const on = await Promise.all(tabs.map((t) => isPixelLensTab(t.id!)));
+  const on = await Promise.all(tabs.map((t) => isPixmeterTab(t.id!)));
   return tabs.map((tab, i) => ({ tab, on: on[i]! }));
 }
 
-/** Tabs with PixelLens on, in tab order. */
-export async function pixelLensTabs(): Promise<Browser.tabs.Tab[]> {
+/** Tabs with Pixmeter on, in tab order. */
+export async function pixmeterTabs(): Promise<Browser.tabs.Tab[]> {
   return (await injectableTabs()).filter((t) => t.on).map((t) => t.tab);
 }
 
-// ---------------------------------------------------------------- agent turns PixelLens on
+// ---------------------------------------------------------------- agent turns Pixmeter on
 
-/** Turns PixelLens on in a tab the way the toolbar icon does (set by the background entry). */
+/** Turns Pixmeter on in a tab the way the toolbar icon does (set by the background entry). */
 let enableTab: ((tabId: number) => Promise<void>) | null = null;
 export function setTabEnabler(fn: (tabId: number) => Promise<void>): void {
   enableTab = fn;
@@ -74,28 +74,28 @@ export async function agentMayEnable(): Promise<boolean> {
 
 const ENABLE_WAIT_MS = 5000;
 
-/** Turn PixelLens on in the tab (no-op when on); resolves once the page answers. */
+/** Turn Pixmeter on in the tab (no-op when on); resolves once the page answers. */
 async function turnOn(tabId: number): Promise<CallOutcome> {
   const tab = await browser.tabs.get(tabId).catch(() => undefined);
   if (!tab) return fail(`No tab with id ${tabId}.`);
   if (!isInjectable(tab.url)) return fail(ERR.notInjectable);
-  if (await isPixelLensTab(tabId)) return { ok: true, data: { success: true, alreadyOn: true } };
+  if (await isPixmeterTab(tabId)) return { ok: true, data: { success: true, alreadyOn: true } };
   if (!(await agentMayEnable())) return fail(ERR.autoEnableOff);
-  if (!enableTab) return fail('PixelLens is starting up; try again.');
+  if (!enableTab) return fail('Pixmeter is starting up; try again.');
   try {
     await enableTab(tabId);
   } catch (e) {
-    return fail(`Could not turn PixelLens on: ${String((e as Error)?.message ?? e)}`);
+    return fail(`Could not turn Pixmeter on: ${String((e as Error)?.message ?? e)}`);
   }
   const end = Date.now() + ENABLE_WAIT_MS;
   while (Date.now() < end) {
-    if (await isPixelLensTab(tabId)) return { ok: true, data: { success: true, alreadyOn: false } };
+    if (await isPixmeterTab(tabId)) return { ok: true, data: { success: true, alreadyOn: false } };
     await new Promise((r) => setTimeout(r, POLL_MS));
   }
-  return fail('PixelLens did not start on this tab in time; try again.');
+  return fail('Pixmeter did not start on this tab in time; try again.');
 }
 
-/** Status → every PixelLens tab and the settings page (10.03). The token is never in it. */
+/** Status → every Pixmeter tab and the settings page (10.03). The token is never in it. */
 async function broadcast(s: McpStatus): Promise<void> {
   void sendToOptions('mcp_status', s).catch(() => {});
   const tabs = await browser.tabs.query({}).catch(() => []);
@@ -149,14 +149,14 @@ export async function disconnect(): Promise<McpStatus> {
 
 /**
  * Prompt with the token (Q3 a), only for our own pages: the settings page (no tab) or the top
- * frame of a tab where PixelLens is on (the dock popover).
+ * frame of a tab where Pixmeter is on (the dock popover).
  */
 export async function prompt(sender: Browser.runtime.MessageSender): Promise<string | null> {
   if (sender.id !== browser.runtime.id) return null;
   const tabId = sender.tab?.id;
   if (tabId === undefined) {
     if (!sender.url?.startsWith(browser.runtime.getURL('/'))) return null;
-  } else if (sender.frameId !== 0 || !(await isPixelLensTab(tabId))) return null;
+  } else if (sender.frameId !== 0 || !(await isPixmeterTab(tabId))) return null;
   const token = (await mcpToken.getValue()) ?? (await ensureToken());
   return connectPrompt(token, browser.runtime.id);
 }
@@ -194,7 +194,7 @@ const reloading = new Map<number, number>();
 
 const fail = (error: string): CallOutcome => ({ ok: false, error });
 
-/** Wait for PixelLens to come back in a tab that is reloading after exit_responsive_mode. */
+/** Wait for Pixmeter to come back in a tab that is reloading after exit_responsive_mode. */
 async function waitForReload(tabId: number): Promise<boolean> {
   const at = reloading.get(tabId);
   if (at === undefined || Date.now() - at > RELOAD_WINDOW_MS) {
@@ -204,7 +204,7 @@ async function waitForReload(tabId: number): Promise<boolean> {
   const end = Date.now() + RELOAD_WAIT_MS;
   while (Date.now() < end) {
     await new Promise((r) => setTimeout(r, POLL_MS));
-    if (await isPixelLensTab(tabId)) return true;
+    if (await isPixmeterTab(tabId)) return true;
   }
   return false;
 }
@@ -217,8 +217,8 @@ export async function forwardToTab(
   const { tabId } = payload;
   const tab = await browser.tabs.get(tabId).catch(() => undefined);
   if (!tab) return fail(`No tab with id ${tabId}.`);
-  if (!(await isPixelLensTab(tabId)) && !(await waitForReload(tabId))) {
-    // the user allowed it: turn PixelLens on instead of failing (e.g. after a click navigated)
+  if (!(await isPixmeterTab(tabId)) && !(await waitForReload(tabId))) {
+    // the user allowed it: turn Pixmeter on instead of failing (e.g. after a click navigated)
     if (!(await agentMayEnable())) return fail(ERR.tabInactiveHint);
     const on = await turnOn(tabId);
     if (!on.ok) return on;
@@ -248,14 +248,14 @@ async function listTabs(): Promise<CallOutcome> {
         active: !!t.active,
         enabled: on,
       })),
-      // tells the agent whether it may turn PixelLens on by itself
+      // tells the agent whether it may turn Pixmeter on by itself
       canEnable: all,
     },
   };
 }
 
 async function focusTab({ tabId }: McpPayloads['focus_tab']): Promise<CallOutcome> {
-  if (!(await isPixelLensTab(tabId))) return fail(ERR.tabInactive);
+  if (!(await isPixmeterTab(tabId))) return fail(ERR.tabInactive);
   try {
     await activateTab(tabId);
     return { ok: true, data: { success: true } };

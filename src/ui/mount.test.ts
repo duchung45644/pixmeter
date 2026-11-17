@@ -23,8 +23,8 @@ describe('mountUi', () => {
 
 it('mounts a named host marked as ours', async () => {
   const ctx = { onInvalidated: () => () => {}, isInvalid: false } as never;
-  const ui = await mountUi(ctx, Empty, {}, { name: 'pixellens-capture' });
-  expect(ui.host.localName).toBe('pixellens-capture');
-  expect(ui.host.hasAttribute('data-pixellens')).toBe(true);
+  const ui = await mountUi(ctx, Empty, {}, { name: 'pixmeter-capture' });
+  expect(ui.host.localName).toBe('pixmeter-capture');
+  expect(ui.host.hasAttribute('data-pixmeter')).toBe(true);
   ui.remove();
 });

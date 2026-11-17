@@ -1,28 +1,28 @@
-# PixelLens Privacy Policy
+# Pixmeter Privacy Policy
 
 _Last updated: 2026-11-10_
 
-PixelLens is a browser extension for inspecting and adjusting web pages. It does not collect, sell or share personal data.
+Pixmeter is a browser extension for inspecting and adjusting web pages. It does not collect, sell or share personal data.
 
-## What PixelLens stores
+## What Pixmeter stores
 
-- **Preferences** (theme, tool settings, panel layout) are stored with the browser's extension storage. If you are signed in to your browser with sync turned on, the browser syncs them between your devices. PixelLens never sees or controls that sync.
+- **Preferences** (theme, tool settings, panel layout) are stored with the browser's extension storage. If you are signed in to your browser with sync turned on, the browser syncs them between your devices. Pixmeter never sees or controls that sync.
 - **CSS edits** you make on a site (rule and inline style changes) are saved automatically for that site, locally on your device only, until you revert them.
 - **The MCP token** used to connect a local AI agent is stored locally on your device only.
 
 None of this data is sent to the developer or to any third party.
 
-## What PixelLens does not do
+## What Pixmeter does not do
 
 - No analytics, tracking, advertising or telemetry.
 - No account, no sign-in, no remote server operated by the developer.
-- PixelLens does not read or send page content anywhere. Page data (element styles, colors, fonts, screenshots) is processed inside your browser and shown only to you.
+- Pixmeter does not read or send page content anywhere. Page data (element styles, colors, fonts, screenshots) is processed inside your browser and shown only to you.
 
 ## Network access
 
-- PixelLens runs on a tab only after you turn it on for that tab.
+- Pixmeter runs on a tab only after you turn it on for that tab.
 - The optional MCP feature connects only to `ws://127.0.0.1` on your own computer, and only after you turn it on. It is protected by a token and the extension's origin.
-- To read a page's stylesheets, PixelLens may download those same stylesheets from the site you are viewing.
+- To read a page's stylesheets, Pixmeter may download those same stylesheets from the site you are viewing.
 
 ## Permissions
 

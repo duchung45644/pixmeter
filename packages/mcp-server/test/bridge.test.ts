@@ -42,7 +42,7 @@ async function start(opts: Partial<ConstructorParameters<typeof Bridge>[0]> = {}
 }
 
 /** A fake extension: a ws client that records frames. */
-function fakeExt(origin = ORIGIN, path = '/pixellens') {
+function fakeExt(origin = ORIGIN, path = '/pixmeter') {
   const ws = new WebSocket(`ws://127.0.0.1:${bridge!.port}${path}`, { origin });
   sockets.push(ws);
   const frames: Record<string, unknown>[] = [];
@@ -94,7 +94,7 @@ describe('upgrade', () => {
       'https://evil.example',
       'chrome-extension://otherextensionidxxxxxxxxxxxxxxx',
     ]) {
-      const ws = new WebSocket(`ws://127.0.0.1:${bridge!.port}/pixellens`, { origin });
+      const ws = new WebSocket(`ws://127.0.0.1:${bridge!.port}/pixmeter`, { origin });
       sockets.push(ws);
       const status = await new Promise<number>((r) => {
         ws.on('unexpected-response', (_req, res) => r(res.statusCode ?? 0));
@@ -269,7 +269,7 @@ describe('calls', () => {
     });
     await connected();
     expect(await client.callTool({ name: 'ping', arguments: {} })).toMatchObject({
-      content: [{ text: 'pong: PixelLens 2.0.0 is connected.' }],
+      content: [{ text: 'pong: Pixmeter 2.0.0 is connected.' }],
     });
   });
 
@@ -287,11 +287,11 @@ describe('config', () => {
     for (const port of [MCP_PORT, 5000]) {
       const prompt = connectPrompt(TOKEN, EXT_ID, port);
       const cmd =
-        /Command: npx -y (\S+) (.*?) with environment variable PIXELLENS_MCP_TOKEN=(\S+) /.exec(
+        /Command: npx -y (\S+) (.*?) with environment variable PIXMETER_MCP_TOKEN=(\S+) /.exec(
           prompt,
         );
-      expect(cmd?.[1]).toBe('@pixellens/mcp-server');
-      expect(parseConfig(cmd![2]!.split(' '), { PIXELLENS_MCP_TOKEN: cmd![3] })).toEqual({
+      expect(cmd?.[1]).toBe('@pixmeter/mcp-server');
+      expect(parseConfig(cmd![2]!.split(' '), { PIXMETER_MCP_TOKEN: cmd![3] })).toEqual({
         token: TOKEN,
         extensionId: EXT_ID,
         port,
@@ -299,17 +299,17 @@ describe('config', () => {
     }
   });
 
-  it('reads the token from PIXELLENS_MCP_TOKEN and the id from --extension-id', () => {
-    expect(parseConfig(['--extension-id', EXT_ID], { PIXELLENS_MCP_TOKEN: TOKEN })).toEqual({
+  it('reads the token from PIXMETER_MCP_TOKEN and the id from --extension-id', () => {
+    expect(parseConfig(['--extension-id', EXT_ID], { PIXMETER_MCP_TOKEN: TOKEN })).toEqual({
       token: TOKEN,
       extensionId: EXT_ID,
       port: MCP_PORT,
     });
     expect(
-      parseConfig([`--extension-id=${EXT_ID}`, '--port', '5000'], { PIXELLENS_MCP_TOKEN: TOKEN })
+      parseConfig([`--extension-id=${EXT_ID}`, '--port', '5000'], { PIXMETER_MCP_TOKEN: TOKEN })
         .port,
     ).toBe(5000);
-    expect(() => parseConfig(['--extension-id', EXT_ID], {})).toThrow(/PIXELLENS_MCP_TOKEN/);
-    expect(() => parseConfig([], { PIXELLENS_MCP_TOKEN: TOKEN })).toThrow(/extension-id/);
+    expect(() => parseConfig(['--extension-id', EXT_ID], {})).toThrow(/PIXMETER_MCP_TOKEN/);
+    expect(() => parseConfig([], { PIXMETER_MCP_TOKEN: TOKEN })).toThrow(/extension-id/);
   });
 });

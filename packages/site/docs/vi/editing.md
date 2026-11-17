@@ -1,6 +1,6 @@
 # Chỉnh sửa
 
-PixelLens cho phép sửa CSS, chữ và cấu trúc HTML của trang ngay trong trình duyệt, rồi sao chép kết quả thành code. Các chỉnh sửa chỉ thay đổi trang trong trình duyệt của bạn, không động tới tệp của website.
+Pixmeter cho phép sửa CSS, chữ và cấu trúc HTML của trang ngay trong trình duyệt, rồi sao chép kết quả thành code. Các chỉnh sửa chỉ thay đổi trang trong trình duyệt của bạn, không động tới tệp của website.
 
 Phần chỉnh sửa nằm ở tab **Phần tử** của bảng bên (nhấn `0`) và tác động lên phần tử đang chọn.
 
@@ -22,7 +22,7 @@ Các dấu hiệu bên cạnh mỗi dòng:
 - Chấm đỏ kèm **Thuộc tính không xác định** hoặc **Giá trị không hợp lệ** khi trình duyệt không chấp nhận.
 - Gạch ngang kèm **Bị ghi đè bởi …** khi rule khác thắng.
 - Mờ đi kèm **Không được kế thừa bởi phần tử này** với thuộc tính kế thừa nhưng không áp dụng.
-- Chấm màu hổ phách kèm **Bị ghi đè bởi một stylesheet PixelLens không đọc được** khi một stylesheet khác nguồn thắng. Dùng **Cấp quyền truy cập** để PixelLens đọc được các stylesheet đó ("Một số kiểu có thể bị thiếu.").
+- Chấm màu hổ phách kèm **Bị ghi đè bởi một stylesheet Pixmeter không đọc được** khi một stylesheet khác nguồn thắng. Dùng **Cấp quyền truy cập** để Pixmeter đọc được các stylesheet đó ("Một số kiểu có thể bị thiếu.").
 
 ## Ép trạng thái
 
@@ -54,7 +54,7 @@ Các chỉnh sửa rule CSS và style nội tuyến không nằm trong lịch s�
 
 ## Lưu theo từng trang
 
-PixelLens nhớ các chỉnh sửa rule CSS và style nội tuyến cho từng website (theo origin; với tệp cục bộ thì theo đường dẫn tệp) và áp lại vào lần sau bạn bật PixelLens ở đó. Một thông báo như **Đã khôi phục 3 chỉnh sửa đã lưu** sẽ xác nhận việc này. Chỉnh sửa chữ và HTML không được lưu.
+Pixmeter nhớ các chỉnh sửa rule CSS và style nội tuyến cho từng website (theo origin; với tệp cục bộ thì theo đường dẫn tệp) và áp lại vào lần sau bạn bật Pixmeter ở đó. Một thông báo như **Đã khôi phục 3 chỉnh sửa đã lưu** sẽ xác nhận việc này. Chỉnh sửa chữ và HTML không được lưu.
 
 Muốn xoá mọi chỉnh sửa đã lưu, mở [Cài đặt](settings.md) và bấm **Xóa** ở dòng **Chỉnh sửa đã lưu**.
 

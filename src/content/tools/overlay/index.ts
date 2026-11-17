@@ -149,7 +149,7 @@ export function addImage(
   if (list.length >= MAX_IMAGES) return; // checked here so async loads finishing together can't overshoot
   img.src = src;
   img.alt = '';
-  img.dataset.pixellens = '';
+  img.dataset.pixmeter = '';
   const signal = sessionSignal();
   img.addEventListener('pointerdown', onPointerDown, { signal });
   img.addEventListener('pointermove', onPointerMove, { signal });

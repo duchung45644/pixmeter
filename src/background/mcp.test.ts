@@ -28,7 +28,7 @@ beforeEach(() => {
   resetMcp();
   FakeWebSocket.install();
   sendMessage.mockReset();
-  // tab 1 has PixelLens on, tab 2 has no content script
+  // tab 1 has Pixmeter on, tab 2 has no content script
   sendMessage.mockImplementation(async (tabId, msg) => {
     if (tabId !== 1) throw new Error('Receiving end does not exist');
     return (msg as { type: string }).type === 'ping' ? { active: true } : undefined;
@@ -67,7 +67,7 @@ describe('connect / disconnect', () => {
     expect(s).toMatchObject({ intent: true, waiting: true, connected: false });
   });
 
-  it('broadcasts status to PixelLens tabs and the settings page, never the token', async () => {
+  it('broadcasts status to Pixmeter tabs and the settings page, never the token', async () => {
     await connect();
     await vi.waitFor(() => expect(FakeWebSocket.last).toBeDefined());
     FakeWebSocket.last!.open();
@@ -119,9 +119,9 @@ describe('connect / disconnect', () => {
 
 describe('prompt', () => {
   const id = browser.runtime.id;
-  it('goes to the settings page and to PixelLens tabs only', async () => {
+  it('goes to the settings page and to Pixmeter tabs only', async () => {
     const page = { id, url: browser.runtime.getURL('/options.html') };
-    expect(await prompt(page)).toContain('PIXELLENS_MCP_TOKEN=');
+    expect(await prompt(page)).toContain('PIXMETER_MCP_TOKEN=');
     expect(await prompt({ id, tab: { id: 1 } as never, frameId: 0 })).toContain('--extension-id');
     expect(await prompt({ id, tab: { id: 2 } as never, frameId: 0 })).toBeNull();
     expect(await prompt({ id, tab: { id: 1 } as never, frameId: 3 })).toBeNull();
@@ -153,7 +153,7 @@ describe('router', () => {
     expect(mcpCalls()).toHaveLength(0);
   });
 
-  it('lists PixelLens tabs only', async () => {
+  it('lists Pixmeter tabs only', async () => {
     expect(await handleCall('list_tabs', {})).toEqual({
       ok: true,
       data: {
@@ -163,7 +163,7 @@ describe('router', () => {
     });
   });
 
-  it('refuses tabs where PixelLens is off, focus_tab included', async () => {
+  it('refuses tabs where Pixmeter is off, focus_tab included', async () => {
     expect(await handleCall('get_page_info', { tabId: 2 })).toEqual({
       ok: false,
       error: ERR.tabInactiveHint,
@@ -250,7 +250,7 @@ describe('router', () => {
   });
 });
 
-describe('agent turns PixelLens on', () => {
+describe('agent turns Pixmeter on', () => {
   let on: Set<number>;
   let granted: boolean;
   const enabler = vi.fn(async (tabId: number) => void on.add(tabId));
@@ -323,7 +323,7 @@ describe('agent turns PixelLens on', () => {
     expect(enabler).toHaveBeenCalledTimes(1);
   });
 
-  it('turns PixelLens on before a command sent to a tab where it is off', async () => {
+  it('turns Pixmeter on before a command sent to a tab where it is off', async () => {
     await mcpAutoEnable.setValue(true);
     expect(await handleCall('get_page_info', { tabId: 2 })).toEqual({
       ok: true,
@@ -332,7 +332,7 @@ describe('agent turns PixelLens on', () => {
     expect(enabler).toHaveBeenCalledWith(2);
   });
 
-  it('never touches pages PixelLens cannot run on', async () => {
+  it('never touches pages Pixmeter cannot run on', async () => {
     await mcpAutoEnable.setValue(true);
     expect(await handleCall('enable_tab', { tabId: 3 })).toEqual({
       ok: false,

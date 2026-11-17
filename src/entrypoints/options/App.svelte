@@ -32,7 +32,7 @@
   let prompt = $state<string | null>(null);
   let outdatedOpen = $state(false);
   let tourQueued = $state(false);
-  /** "Let the agent turn PixelLens on": the stored switch, shown on only while <all_urls> is granted. */
+  /** "Let the agent turn Pixmeter on": the stored switch, shown on only while <all_urls> is granted. */
   let autoEnable = $state(false);
   let autoDenied = $state(false);
   const hasAllUrls = () =>
@@ -281,7 +281,7 @@
     buttons={{ cancel: i18n.t('dialog.cancel'), confirm: i18n.t('dialog.confirm') }}
     close={(ok) => {
       confirming = false;
-      // storage only: a tab with PixelLens on keeps its edits in memory (Q7, as legacy)
+      // storage only: a tab with Pixmeter on keeps its edits in memory (Q7, as legacy)
       if (ok) void clearAllPersistedEdits();
     }}
   />

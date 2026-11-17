@@ -54,14 +54,14 @@ describe('tabOrder in shadow roots', () => {
 });
 
 describe('touchesPage', () => {
-  const own = (el: Element) => el.localName.startsWith('pixellens-');
+  const own = (el: Element) => el.localName.startsWith('pixmeter-');
   const rec = (r: Partial<MutationRecord>) =>
     ({ addedNodes: [], removedNodes: [], ...r }) as unknown as MutationRecord;
 
   it('ignores style writes and insertions on our own nodes', () => {
     const bar = document.createElement('div');
-    bar.dataset.pixellens = '';
-    const host = document.createElement('pixellens-vision');
+    bar.dataset.pixmeter = '';
+    const host = document.createElement('pixmeter-vision');
     const html = document.documentElement;
     expect(
       touchesPage(

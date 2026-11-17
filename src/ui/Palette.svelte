@@ -74,9 +74,9 @@
       placeholder={i18n.t('palette.placeholder')}
       role="combobox"
       aria-expanded="true"
-      aria-controls="pixellens-palette-list"
+      aria-controls="pixmeter-palette-list"
     />
-    <ul bind:this={list} id="pixellens-palette-list" role="listbox" class="overflow-y-auto p-1">
+    <ul bind:this={list} id="pixmeter-palette-list" role="listbox" class="overflow-y-auto p-1">
       {#each shown as item, i (item.id)}
         {@const Icon = (item.isActive?.() && item.activeIcon) || item.icon}
         {@const ok = runnable(item)}

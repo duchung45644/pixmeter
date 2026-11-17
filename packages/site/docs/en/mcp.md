@@ -1,49 +1,49 @@
 # MCP (AI agents)
 
-PixelLens can be driven by an AI agent (Claude Code, Cursor or any other client that speaks the Model Context Protocol). The agent can read pages, inspect elements, apply CSS, switch to responsive mode and take screenshots, through the same tools you use.
+Pixmeter can be driven by an AI agent (Claude Code, Cursor or any other client that speaks the Model Context Protocol). The agent can read pages, inspect elements, apply CSS, switch to responsive mode and take screenshots, through the same tools you use.
 
 ## How it works
 
 ```
-agent ⇄ (stdio, MCP) ⇄ PixelLens MCP server ⇄ (WebSocket) ⇄ extension ⇄ tab
+agent ⇄ (stdio, MCP) ⇄ Pixmeter MCP server ⇄ (WebSocket) ⇄ extension ⇄ tab
 ```
 
-The MCP server is a small Node program that runs on your computer. The agent starts it, and the extension connects to it at `ws://127.0.0.1:47347/pixellens`. Nothing leaves your machine.
+The MCP server is a small Node program that runs on your computer. The agent starts it, and the extension connects to it at `ws://127.0.0.1:47347/pixmeter`. Nothing leaves your machine.
 
 ## Build the server
 
-The server lives in the repository as `packages/mcp-server` (`@pixellens/mcp-server`). It needs Node 18 or newer. From a checkout:
+The server lives in the repository as `packages/mcp-server` (`@pixmeter/mcp-server`). It needs Node 18 or newer. From a checkout:
 
 ```sh
 corepack pnpm install
-corepack pnpm --filter @pixellens/mcp-server build
+corepack pnpm --filter @pixmeter/mcp-server build
 ```
 
 The program is then `packages/mcp-server/dist/cli.js`.
 
 ## Connect
 
-1. Turn PixelLens on in a tab.
+1. Turn Pixmeter on in a tab.
 2. Open **More tools** and choose **Connect Agent** (the MCP item).
 3. The popover shows **Paste this into your AI agent to connect it:** followed by a ready-made prompt that carries a pairing token (created once and kept on this device). Copy it with the copy button.
 4. Click **Connect**.
 5. Paste the prompt into your agent, or add the server to its configuration yourself (examples below).
-6. While PixelLens waits, the item reads **Waiting for agent** (**Waiting for your agent…** in the popover). Once the agent's server is running, it reads **MCP connected** and the popover shows the agent's name and version and the server version. The **More tools** button shows a dot.
+6. While Pixmeter waits, the item reads **Waiting for agent** (**Waiting for your agent…** in the popover). Once the agent's server is running, it reads **MCP connected** and the popover shows the agent's name and version and the server version. The **More tools** button shows a dot.
 
 **Disconnect** in the same popover closes the connection. You can also connect and disconnect from [Settings](settings.md) (**MCP Server** under **Terminal AI**).
 
 The copied prompt looks like this:
 
 ```
-Add the PixelLens MCP server to this agent. Command: npx -y @pixellens/mcp-server --extension-id bkgdfebicmlicjnkgbemlidlnpbnaofh
-with environment variable PIXELLENS_MCP_TOKEN=<token> (stdio transport, requires Node 18 or newer).
+Add the Pixmeter MCP server to this agent. Command: npx -y @pixmeter/mcp-server --extension-id bkgdfebicmlicjnkgbemlidlnpbnaofh
+with environment variable PIXMETER_MCP_TOKEN=<token> (stdio transport, requires Node 18 or newer).
 After adding it, call its ping tool to verify the connection.
 ```
 
 The server needs two things:
 
-- `--extension-id`: the PixelLens extension ID, `bkgdfebicmlicjnkgbemlidlnpbnaofh` for both the store version and unpacked builds.
-- `PIXELLENS_MCP_TOKEN`: the token from the copied prompt.
+- `--extension-id`: the Pixmeter extension ID, `bkgdfebicmlicjnkgbemlidlnpbnaofh` for both the store version and unpacked builds.
+- `PIXMETER_MCP_TOKEN`: the token from the copied prompt.
 
 ## Configuration examples
 
@@ -54,14 +54,14 @@ With a local build:
 ```json
 {
   "mcpServers": {
-    "PixelLens": {
+    "Pixmeter": {
       "command": "node",
       "args": [
         "/path/to/ruler/packages/mcp-server/dist/cli.js",
         "--extension-id",
         "bkgdfebicmlicjnkgbemlidlnpbnaofh"
       ],
-      "env": { "PIXELLENS_MCP_TOKEN": "<token>" }
+      "env": { "PIXMETER_MCP_TOKEN": "<token>" }
     }
   }
 }
@@ -73,7 +73,7 @@ Any MCP client that can start a stdio server works. Give it:
 
 - command: `node`
 - arguments: `/path/to/ruler/packages/mcp-server/dist/cli.js --extension-id bkgdfebicmlicjnkgbemlidlnpbnaofh`
-- environment variable: `PIXELLENS_MCP_TOKEN=<token>`
+- environment variable: `PIXMETER_MCP_TOKEN=<token>`
 
 After adding it, ask the agent to call the `ping` tool to check the connection.
 
@@ -81,9 +81,9 @@ After adding it, ask the agent to call the `ping` tool to check the connection.
 
 - **Opt-in**: the extension opens no connection until you press **Connect**. **Disconnect** closes it at once.
 - **Local only**: the server listens on `127.0.0.1` only.
-- **Origin check**: the server accepts only connections from the PixelLens extension's origin, which a web page cannot fake.
+- **Origin check**: the server accepts only connections from the Pixmeter extension's origin, which a web page cannot fake.
 - **Pairing token**: a random 43-character token, stored only on this device, proves to the extension that it talks to your server. Neither side logs it.
-- **Tab scope**: the agent only sees tabs where you turned PixelLens on. It cannot turn PixelLens on in other tabs.
+- **Tab scope**: the agent only sees tabs where you turned Pixmeter on. It cannot turn Pixmeter on in other tabs.
 
 ## Edits made by the agent
 
@@ -95,8 +95,8 @@ The server offers one tool per command, plus `ping`. Every command except `list_
 
 | Command                     | What it does                                                                |
 | --------------------------- | --------------------------------------------------------------------------- |
-| `list_tabs`                 | Lists the tabs where PixelLens is on                                        |
-| `focus_tab`                 | Brings a PixelLens tab to the front                                         |
+| `list_tabs`                 | Lists the tabs where Pixmeter is on                                         |
+| `focus_tab`                 | Brings a Pixmeter tab to the front                                          |
 | `fetch_stylesheet`          | Downloads a public stylesheet by URL (needs access to all sites)            |
 | `get_page_info`             | URL, title, language, meta, H1, viewport, page size, scroll and pixel ratio |
 | `get_selected_element`      | Summary of the element you selected                                         |
@@ -149,6 +149,6 @@ The full payload of each command is in `docs/mcp-protocol.md` in the repository.
 
 - **Stays on Waiting for agent**: the server is not running. Check that the agent started it (its MCP list or logs), that the path to `cli.js` is right and that Node 18+ is installed.
 - **The server exits at once**: port 47347 is already taken (another copy of the server is running), the token is missing or malformed, or `--extension-id` is missing. The server prints the reason.
-- **The connection is refused**: the token in the agent's configuration does not match the one PixelLens shows, or the extension ID is wrong. Copy the prompt again and update the configuration. After a refusal, press **Connect** again.
+- **The connection is refused**: the token in the agent's configuration does not match the one Pixmeter shows, or the extension ID is wrong. Copy the prompt again and update the configuration. After a refusal, press **Connect** again.
 - **MCP out of date**: the server is older than the extension expects. Rebuild it or restart your agent so it starts the new version.
-- **"PixelLens is not active on this tab."**: turn PixelLens on in that tab; the agent only reaches tabs where it is on.
+- **"Pixmeter is not active on this tab."**: turn Pixmeter on in that tab; the agent only reaches tabs where it is on.

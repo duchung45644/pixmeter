@@ -11,7 +11,7 @@ const isOwnNode = (n: Element): boolean => {
 export const isOwn = (n: Element): boolean => isOwnHost(n) || isOwnNode(n);
 
 /**
- * Input events the agent dispatched (MCP click_element / type_text / press_key). PixelLens's own
+ * Input events the agent dispatched (MCP click_element / type_text / press_key). Pixmeter's own
  * listeners (inspector, measure, ruler, shortcuts, drag guard) let them through to the page.
  */
 export const agentEvents = new WeakSet<Event>();

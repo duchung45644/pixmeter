@@ -1,6 +1,6 @@
 # Edge Add-ons — nội dung đăng
 
-Gói: `corepack pnpm zip:edge` → `.output/pixellens-<version>-edge.zip`.
+Gói: `corepack pnpm zip:edge` → `.output/pixmeter-<version>-edge.zip`.
 
 Ảnh:
 - Logo store: `docs/store/logo-300.png` (300×300).
@@ -14,13 +14,13 @@ Category: **Developer tools**. Privacy policy URL: link công khai tới `docs/p
 
 ## English
 
-**Name:** PixelLens — The All-in-One Toolkit for Web Inspection and Design
+**Name:** Pixmeter — The All-in-One Toolkit for Web Inspection and Design
 
 **Short description:** Hover any element to see how it's built, from size and spacing to styles and colors, then fine-tune it right on the page.
 
 **Description:**
 
-PixelLens puts a full inspection and design toolkit on any web page. No DevTools digging, just hover, measure and tweak.
+Pixmeter puts a full inspection and design toolkit on any web page. No DevTools digging, just hover, measure and tweak.
 
 Inspect
 • Hover to see size, padding, margin, font, colors and contrast
@@ -47,9 +47,9 @@ Responsive and capture
 For AI agents
 • Optional local MCP server lets coding agents (Claude Code, Cursor…) inspect, edit and capture the page you are on
 • Agents can click, type, press keys and scroll to test your page like a user
-• If you allow it in the settings, the agent can turn PixelLens on in a tab by itself
+• If you allow it in the settings, the agent can turn Pixmeter on in a tab by itself
 
-Keyboard first: Ctrl+Shift+F turns PixelLens on, number keys 1–0 switch tools, Ctrl+K searches every command.
+Keyboard first: Ctrl+Shift+F turns Pixmeter on, number keys 1–0 switch tools, Ctrl+K searches every command.
 
 Private by design: no tracking, no account, nothing leaves your browser.
 
@@ -57,13 +57,13 @@ Private by design: no tracking, no account, nothing leaves your browser.
 
 ## Tiếng Việt
 
-**Tên:** PixelLens — Bộ công cụ tất cả trong một để kiểm tra và thiết kế web
+**Tên:** Pixmeter — Bộ công cụ tất cả trong một để kiểm tra và thiết kế web
 
 **Mô tả ngắn:** Rê chuột lên một phần tử để thấy nó được dựng ra sao, từ kích thước, khoảng cách đến style và màu, rồi chỉnh ngay trên trang.
 
 **Mô tả:**
 
-PixelLens mang cả bộ công cụ kiểm tra và thiết kế lên mọi trang web. Không cần lục DevTools, chỉ cần rê chuột, đo và chỉnh.
+Pixmeter mang cả bộ công cụ kiểm tra và thiết kế lên mọi trang web. Không cần lục DevTools, chỉ cần rê chuột, đo và chỉnh.
 
 Kiểm tra
 • Rê chuột để xem kích thước, padding, margin, font, màu và độ tương phản
@@ -90,9 +90,9 @@ Responsive và chụp ảnh
 Cho AI agent
 • MCP server chạy trên máy (tuỳ chọn) cho phép agent lập trình (Claude Code, Cursor…) kiểm tra, sửa và chụp trang bạn đang mở
 • Agent có thể click, gõ phím và cuộn trang để thử trang như người dùng thật
-• Nếu bạn cho phép trong cài đặt, agent tự bật PixelLens trên tab cần dùng
+• Nếu bạn cho phép trong cài đặt, agent tự bật Pixmeter trên tab cần dùng
 
-Ưu tiên bàn phím: Ctrl+Shift+F bật PixelLens, phím số 1–0 chuyển công cụ, Ctrl+K tìm mọi lệnh.
+Ưu tiên bàn phím: Ctrl+Shift+F bật Pixmeter, phím số 1–0 chuyển công cụ, Ctrl+K tìm mọi lệnh.
 
 Riêng tư: không theo dõi, không tài khoản, không dữ liệu nào rời khỏi trình duyệt.
 
@@ -100,4 +100,4 @@ Riêng tư: không theo dõi, không tài khoản, không dữ liệu nào rời
 
 ## Ghi chú cho người kiểm duyệt (Notes for certification)
 
-PixelLens has no content scripts in the manifest; it is injected with `scripting.executeScript` only when the user clicks the toolbar button on a tab. To test: open any page, click the PixelLens icon, a dock appears at the bottom; press 1 to inspect, hover elements. The `debugger` permission is used only for full-page screenshots (Capture → Full page) and is detached immediately. The MCP feature is optional, off by default, and only connects to a server on 127.0.0.1 that the user starts, authenticated with a pairing token and the extension origin. Version 1.1.0 adds agent page interaction (click, type, scroll) over that same local channel, and a settings switch, off by default, that lets the agent turn PixelLens on in a tab; turning the switch on requests the optional `<all_urls>` host permission at that moment. No new install-time permissions.
+Pixmeter has no content scripts in the manifest; it is injected with `scripting.executeScript` only when the user clicks the toolbar button on a tab. To test: open any page, click the Pixmeter icon, a dock appears at the bottom; press 1 to inspect, hover elements. The `debugger` permission is used only for full-page screenshots (Capture → Full page) and is detached immediately. The MCP feature is optional, off by default, and only connects to a server on 127.0.0.1 that the user starts, authenticated with a pairing token and the extension origin. Version 1.1.0 adds agent page interaction (click, type, scroll) over that same local channel, and a settings switch, off by default, that lets the agent turn Pixmeter on in a tab; turning the switch on requests the optional `<all_urls>` host permission at that moment. No new install-time permissions.

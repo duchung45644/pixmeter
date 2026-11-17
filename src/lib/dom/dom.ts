@@ -42,8 +42,8 @@ export const queryAllDeep = (root: ParentNode, sel: string, isOwn: (el: Element)
   [root, ...shadowRoots(root, isOwn)].flatMap((r) => [...r.querySelectorAll(sel)]);
 
 /** Every open shadow root under root, nested, in tree order, skipping our own hosts (port of legacy oe(), content.js:1548). */
-/** Our own UI hosts (`pixellens-ui`, `pixellens-capture`, `pixellens-cover`): skipped by every page scan. */
-export const isOwnHost = (el: Element): boolean => el.localName.startsWith('pixellens-');
+/** Our own UI hosts (`pixmeter-ui`, `pixmeter-capture`, `pixmeter-cover`): skipped by every page scan. */
+export const isOwnHost = (el: Element): boolean => el.localName.startsWith('pixmeter-');
 
 export function shadowRoots(
   root: ParentNode,

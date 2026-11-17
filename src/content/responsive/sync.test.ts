@@ -146,7 +146,7 @@ describe('shell integration', () => {
       return w as unknown as Window;
     });
     shadow = document.body
-      .appendChild(document.createElement('pixellens-ui'))
+      .appendChild(document.createElement('pixmeter-ui'))
       .attachShadow({ mode: 'open' });
     detach = mountLayer(shadow);
     state.active = true;

@@ -4,7 +4,7 @@
  * The content script cannot make trusted input, so these dispatch ordinary DOM events the way a
  * browser does for a real user: pointer → mouse → click with coordinates, focus, the native value
  * setter + input/change (works with React/Vue controlled inputs), and keydown/keyup. Every event is
- * put in {@link agentEvents} so PixelLens's own listeners (inspector click-to-select, measure,
+ * put in {@link agentEvents} so Pixmeter's own listeners (inspector click-to-select, measure,
  * shortcuts) let it through to the page. Sites that check `event.isTrusted` will ignore them.
  */
 import { isOwnHost } from '../../lib/dom/dom';
@@ -29,7 +29,7 @@ function bringIntoView(el: Element): { x: number; y: number } {
 
 /** What a real click at (x, y) would hit; the target itself or one of its descendants is fine. */
 function topAt(el: Element, x: number, y: number): Element {
-  // same hit test as the inspector: skips PixelLens's own host, overlay nodes, html and body
+  // same hit test as the inspector: skips Pixmeter's own host, overlay nodes, html and body
   const hit = pageElementAt(x, y, host());
   if (!hit || hit === el || el.contains(hit)) return hit ?? el;
   // a label for this control is a real click target too
@@ -276,7 +276,7 @@ export const interactCommands: Commands = {
     return {
       success: true,
       clicked: summary(el),
-      note: 'The page may navigate or change after a click. If a later command says PixelLens is not active, the page navigated: call list_tabs.',
+      note: 'The page may navigate or change after a click. If a later command says Pixmeter is not active, the page navigated: call list_tabs.',
       url: before,
     };
   },

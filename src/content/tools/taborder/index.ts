@@ -30,7 +30,7 @@ function rescan(): void {
 function scheduleRescan(records: MutationRecord[]): void {
   // our overlay images / split bar restyle on every paint: reacting to them would loop
   if (!touchesPage(records, isOwn)) return;
-  // the cursor PixelLens sets on <html> is not a tab-order change
+  // the cursor Pixmeter sets on <html> is not a tab-order change
   if (records.every((r) => r.target === document.documentElement && r.attributeName === 'style'))
     return;
   const now = Date.now();

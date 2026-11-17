@@ -27,8 +27,8 @@ jobs:
         with:
           node-version: 22
       - run: corepack enable
-      - run: pnpm install --frozen-lockfile --filter @pixellens/site
-      - run: pnpm --filter @pixellens/site build
+      - run: pnpm install --frozen-lockfile --filter @pixmeter/site
+      - run: pnpm --filter @pixmeter/site build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/site/dist

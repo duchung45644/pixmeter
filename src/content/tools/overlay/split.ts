@@ -13,7 +13,7 @@ const LINE = '#5B5BF0';
 
 function makeBar(onDrop: () => void): HTMLDivElement {
   const el = document.createElement('div');
-  el.dataset.pixellens = '';
+  el.dataset.pixmeter = '';
   el.setAttribute('role', 'separator');
   el.setAttribute('aria-orientation', 'vertical');
   el.addEventListener(

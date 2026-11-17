@@ -18,7 +18,7 @@ In each tab:
 
 ## Color picker
 
-Choose **Color Picker** in **More tools**, or press `C`. The PixelLens UI hides and the browser's color picker opens: click anywhere on screen to pick a color, or press `Esc` to cancel. The color is copied to the clipboard and shown briefly on the dock.
+Choose **Color Picker** in **More tools**, or press `C`. The Pixmeter UI hides and the browser's color picker opens: click anywhere on screen to pick a color, or press `Esc` to cancel. The color is copied to the clipboard and shown briefly on the dock.
 
 The color is written in the format chosen in [Settings](settings.md) (**Color Format**):
 

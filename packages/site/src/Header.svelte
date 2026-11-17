@@ -20,7 +20,7 @@
   <nav class="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
     <a href="./index.html" class="flex items-center gap-2.5 font-semibold text-strong">
       <img src="./logo.svg" alt="" class="size-7" />
-      PixelLens
+      Pixmeter
     </a>
     <div
       class="ml-auto hidden items-center gap-6 border-r border-line-soft pr-6 text-sm text-muted md:flex"

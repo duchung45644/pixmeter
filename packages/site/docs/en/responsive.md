@@ -1,14 +1,14 @@
 # Responsive mode
 
-Responsive mode shows the current page in several frames of different sizes, side by side, in the same tab. The PixelLens tools work inside every frame at once.
+Responsive mode shows the current page in several frames of different sizes, side by side, in the same tab. The Pixmeter tools work inside every frame at once.
 
 ## Turn it on
 
 Press `5` or click **Responsive Mode · B: breakpoints** on the dock. Press again to leave. While it is on, video and audio on the page are paused.
 
-The first time, you start with three frames: Phone (390×844), Tablet (768×1024) and Desktop (1280×800). PixelLens remembers your frames, zoom, layout and scroll sync for next time.
+The first time, you start with three frames: Phone (390×844), Tablet (768×1024) and Desktop (1280×800). Pixmeter remembers your frames, zoom, layout and scroll sync for next time.
 
-If you have inline style, markup or class edits, PixelLens asks first: **Your CSS rule changes will be kept. Inline style, markup and class edits will be discarded.** The same happens when you leave. On leaving, the first frame's CSS rule edits and its current URL come back to the page.
+If you have inline style, markup or class edits, Pixmeter asks first: **Your CSS rule changes will be kept. Inline style, markup and class edits will be discarded.** The same happens when you leave. On leaving, the first frame's CSS rule edits and its current URL come back to the page.
 
 ## Toolbar
 
@@ -55,8 +55,8 @@ With the breakpoints tool on (key `B`, or the **Breakpoints** toolbar button), t
 
 ## Pages that block the preview
 
-Many sites forbid being shown inside a frame. To load them anyway, PixelLens needs access to all sites, which it asks for only here. A blocked frame shows **This site blocks loading in the preview. Grant access to show it.** Click **Grant access** and accept the browser prompt; the frames reload.
+Many sites forbid being shown inside a frame. To load them anyway, Pixmeter needs access to all sites, which it asks for only here. A blocked frame shows **This site blocks loading in the preview. Grant access to show it.** Click **Grant access** and accept the browser prompt; the frames reload.
 
-With that permission, PixelLens removes the blocking response headers only for the frames of this tab, and only while responsive mode is on.
+With that permission, Pixmeter removes the blocking response headers only for the frames of this tab, and only while responsive mode is on.
 
 Some sites block framing with a script or an in-page policy that cannot be removed. Those show **This site blocks loading in the preview. It does this with a script or an in-page policy that can't be stripped.** A frame that never finishes loading shows **This page did not finish loading.**

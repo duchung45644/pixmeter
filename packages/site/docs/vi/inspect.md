@@ -2,7 +2,7 @@
 
 ## Trình kiểm tra
 
-Nhấn `1` hoặc bấm **Trình kiểm tra** để bật chế độ kiểm tra khi rê chuột. PixelLens nhớ lựa chọn này cho lần bật sau.
+Nhấn `1` hoặc bấm **Trình kiểm tra** để bật chế độ kiểm tra khi rê chuột. Pixmeter nhớ lựa chọn này cho lần bật sau.
 
 Khi trình kiểm tra đang bật:
 
@@ -45,11 +45,11 @@ Cho tới khi bạn ghim bảng đầu tiên, cuối bảng nổi luôn có dòn
 
 ## Khoảng cách
 
-Khi đã chọn một phần tử và trình kiểm tra đang bật, rê chuột lên phần tử khác: PixelLens vẽ các khoảng cách giữa hai phần tử, kèm số pixel trên từng đường.
+Khi đã chọn một phần tử và trình kiểm tra đang bật, rê chuột lên phần tử khác: Pixmeter vẽ các khoảng cách giữa hai phần tử, kèm số pixel trên từng đường.
 
 ## Chế độ X-Ray
 
-Nhấn `3` hoặc bấm **Chế độ X-Ray** để vẽ viền quanh mọi phần tử trên trang, mỗi cấp lồng nhau một màu. Phần tử bị ẩn và các thành phần bên trong SVG được bỏ qua. X-Ray cũng đi vào cả các shadow root mở. PixelLens nhớ X-Ray đang bật hay tắt.
+Nhấn `3` hoặc bấm **Chế độ X-Ray** để vẽ viền quanh mọi phần tử trên trang, mỗi cấp lồng nhau một màu. Phần tử bị ẩn và các thành phần bên trong SVG được bỏ qua. X-Ray cũng đi vào cả các shadow root mở. Pixmeter nhớ X-Ray đang bật hay tắt.
 
 ## Tìm Phần tử
 

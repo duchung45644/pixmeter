@@ -30,7 +30,7 @@ import {
   openOptions,
   optionsHandlers,
 } from '../background/options';
-import { initMcp, isPixelLensTab, mcpHandlers, setTabEnabler } from '../background/mcp';
+import { initMcp, isPixmeterTab, mcpHandlers, setTabEnabler } from '../background/mcp';
 
 /** Toolbar icon: brand indigo while on, neutral grey while off (no red/blue pair). */
 export const ICON_ON = { 16: 'images/icon16.png', 32: 'images/icon32.png' } as const;
@@ -117,7 +117,7 @@ async function captureTab(
 
 /** 10.05 / 10.14: the visible tab for an agent, PNG scaled down to ≤ 2000 px (Q6 a). */
 async function captureForAi(tab?: { id?: number; windowId?: number }): Promise<AiCapture> {
-  if (tab?.id === undefined || !(await isPixelLensTab(tab.id)))
+  if (tab?.id === undefined || !(await isPixmeterTab(tab.id)))
     return { ok: false, reason: 'script_inactive' };
   try {
     const dataUrl = await captureVisible(tab.windowId ?? browser.windows.WINDOW_ID_CURRENT);
@@ -200,9 +200,9 @@ async function setup() {
 export default defineBackground(() => {
   initPanels();
   initResponsive(toggleTab);
-  // the agent may turn PixelLens on by itself when the user allows it (enable_tab, auto-enable)
+  // the agent may turn Pixmeter on by itself when the user allows it (enable_tab, auto-enable)
   setTabEnabler(async (tabId) => {
-    if (!(await isPixelLensTab(tabId))) await toggleTab(tabId);
+    if (!(await isPixmeterTab(tabId))) await toggleTab(tabId);
   });
   initMcp(); // dials only when the user left MCP on (10.04)
   browser.runtime.onInstalled.addListener(() => void setup().catch(() => {}));

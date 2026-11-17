@@ -12,7 +12,7 @@ Press `0` or click **Toggle Side Panel** on the dock. If the browser has no side
 - The gear button opens **Settings**.
 - **Open in a window** moves the panel into its own window; **Move to side panel** puts it back.
 
-Every section can be collapsed by clicking its title. Sections start closed, and PixelLens remembers which ones you opened.
+Every section can be collapsed by clicking its title. Sections start closed, and Pixmeter remembers which ones you opened.
 
 ## Element tab
 
@@ -35,7 +35,7 @@ With an element selected, from top to bottom:
 - **Assets**: images, background images and inline SVGs in the element, with a preview, **Download** for each and **Download All**.
 - **Code**: the element's CSS in three views: **Computed**, **Source** (the matched rules as written) and **Tailwind** (Tailwind classes converted from the computed CSS).
 
-When some stylesheets come from another origin, the panel shows how many are hidden and a **Grant access** button that lets PixelLens read them. See [Privacy and permissions](privacy-permissions.md).
+When some stylesheets come from another origin, the panel shows how many are hidden and a **Grant access** button that lets Pixmeter read them. See [Privacy and permissions](privacy-permissions.md).
 
 ## Page tab
 

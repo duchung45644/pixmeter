@@ -1,6 +1,6 @@
 # Editing
 
-PixelLens lets you change a page's CSS, text and markup right in the browser, then copy the result as code. Edits only change the page in your browser; they never touch the site's files.
+Pixmeter lets you change a page's CSS, text and markup right in the browser, then copy the result as code. Edits only change the page in your browser; they never touch the site's files.
 
 Editing lives in the side panel's **Element** tab (press `0`) and works on the selected element.
 
@@ -22,7 +22,7 @@ Markers explain each line:
 - A red dot and **Unknown property** or **Invalid value** for something the browser rejects.
 - Struck-through with **Overridden by …** when another rule wins.
 - Dimmed with **Not inherited by this element** for an inherited property that does not apply.
-- An amber dot with **Overridden by a stylesheet PixelLens can't read** when a cross-origin stylesheet wins. Use **Grant access** to let PixelLens read such stylesheets ("Some styles may be missing.").
+- An amber dot with **Overridden by a stylesheet Pixmeter can't read** when a cross-origin stylesheet wins. Use **Grant access** to let Pixmeter read such stylesheets ("Some styles may be missing.").
 
 ## Force states
 
@@ -54,7 +54,7 @@ CSS rule and inline style edits are not part of that history. To take one back, 
 
 ## Saved per site
 
-PixelLens remembers your CSS rule edits and inline style edits for each site (each origin; for local files, each file path) and puts them back the next time you turn PixelLens on there. A message such as **3 saved edits restored** confirms it. Text and markup edits are not saved.
+Pixmeter remembers your CSS rule edits and inline style edits for each site (each origin; for local files, each file path) and puts them back the next time you turn Pixmeter on there. A message such as **3 saved edits restored** confirms it. Text and markup edits are not saved.
 
 To forget every saved edit, open [Settings](settings.md) and use **Clear** next to **Saved edits**.
 

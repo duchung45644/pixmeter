@@ -6,7 +6,7 @@ export const EDGE_URL =
 export const EXTENSION_ID = 'bkgdfebicmlicjnkgbemlidlnpbnaofh';
 /** Chrome Web Store listing; empty until it exists (Chrome visitors then see a 'coming soon' note). */
 export const CHROME_URL = '';
-export const VERSION = '1.1.0';
+export const VERSION = '1.2.0';
 
 /** Showcase rows: id → screenshot in public/img (null: no image, icon only). */
 export const SHOWCASE_IMAGES: Record<string, string | null> = {
@@ -53,10 +53,7 @@ const en = {
   how: {
     title: 'Start in three steps',
     steps: [
-      [
-        'Install',
-        'Add PixelLens to Edge from the Add-ons store. No sign-up, nothing to configure.',
-      ],
+      ['Install', 'Add Pixmeter to Edge from the Add-ons store. No sign-up, nothing to configure.'],
       [
         'Turn it on',
         'Click the toolbar icon or press Ctrl+Shift+F on any tab. A small dock appears at the bottom of the page.',
@@ -69,7 +66,7 @@ const en = {
   },
   showcase: {
     title: 'Everything you open DevTools for, one hover away',
-    lead: 'PixelLens puts the tools designers and front-end developers reach for every day right on top of the page, without digging through panels.',
+    lead: 'Pixmeter puts the tools designers and front-end developers reach for every day right on top of the page, without digging through panels.',
     rows: [
       {
         id: 'inspect',
@@ -182,8 +179,8 @@ const en = {
     ],
   },
   compare: {
-    title: 'What PixelLens adds on top of DevTools',
-    head: ['', 'Browser DevTools', 'PixelLens'],
+    title: 'What Pixmeter adds on top of DevTools',
+    head: ['', 'Browser DevTools', 'Pixmeter'],
     rows: [
       ['Size and spacing on hover', 'Partly', 'Yes'],
       ['Distance between any two elements', 'No', 'Yes'],
@@ -198,10 +195,10 @@ const en = {
   ai: {
     eyebrow: 'Built for AI coding agents',
     title: 'Let your agent see the page you see',
-    body: 'PixelLens ships a local MCP server. Claude Code, Cursor and other MCP clients can inspect elements, read styles, edit CSS, switch responsive sizes and take screenshots of the tab you have open.',
+    body: 'Pixmeter ships a local MCP server. Claude Code, Cursor and other MCP clients can inspect elements, read styles, edit CSS, switch responsive sizes and take screenshots of the tab you have open.',
     safe: 'It connects only to 127.0.0.1 on your computer, uses a token and checks the extension origin, and is off until you turn it on.',
     steps: [
-      'Build the server: corepack pnpm --filter @pixellens/mcp-server build',
+      'Build the server: corepack pnpm --filter @pixmeter/mcp-server build',
       'Open the More menu (9) → Connect agent to get your token and config',
       'Add the config to your agent, then ask it about the current page',
     ],
@@ -261,9 +258,9 @@ const en = {
   },
   faq: {
     title: 'Frequently asked questions',
-    storeLink: 'PixelLens on Edge Add-ons',
+    storeLink: 'Pixmeter on Edge Add-ons',
     items: [
-      ['Is PixelLens free?', 'Yes. All tools are free, with no account and no ads.'],
+      ['Is Pixmeter free?', 'Yes. All tools are free, with no account and no ads.'],
       [
         'Which browsers does it support?',
         'Microsoft Edge and other Chromium-based browsers version 116 or newer. Edge users can install it from Edge Add-ons; a Chrome Web Store listing is planned.',
@@ -282,21 +279,21 @@ const en = {
       ],
       [
         'Does it slow down pages?',
-        'No. Nothing runs until you turn PixelLens on for a tab, and turning it off removes everything it added.',
+        'No. Nothing runs until you turn Pixmeter on for a tab, and turning it off removes everything it added.',
       ],
       [
         'Does it work on localhost and local files?',
-        'Yes on localhost. For file:// pages, turn on "Allow access to file URLs" for PixelLens in the extensions page.',
+        'Yes on localhost. For file:// pages, turn on "Allow access to file URLs" for Pixmeter in the extensions page.',
       ],
       [
         'How do I report a bug or suggest a feature?',
-        'Leave a review or use the support link on the PixelLens page in Edge Add-ons:',
+        'Leave a review or use the support link on the Pixmeter page in Edge Add-ons:',
       ],
     ],
   },
   privacy: {
     title: 'Private by design',
-    body: 'No tracking, no analytics, no account. PixelLens runs only on the tab where you turn it on, and your data never leaves your browser.',
+    body: 'No tracking, no analytics, no account. Pixmeter runs only on the tab where you turn it on, and your data never leaves your browser.',
     link: 'Read the privacy policy',
   },
   footer: {
@@ -304,7 +301,7 @@ const en = {
     home: 'Home',
     version: `Version ${VERSION}`,
   },
-  shotAlt: 'PixelLens screenshot',
+  shotAlt: 'Pixmeter screenshot',
   more: {
     allFeatures: 'See all features',
     aiTeaser:
@@ -315,12 +312,31 @@ const en = {
     stepsEyebrow: 'Up and running in a minute',
     featuresEyebrow: 'What you get',
     ctaTitle: 'Stop digging through DevTools',
-    ctaBody: 'Install PixelLens, press Ctrl+Shift+F on any page, and start hovering.',
+    ctaBody: 'Install Pixmeter, press Ctrl+Shift+F on any page, and start hovering.',
   },
   changelog: {
     title: 'Changelog',
-    lead: 'What changed in each version of PixelLens.',
+    lead: 'What changed in each version of Pixmeter.',
     releases: [
+      {
+        version: '1.2.0',
+        date: 'November 17, 2026',
+        groups: [
+          {
+            name: 'New',
+            items: [
+              'PixelLens is now Pixmeter. Your settings are kept; only the name changes.',
+              'AI agents can measure the distance between two elements (measure_distance) and check text contrast against the real background, with a suggested colour when it fails (check_contrast).',
+            ],
+          },
+          {
+            name: 'Changed',
+            items: [
+              'The MCP server is now the npm package @pixmeter/mcp-server 2.0. Update your agent config: the old @pixellens/mcp-server cannot pair with this version.',
+            ],
+          },
+        ],
+      },
       {
         version: '1.1.0',
         date: 'November 13, 2026',
@@ -329,7 +345,7 @@ const en = {
             name: 'New',
             items: [
               'AI agents can click, type, press keys and scroll on the page through the local MCP server (click_element, type_text, press_key, scroll_page).',
-              'A new setting, off by default, lets the agent turn PixelLens on in a tab by itself (enable_tab).',
+              'A new setting, off by default, lets the agent turn Pixmeter on in a tab by itself (enable_tab).',
               'Default shortcut is now Ctrl+Shift+F on Windows and Linux; Alt+Shift combinations were swallowed by Vietnamese input methods such as Unikey. macOS keeps Alt+Shift+S.',
             ],
           },
@@ -369,7 +385,7 @@ const en = {
     ],
   },
   pages: {
-    features: 'Every tool in PixelLens, what it does and how to reach it.',
+    features: 'Every tool in Pixmeter, what it does and how to reach it.',
     ai: 'Connect your coding agent to the page in front of you.',
     faq: 'Answers to the questions people ask most.',
   },
@@ -411,10 +427,7 @@ const vi: Dict = {
   how: {
     title: 'Bắt đầu trong ba bước',
     steps: [
-      [
-        'Cài đặt',
-        'Thêm PixelLens vào Edge từ Edge Add-ons. Không cần đăng ký, không cần cấu hình.',
-      ],
+      ['Cài đặt', 'Thêm Pixmeter vào Edge từ Edge Add-ons. Không cần đăng ký, không cần cấu hình.'],
       [
         'Bật lên',
         'Bấm icon trên thanh công cụ hoặc nhấn Ctrl+Shift+F ở tab bất kỳ. Một dock nhỏ hiện ở cuối trang.',
@@ -427,7 +440,7 @@ const vi: Dict = {
   },
   showcase: {
     title: 'Mọi thứ bạn mở DevTools để xem, giờ chỉ cần rê chuột',
-    lead: 'PixelLens đặt những công cụ designer và front-end developer dùng hằng ngày ngay trên trang, không phải lục từng panel.',
+    lead: 'Pixmeter đặt những công cụ designer và front-end developer dùng hằng ngày ngay trên trang, không phải lục từng panel.',
     rows: [
       {
         id: 'inspect',
@@ -537,8 +550,8 @@ const vi: Dict = {
     ],
   },
   compare: {
-    title: 'PixelLens bổ sung gì so với DevTools',
-    head: ['', 'DevTools của trình duyệt', 'PixelLens'],
+    title: 'Pixmeter bổ sung gì so với DevTools',
+    head: ['', 'DevTools của trình duyệt', 'Pixmeter'],
     rows: [
       ['Kích thước và khoảng cách khi rê chuột', 'Một phần', 'Có'],
       ['Khoảng cách giữa hai phần tử bất kỳ', 'Không', 'Có'],
@@ -553,10 +566,10 @@ const vi: Dict = {
   ai: {
     eyebrow: 'Dành cho AI agent lập trình',
     title: 'Cho agent nhìn thấy đúng trang bạn đang xem',
-    body: 'PixelLens có sẵn MCP server chạy trên máy. Claude Code, Cursor và các MCP client khác có thể kiểm tra phần tử, đọc style, sửa CSS, đổi kích thước responsive và chụp ảnh tab bạn đang mở.',
+    body: 'Pixmeter có sẵn MCP server chạy trên máy. Claude Code, Cursor và các MCP client khác có thể kiểm tra phần tử, đọc style, sửa CSS, đổi kích thước responsive và chụp ảnh tab bạn đang mở.',
     safe: 'Nó chỉ kết nối tới 127.0.0.1 trên máy bạn, dùng token, kiểm tra origin của extension, và tắt cho đến khi bạn bật.',
     steps: [
-      'Build server: corepack pnpm --filter @pixellens/mcp-server build',
+      'Build server: corepack pnpm --filter @pixmeter/mcp-server build',
       'Mở menu Thêm (9) → Kết nối agent để lấy token và cấu hình',
       'Thêm cấu hình vào agent, rồi hỏi nó về trang đang mở',
     ],
@@ -619,10 +632,10 @@ const vi: Dict = {
   },
   faq: {
     title: 'Câu hỏi thường gặp',
-    storeLink: 'PixelLens trên Edge Add-ons',
+    storeLink: 'Pixmeter trên Edge Add-ons',
     items: [
       [
-        'PixelLens có miễn phí không?',
+        'Pixmeter có miễn phí không?',
         'Có. Mọi công cụ đều miễn phí, không cần tài khoản, không quảng cáo.',
       ],
       [
@@ -643,21 +656,21 @@ const vi: Dict = {
       ],
       [
         'Có làm chậm trang không?',
-        'Không. Không có gì chạy cho đến khi bạn bật PixelLens trên tab, và tắt đi là gỡ sạch mọi thứ nó thêm vào.',
+        'Không. Không có gì chạy cho đến khi bạn bật Pixmeter trên tab, và tắt đi là gỡ sạch mọi thứ nó thêm vào.',
       ],
       [
         'Dùng được với localhost và file trên máy không?',
-        'Có với localhost. Với trang file://, bật "Allow access to file URLs" cho PixelLens trong trang quản lý extension.',
+        'Có với localhost. Với trang file://, bật "Allow access to file URLs" cho Pixmeter trong trang quản lý extension.',
       ],
       [
         'Báo lỗi hoặc góp ý tính năng ở đâu?',
-        'Để lại đánh giá hoặc dùng mục hỗ trợ trên trang PixelLens ở Edge Add-ons:',
+        'Để lại đánh giá hoặc dùng mục hỗ trợ trên trang Pixmeter ở Edge Add-ons:',
       ],
     ],
   },
   privacy: {
     title: 'Riêng tư ngay từ thiết kế',
-    body: 'Không theo dõi, không analytics, không tài khoản. PixelLens chỉ chạy trên tab bạn bật, và dữ liệu không bao giờ rời trình duyệt.',
+    body: 'Không theo dõi, không analytics, không tài khoản. Pixmeter chỉ chạy trên tab bạn bật, và dữ liệu không bao giờ rời trình duyệt.',
     link: 'Đọc chính sách quyền riêng tư',
   },
   footer: {
@@ -665,23 +678,42 @@ const vi: Dict = {
     home: 'Trang chủ',
     version: `Phiên bản ${VERSION}`,
   },
-  shotAlt: 'Ảnh chụp PixelLens',
+  shotAlt: 'Ảnh chụp Pixmeter',
   more: {
     allFeatures: 'Xem tất cả tính năng',
     aiTeaser:
       'Cho Claude Code, Cursor và các agent khác kiểm tra, sửa và chụp trang bạn đang mở, qua MCP server chạy trên máy.',
-    aiLink: 'Cách PixelLens làm việc với AI agent',
+    aiLink: 'Cách Pixmeter làm việc với AI agent',
     faqLink: 'Xem hỏi đáp',
     alsoTitle: 'Và phần còn lại của bộ công cụ',
     stepsEyebrow: 'Dùng được sau một phút',
     featuresEyebrow: 'Bạn có gì',
     ctaTitle: 'Thôi lục lọi trong DevTools',
-    ctaBody: 'Cài PixelLens, nhấn Ctrl+Shift+F ở trang bất kỳ, rồi rê chuột.',
+    ctaBody: 'Cài Pixmeter, nhấn Ctrl+Shift+F ở trang bất kỳ, rồi rê chuột.',
   },
   changelog: {
     title: 'Nhật ký thay đổi',
-    lead: 'Những gì thay đổi trong từng phiên bản PixelLens.',
+    lead: 'Những gì thay đổi trong từng phiên bản Pixmeter.',
     releases: [
+      {
+        version: '1.2.0',
+        date: '17/11/2026',
+        groups: [
+          {
+            name: 'Mới',
+            items: [
+              'PixelLens đổi tên thành Pixmeter. Cài đặt của bạn được giữ nguyên, chỉ đổi tên.',
+              'AI agent đo được khoảng cách giữa hai phần tử (measure_distance) và kiểm tra độ tương phản chữ với nền thật, kèm gợi ý màu khi không đạt (check_contrast).',
+            ],
+          },
+          {
+            name: 'Thay đổi',
+            items: [
+              'MCP server giờ là gói npm @pixmeter/mcp-server 2.0. Cần cập nhật cấu hình agent: gói cũ @pixellens/mcp-server không kết nối được với bản này.',
+            ],
+          },
+        ],
+      },
       {
         version: '1.1.0',
         date: '13/11/2026',
@@ -690,7 +722,7 @@ const vi: Dict = {
             name: 'Mới',
             items: [
               'AI agent có thể click, gõ, nhấn phím và cuộn trang qua MCP server chạy trên máy (click_element, type_text, press_key, scroll_page).',
-              'Tuỳ chọn mới, mặc định tắt, cho agent tự bật PixelLens trên một tab (enable_tab).',
+              'Tuỳ chọn mới, mặc định tắt, cho agent tự bật Pixmeter trên một tab (enable_tab).',
               'Phím tắt mặc định đổi thành Ctrl+Shift+F trên Windows và Linux, vì bộ gõ tiếng Việt như Unikey nuốt tổ hợp Alt+Shift. macOS vẫn là Alt+Shift+S.',
             ],
           },
@@ -730,7 +762,7 @@ const vi: Dict = {
     ],
   },
   pages: {
-    features: 'Mọi công cụ trong PixelLens, làm được gì và gọi ra thế nào.',
+    features: 'Mọi công cụ trong Pixmeter, làm được gì và gọi ra thế nào.',
     ai: 'Kết nối agent lập trình với đúng trang bạn đang xem.',
     faq: 'Giải đáp những câu hỏi thường gặp nhất.',
   },

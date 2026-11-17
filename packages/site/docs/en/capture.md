@@ -1,6 +1,6 @@
 # Capture
 
-Press `8` or click **Capture Screenshot**. The screen freezes, the PixelLens UI hides, and a bar appears at the bottom with the capture modes. `Esc` closes the capture at any point.
+Press `8` or click **Capture Screenshot**. The screen freezes, the Pixmeter UI hides, and a bar appears at the bottom with the capture modes. `Esc` closes the capture at any point.
 
 ## Modes
 
@@ -43,11 +43,11 @@ The copy and save buttons show **Copied**, **Saved** or **Failed** for a moment.
 
 ## Full page
 
-PixelLens first tries a fast capture that renders the whole page at once through the browser's debugging interface (the `debugger` permission). It attaches only for that capture and detaches right after; the browser may show a notice bar while it is attached.
+Pixmeter first tries a fast capture that renders the whole page at once through the browser's debugging interface (the `debugger` permission). It attaches only for that capture and detaches right after; the browser may show a notice bar while it is attached.
 
-If the fast capture fails (most often because DevTools is open on that tab), PixelLens scrolls the page and stitches the pieces instead, and tells you why: **Fast capture failed (…), used scroll & stitch instead. Close DevTools on this tab if it is open.**
+If the fast capture fails (most often because DevTools is open on that tab), Pixmeter scrolls the page and stitches the pieces instead, and tells you why: **Fast capture failed (…), used scroll & stitch instead. Close DevTools on this tab if it is open.**
 
 ## Copy and save
 
-- **Copy** needs a secure page (HTTPS). On other pages the button says **Copy needs HTTPS — use Save**. If the browser refuses clipboard access, PixelLens asks for the optional clipboard permission once.
+- **Copy** needs a secure page (HTTPS). On other pages the button says **Copy needs HTTPS — use Save**. If the browser refuses clipboard access, Pixmeter asks for the optional clipboard permission once.
 - **Save** downloads the PNG through the browser's normal download.

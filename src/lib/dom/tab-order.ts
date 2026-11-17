@@ -53,10 +53,10 @@ export function tabOrder(root: ParentNode, isOwn: (el: Element) => boolean): HTM
   return sortTabOrder(entries, (e) => e.n).flatMap((e) => e.els);
 }
 
-/** The node itself or an ancestor is our UI (an own host, or a `data-pixellens` node). */
+/** The node itself or an ancestor is our UI (an own host, or a `data-pixmeter` node). */
 function inOwn(node: Node, isOwn: (el: Element) => boolean): boolean {
   for (let el = node instanceof Element ? node : node.parentElement; el; el = el.parentElement)
-    if (isOwn(el) || el.hasAttribute('data-pixellens')) return true;
+    if (isOwn(el) || el.hasAttribute('data-pixmeter')) return true;
   return false;
 }
 

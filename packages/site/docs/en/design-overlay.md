@@ -16,7 +16,7 @@ In the panel, **Drop, paste or click to choose design images**:
 
 You can keep up to 5 images. Once one is added, the **+** button (**Add another image…**) adds more. Thumbnails at the top of the panel show the images; click one (or the image itself) to select it.
 
-Images are not saved: they disappear when you turn PixelLens off.
+Images are not saved: they disappear when you turn Pixmeter off.
 
 ## Move and resize
 

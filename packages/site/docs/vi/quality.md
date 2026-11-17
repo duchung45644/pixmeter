@@ -18,7 +18,7 @@ Trong mỗi tab:
 
 ## Chọn màu
 
-Chọn **Chọn Màu** trong **Thêm công cụ**, hoặc nhấn `C`. Giao diện PixelLens ẩn đi và công cụ lấy màu của trình duyệt mở ra: bấm vào bất kỳ đâu trên màn hình để lấy màu, hoặc nhấn `Esc` để huỷ. Màu được sao chép vào clipboard và hiện thoáng qua trên dock.
+Chọn **Chọn Màu** trong **Thêm công cụ**, hoặc nhấn `C`. Giao diện Pixmeter ẩn đi và công cụ lấy màu của trình duyệt mở ra: bấm vào bất kỳ đâu trên màn hình để lấy màu, hoặc nhấn `Esc` để huỷ. Màu được sao chép vào clipboard và hiện thoáng qua trên dock.
 
 Màu được ghi theo định dạng chọn trong [Cài đặt](settings.md) (**Định dạng màu**):
 

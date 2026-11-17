@@ -130,7 +130,7 @@
   });
 
   $effect(() => {
-    document.title = `${doc.title} · PixelLens Docs`;
+    document.title = `${doc.title} · Pixmeter Docs`;
   });
 
   /** Heading links inside the article become `#page/anchor` routes. */

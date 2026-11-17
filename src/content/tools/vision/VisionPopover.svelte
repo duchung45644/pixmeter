@@ -14,7 +14,7 @@
     <label class="flex cursor-pointer items-center gap-2 rounded-btn px-1 py-0.5 hover:bg-line">
       <input
         type="radio"
-        name="pixellens-vision"
+        name="pixmeter-vision"
         value={mode}
         checked={app.vision === mode}
         onchange={() => setVision(mode)}

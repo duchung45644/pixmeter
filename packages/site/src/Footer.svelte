@@ -8,7 +8,7 @@
   >
     <div class="flex items-center gap-2">
       <img src="./logo.svg" alt="" class="size-5" />
-      <span class="text-fg">PixelLens</span>
+      <span class="text-fg">Pixmeter</span>
       <span>· {t().footer.made}</span>
       <span class="text-subtle">{t().footer.version}</span>
     </div>

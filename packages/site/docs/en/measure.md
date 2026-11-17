@@ -2,7 +2,7 @@
 
 ## Page rulers and guides
 
-Press `6` or click **Page Rulers** to show pixel rulers along the top and left edges of the window. A crosshair on each ruler follows the pointer. PixelLens remembers whether the rulers were on.
+Press `6` or click **Page Rulers** to show pixel rulers along the top and left edges of the window. A crosshair on each ruler follows the pointer. Pixmeter remembers whether the rulers were on.
 
 Creating guides:
 
@@ -19,7 +19,7 @@ Changing and removing guides:
 - Double-click a guide to remove it.
 - Click a guide to select it, then press `Delete` or `Backspace`. `Esc` or a click elsewhere drops the selection.
 
-Guides stay for as long as PixelLens is on in the tab, but they are only shown while the rulers are on.
+Guides stay for as long as Pixmeter is on in the tab, but they are only shown while the rulers are on.
 
 ## Measure area
 
@@ -53,7 +53,7 @@ Press `4` or click **Layout Grid** to show a column grid over the page together 
 | **Color**     | color picker or hex value           | `#FC48FF` |
 | **Opacity**   | 5% to 100%                          | 30%       |
 
-The grid is centered in the window. Settings are saved, and the grid comes back on the next time you turn PixelLens on if you left it on.
+The grid is centered in the window. Settings are saved, and the grid comes back on the next time you turn Pixmeter on if you left it on.
 
 ## Breakpoints
 

@@ -1,14 +1,14 @@
 # Chế độ responsive
 
-Chế độ responsive hiện trang hiện tại trong nhiều khung kích thước khác nhau, đặt cạnh nhau, ngay trong cùng một tab. Các công cụ của PixelLens chạy trong mọi khung cùng lúc.
+Chế độ responsive hiện trang hiện tại trong nhiều khung kích thước khác nhau, đặt cạnh nhau, ngay trong cùng một tab. Các công cụ của Pixmeter chạy trong mọi khung cùng lúc.
 
 ## Bật chế độ
 
 Nhấn `5` hoặc bấm **Chế độ Responsive · B: breakpoint** trên dock. Nhấn lần nữa để thoát. Khi chế độ đang bật, video và âm thanh trên trang được tạm dừng.
 
-Lần đầu bạn có ba khung: Phone (390×844), Tablet (768×1024) và Desktop (1280×800). PixelLens nhớ các khung, mức thu phóng, bố cục và tuỳ chọn đồng bộ cuộn cho lần sau.
+Lần đầu bạn có ba khung: Phone (390×844), Tablet (768×1024) và Desktop (1280×800). Pixmeter nhớ các khung, mức thu phóng, bố cục và tuỳ chọn đồng bộ cuộn cho lần sau.
 
-Nếu bạn đang có chỉnh sửa style nội tuyến, HTML hoặc class, PixelLens sẽ hỏi trước: **Các thay đổi quy tắc CSS sẽ được giữ lại. Kiểu nội tuyến, chỉnh sửa mã và lớp sẽ bị loại bỏ.** Khi thoát cũng vậy. Lúc thoát, chỉnh sửa rule CSS và URL hiện tại của khung đầu tiên được đưa trở lại trang.
+Nếu bạn đang có chỉnh sửa style nội tuyến, HTML hoặc class, Pixmeter sẽ hỏi trước: **Các thay đổi quy tắc CSS sẽ được giữ lại. Kiểu nội tuyến, chỉnh sửa mã và lớp sẽ bị loại bỏ.** Khi thoát cũng vậy. Lúc thoát, chỉnh sửa rule CSS và URL hiện tại của khung đầu tiên được đưa trở lại trang.
 
 ## Thanh công cụ
 
@@ -55,8 +55,8 @@ Khi công cụ breakpoint bật (phím `B`, hoặc nút **Breakpoints** trên th
 
 ## Trang chặn bản xem trước
 
-Nhiều website không cho phép hiển thị bên trong khung. Để vẫn tải được, PixelLens cần quyền truy cập mọi trang, và chỉ xin quyền này ở đây. Khung bị chặn sẽ hiện **Trang này chặn việc tải trong bản xem trước. Cấp quyền truy cập để hiển thị.** Bấm **Cấp quyền truy cập** và đồng ý ở hộp thoại của trình duyệt; các khung sẽ tải lại.
+Nhiều website không cho phép hiển thị bên trong khung. Để vẫn tải được, Pixmeter cần quyền truy cập mọi trang, và chỉ xin quyền này ở đây. Khung bị chặn sẽ hiện **Trang này chặn việc tải trong bản xem trước. Cấp quyền truy cập để hiển thị.** Bấm **Cấp quyền truy cập** và đồng ý ở hộp thoại của trình duyệt; các khung sẽ tải lại.
 
-Khi có quyền đó, PixelLens gỡ các header chặn khỏi phản hồi, chỉ cho các khung xem trước của tab này và chỉ trong lúc chế độ responsive đang bật.
+Khi có quyền đó, Pixmeter gỡ các header chặn khỏi phản hồi, chỉ cho các khung xem trước của tab này và chỉ trong lúc chế độ responsive đang bật.
 
 Một số website chặn bằng script hoặc chính sách trong trang mà không gỡ được. Khi đó khung hiện **Trang này chặn việc tải trong bản xem trước. Trang làm điều này bằng một tập lệnh hoặc chính sách trong trang mà không thể loại bỏ.** Khung không tải xong sẽ hiện **Trang này chưa tải xong.**

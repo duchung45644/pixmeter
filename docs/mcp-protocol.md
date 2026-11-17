@@ -1,6 +1,6 @@
-# PixelLens MCP channel — protocol 1
+# Pixmeter MCP channel — protocol 1
 
-How the PixelLens extension talks to a local MCP server. The code is the source of truth:
+How the Pixmeter extension talks to a local MCP server. The code is the source of truth:
 `src/lib/mcp/protocol.ts` holds the constants, the frame types, `parseFrame`, `validateCall`
 (the exact payload of every command) and `connectPrompt`. This page explains it for whoever
 builds the server.
@@ -15,7 +15,7 @@ agent ⇄ (stdio, MCP) ⇄ server ⇄ (WebSocket, this protocol) ⇄ extension b
 | --- | --- |
 | Server role | WebSocket **server**, bound to `127.0.0.1` only (never `0.0.0.0` / `::`) |
 | Extension role | WebSocket **client** in the background service worker |
-| URL | `ws://127.0.0.1:47347/pixellens` (`MCP_PORT`, `MCP_PATH`). The extension never dials `localhost`. |
+| URL | `ws://127.0.0.1:47347/pixmeter` (`MCP_PORT`, `MCP_PATH`). The extension never dials `localhost`. |
 | Frames | UTF-8 JSON text, one object per message, ≤ 1 MB (`MAX_FRAME_BYTES`). Bigger, binary, non-JSON or unknown frames are dropped with no reply. |
 | Keep-alive | Server sends `{"type":"ping"}` about every 20 s; extension replies `{"type":"pong"}`. Chrome ≥ 116 keeps the worker alive while the socket has traffic. |
 
@@ -26,11 +26,11 @@ If the port is taken the server must exit with a clear error. There is no port r
 1. **Origin check at upgrade.** Chrome sends `Origin: chrome-extension://<extension id>` on the
    WebSocket handshake and a web page cannot forge it. The server must answer anything else with
    HTTP 403 and no upgrade. The extension id comes from the copied prompt (`--extension-id`).
-   This is what stops a web page from opening `ws://127.0.0.1:47347/pixellens`.
+   This is what stops a web page from opening `ws://127.0.0.1:47347/pixmeter`.
 2. **Pairing token.** The extension creates the token once, the first time the user presses
    Connect: 32 bytes from `crypto.getRandomValues`, unpadded base64url (43 chars, `TOKEN_RE`),
    stored in `chrome.storage.local` (`mcpToken`). It only reaches the user inside the copy prompt,
-   which passes it as the env var `PIXELLENS_MCP_TOKEN`. The server compares it in constant time
+   which passes it as the env var `PIXMETER_MCP_TOKEN`. The server compares it in constant time
    (`crypto.timingSafeEqual` on equal-length buffers). Wrong token or wrong `protocol` → send
    `reject` and close. The token stops another local process that grabs the port first from
    posing as the server, and the Origin stops web pages.
@@ -39,10 +39,10 @@ If the port is taken the server must exit with a clear error. There is no port r
 4. **Neither side logs the token.**
 5. **Opt-in.** The extension opens no socket and runs no timer until the user presses Connect
    (dock popover or settings page). Disconnect closes the socket right away.
-6. **Tab scope.** By default tab commands only reach tabs where the user turned PixelLens on, and
-   `list_tabs` lists only those. Only when the user turns on **Let the agent turn PixelLens on** in
+6. **Tab scope.** By default tab commands only reach tabs where the user turned Pixmeter on, and
+   `list_tabs` lists only those. Only when the user turns on **Let the agent turn Pixmeter on** in
    the settings (off by default; turning it on also asks for the `<all_urls>` grant) does
-   `list_tabs` list every web-page tab with `enabled`, `enable_tab` inject PixelLens, and a command
+   `list_tabs` list every web-page tab with `enabled`, `enable_tab` inject Pixmeter, and a command
    sent to a tab where it is off turn it on first. Revoking `<all_urls>` switches this off again.
    Browser pages, the extension stores and `file://` are never injected.
 
@@ -54,7 +54,7 @@ Extension → server
 { "type": "hello", "protocol": 1, "token": "<43 chars>", "extVersion": "2.0.0" } // first frame
 { "type": "pong" }
 { "type": "result", "id": 7, "ok": true, "data": { /* command result */ } }
-{ "type": "result", "id": 7, "ok": false, "error": "PixelLens is not active on this tab." }
+{ "type": "result", "id": 7, "ok": false, "error": "Pixmeter is not active on this tab." }
 ```
 
 Server → extension
@@ -82,7 +82,7 @@ Server → extension
 `MCP_TYPES` lists the 54 command names (the 47 legacy ones, 5 agent-control ones, then measure_distance and check_contrast); `validateCall(command, payload)` is the schema. Every
 command except `list_tabs` and `fetch_stylesheet` needs `tabId` (an integer from `list_tabs`);
 without it the error is "`<command>` requires a numeric tabId.". Unknown fields are dropped.
-An unknown command gives "Unknown action. Update the PixelLens extension to the latest version.".
+An unknown command gives "Unknown action. Update the Pixmeter extension to the latest version.".
 
 Common fields:
 
@@ -96,9 +96,9 @@ Common fields:
 
 | Command | Payload (besides `tabId`) | Notes |
 | --- | --- | --- |
-| `list_tabs` | — (no tabId) | `{tabs: [{tabId, title, url, active, enabled}], canEnable}`; every web tab when `canEnable`, else PixelLens tabs only |
-| `enable_tab` | — | turns PixelLens on (shows the dock); `{success, alreadyOn}`; needs `canEnable` |
-| `focus_tab` | — | PixelLens tabs only |
+| `list_tabs` | — (no tabId) | `{tabs: [{tabId, title, url, active, enabled}], canEnable}`; every web tab when `canEnable`, else Pixmeter tabs only |
+| `enable_tab` | — | turns Pixmeter on (shows the dock); `{success, alreadyOn}`; needs `canEnable` |
+| `focus_tab` | — | Pixmeter tabs only |
 | `fetch_stylesheet` | `url` (no tabId) | http(s), public hosts only; needs the optional `<all_urls>` grant |
 | `get_page_info` | — | url, title, lang, meta, h1, viewport, page size, scroll, DPR |
 | `get_selected_element` | `viewportId?` | summary of the user's selection |
@@ -139,7 +139,7 @@ Common fields:
 | `measure_distance` | `elementId`, `toElementId?` (default: the parent) | `{from, to, relation: apart\|overlapping\|inside\|contains, gap{horizontal,vertical} or insets{top,right,bottom,left}, direction}` in CSS px |
 | `check_contrast` | `elementId` | `{foreground, background, ratio, level: AAA\|AA\|fail, largeText, required, suggestedForeground?}`; `background: null` over an image |
 
-Agent input is synthetic (`isTrusted` is false): sites that check it ignore these events. PixelLens's
+Agent input is synthetic (`isTrusted` is false): sites that check it ignore these events. Pixmeter's
 own listeners (inspector click-to-select, measure, ruler, keyboard shortcuts, drag guard) let agent
 events through to the page, so a click is not swallowed by the inspector and a typed "1" does not
 switch tools.
@@ -156,12 +156,12 @@ undo / redo history (Ctrl+Z). Rule and inline style edits (`apply_styles`, `add_
 `connectPrompt(token, extensionId)` builds the text the user pastes into the agent, for example:
 
 ```
-Add the PixelLens MCP server to this agent. Command: npx -y @pixellens/mcp-server --extension-id <id>
-with environment variable PIXELLENS_MCP_TOKEN=<token> (stdio transport, requires Node 18 or newer).
+Add the Pixmeter MCP server to this agent. Command: npx -y @pixmeter/mcp-server --extension-id <id>
+with environment variable PIXMETER_MCP_TOKEN=<token> (stdio transport, requires Node 18 or newer).
 After adding it, call its ping tool to verify the connection.
 ```
 
-The server reads `PIXELLENS_MCP_TOKEN` and `--extension-id` (and an optional `--port`).
+The server reads `PIXMETER_MCP_TOKEN` and `--extension-id` (and an optional `--port`).
 
 ## Server (`packages/mcp-server`)
 
@@ -182,8 +182,8 @@ Run from a checkout (before the package is published):
 
 ```sh
 corepack pnpm install
-corepack pnpm --filter @pixellens/mcp-server build
-corepack pnpm --filter @pixellens/mcp-server test
+corepack pnpm --filter @pixmeter/mcp-server build
+corepack pnpm --filter @pixmeter/mcp-server test
 ```
 
 Agent config for a local build (e.g. `.mcp.json` / Claude Desktop):
@@ -191,10 +191,10 @@ Agent config for a local build (e.g. `.mcp.json` / Claude Desktop):
 ```json
 {
   "mcpServers": {
-    "PixelLens": {
+    "Pixmeter": {
       "command": "node",
       "args": ["/path/to/ruler/packages/mcp-server/dist/cli.js", "--extension-id", "<id>"],
-      "env": { "PIXELLENS_MCP_TOKEN": "<token>" }
+      "env": { "PIXMETER_MCP_TOKEN": "<token>" }
     }
   }
 }

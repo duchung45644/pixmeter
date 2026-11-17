@@ -10,7 +10,7 @@ let sheets: HTMLStyleElement[] = [];
 
 function addSheet(parent: Node, css: string): void {
   const s = document.createElement('style');
-  s.dataset.pixellens = '';
+  s.dataset.pixmeter = '';
   s.textContent = css;
   parent.appendChild(s);
   sheets.push(s);

@@ -36,11 +36,11 @@ export function toContent(data: unknown): CallToolResult {
 
 export function createMcpServer(bridge: Bridge, version: string): Server {
   const server = new Server(
-    { name: 'pixellens', version },
+    { name: 'pixmeter', version },
     {
       capabilities: { tools: {} },
       instructions:
-        'Inspect and edit pages open in the PixelLens browser extension. Start with list_tabs to get a tabId; ' +
+        'Inspect and edit pages open in the Pixmeter browser extension. Start with list_tabs to get a tabId; ' +
         'element ids (v-…) come from results such as query_selector or get_selected_element.',
     },
   );
@@ -58,7 +58,7 @@ export function createMcpServer(bridge: Bridge, version: string): Server {
     if (name === PING_TOOL.name) {
       const ext = bridge.connected;
       return ext
-        ? text(`pong: PixelLens ${ext.extVersion} is connected.`)
+        ? text(`pong: Pixmeter ${ext.extVersion} is connected.`)
         : text(NOT_CONNECTED, true);
     }
     if (!isMcpType(name)) return text(ERR.unknown, true);

@@ -1,11 +1,11 @@
 {
-  "name": "@pixellens/mcp-server",
-  "version": "1.1.0",
-  "description": "Local MCP server for the PixelLens browser extension (stdio MCP <-> WebSocket on 127.0.0.1).",
+  "name": "@pixmeter/mcp-server",
+  "version": "2.0.0",
+  "description": "Local MCP server for the Pixmeter browser extension (stdio MCP <-> WebSocket on 127.0.0.1).",
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "pixellens",
+    "pixmeter",
     "browser",
     "devtools",
     "css",
@@ -15,7 +15,7 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/duchung45644/pixellens.git",
+    "url": "git+https://github.com/duchung45644/pixmeter.git",
     "directory": "packages/mcp-server"
   },
   "publishConfig": {
@@ -23,7 +23,7 @@
   },
   "type": "module",
   "bin": {
-    "pixellens-mcp": "dist/cli.js"
+    "pixmeter-mcp": "dist/cli.js"
   },
   "files": [
     "dist"

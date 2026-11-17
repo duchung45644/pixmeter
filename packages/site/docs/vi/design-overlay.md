@@ -16,7 +16,7 @@ Trong bảng điều khiển, ô **Thả, dán (Ctrl+V) hoặc bấm để chọ
 
 Bạn giữ được tối đa 5 ảnh. Khi đã có ảnh, nút **+** (**Thêm ảnh khác…**) dùng để thêm tiếp. Ảnh nhỏ ở đầu bảng là danh sách các ảnh; bấm vào một ảnh nhỏ (hoặc vào chính ảnh trên trang) để chọn nó.
 
-Ảnh không được lưu lại: chúng biến mất khi bạn tắt PixelLens.
+Ảnh không được lưu lại: chúng biến mất khi bạn tắt Pixmeter.
 
 ## Di chuyển và co giãn
 

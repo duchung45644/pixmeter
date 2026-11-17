@@ -25,7 +25,7 @@ const elementIdS = (description = 'Element id like "v-abc123", from a previous r
   pattern: ELEMENT_ID_PATTERN,
   description,
 });
-const tabId = int('Tab id from list_tabs (only tabs where PixelLens is on).');
+const tabId = int('Tab id from list_tabs (only tabs where Pixmeter is on).');
 const viewportId = int(
   'Responsive mode: run in this viewport frame instead of the one holding the selection.',
 );
@@ -71,15 +71,15 @@ type Spec = [string, Record<string, Schema>?, string[]?];
 const EL: Spec[1] = { elementId: elementIdS(), viewportId };
 const SPECS: Record<McpType, Spec> = {
   list_tabs: [
-    'List tabs: {tabs: [{tabId, title, url, active, enabled}], canEnable}. Normally only tabs where the user turned PixelLens on; ' +
-      'with canEnable true every web-page tab is listed and you can turn PixelLens on yourself (enable_tab, or any command does it).',
+    'List tabs: {tabs: [{tabId, title, url, active, enabled}], canEnable}. Normally only tabs where the user turned Pixmeter on; ' +
+      'with canEnable true every web-page tab is listed and you can turn Pixmeter on yourself (enable_tab, or any command does it).',
   ],
-  focus_tab: ['Bring a PixelLens tab to the front.'],
+  focus_tab: ['Bring a Pixmeter tab to the front.'],
   get_page_info: [
     'Page summary: url, title, lang, meta, h1, viewport, page size, scroll, devicePixelRatio.',
   ],
   get_selected_element: [
-    "Summary of the element the user selected in PixelLens's inspector.",
+    "Summary of the element the user selected in Pixmeter's inspector.",
     { viewportId },
   ],
   get_element_details: ['Full details of one element.', EL, ['elementId']],
@@ -137,7 +137,7 @@ const SPECS: Record<McpType, Spec> = {
   get_a11y_issues: ['Accessibility issues, warnings first, lowest contrast first.', { limit }],
   get_tailwind: ['Tailwind classes for an element.', EL, ['elementId']],
   fetch_stylesheet: [
-    'Fetch a public http(s) stylesheet (needs the optional all-sites grant in PixelLens).',
+    'Fetch a public http(s) stylesheet (needs the optional all-sites grant in Pixmeter).',
     { url: str(LIMITS.url, 'Stylesheet URL.', 1) },
     ['url'],
   ],
@@ -208,7 +208,7 @@ const SPECS: Record<McpType, Spec> = {
     },
     ['elementId', 'html', 'position'],
   ],
-  select_element: ["Select an element in PixelLens's inspector.", EL, ['elementId']],
+  select_element: ["Select an element in Pixmeter's inspector.", EL, ['elementId']],
   get_screenshot: ['Screenshot of the visible tab (PNG, longest side ≤ 2000 px).'],
   apply_styles: [
     'Set CSS: with ruleRef edits that rule, else the inline style of elementId. Joins undo and is saved per site.',
@@ -247,7 +247,7 @@ const SPECS: Record<McpType, Spec> = {
   delete_element: ['Delete an element.', EL, ['elementId']],
   duplicate_element: ['Duplicate an element.', EL, ['elementId']],
   enable_tab: [
-    'Turn PixelLens on in a tab (shows its dock to the user). Only works when list_tabs says canEnable; otherwise ask the user to click the PixelLens icon.',
+    'Turn Pixmeter on in a tab (shows its dock to the user). Only works when list_tabs says canEnable; otherwise ask the user to click the Pixmeter icon.',
   ],
   click_element: [
     'Click an element like a user: scrolls it into view, checks nothing covers it, then fires pointer/mouse/click events. ' +
@@ -256,7 +256,7 @@ const SPECS: Record<McpType, Spec> = {
     ['elementId'],
   ],
   measure_distance: [
-    'Distance in CSS px between two elements (what the PixelLens Distance tool draws): gaps when apart, ' +
+    'Distance in CSS px between two elements (what the Pixmeter Distance tool draws): gaps when apart, ' +
       'insets from each edge when one is inside the other. Without toElementId, measures against the parent.',
     { ...EL, toElementId: elementIdS('The other element; omit to use the parent.') },
     ['elementId'],
@@ -326,7 +326,6 @@ export const COMMAND_TOOLS: ToolDef[] = MCP_TYPES.map((name) => {
 
 export const PING_TOOL: ToolDef = {
   name: 'ping',
-  description:
-    'Check the link to the PixelLens extension: whether it is connected and its version.',
+  description: 'Check the link to the Pixmeter extension: whether it is connected and its version.',
   inputSchema: { type: 'object', properties: {} },
 };

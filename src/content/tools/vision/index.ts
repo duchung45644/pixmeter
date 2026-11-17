@@ -11,11 +11,11 @@ import { state } from '../../core/state.svelte';
 import VisionPopover from './VisionPopover.svelte';
 
 const SVG = 'http://www.w3.org/2000/svg';
-const filterId = (mode: VisionMode) => `pixellens-vision-${mode}`;
+const filterId = (mode: VisionMode) => `pixmeter-vision-${mode}`;
 
 /**
  * Filters live in the page's light DOM (url(#id) resolves against the document), wrapped in an
- * `pixellens-` element so page scans skip it. Built with createElementNS: no innerHTML (Trusted Types).
+ * `pixmeter-` element so page scans skip it. Built with createElementNS: no innerHTML (Trusted Types).
  * The filter itself goes in a `<style>` there, never the inline style of <html>: inline edits of
  * <html> (CSS variables) read and record that attribute.
  */
@@ -24,7 +24,7 @@ let sheet: HTMLStyleElement | null = null;
 
 function ensureDefs(): HTMLStyleElement {
   if (defs?.isConnected && sheet) return sheet;
-  defs = document.createElement('pixellens-vision');
+  defs = document.createElement('pixmeter-vision');
   defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
   const svg = document.createElementNS(SVG, 'svg');
   svg.setAttribute('aria-hidden', 'true');

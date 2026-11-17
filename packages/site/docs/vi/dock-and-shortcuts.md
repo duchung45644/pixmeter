@@ -19,7 +19,7 @@ Các nút được xếp theo nhóm công dụng, từ trái sang phải:
 | **Thêm công cụ** (⋯)                  | `9`           | Mở menu các công cụ ít dùng.                                                                                 |
 | **Bật/Tắt Bảng Bên**                  | `0`           | Mở hoặc đóng bảng bên. Xem [Bảng bên](side-panel.md).                                                        |
 | **Tiếp tục**                          | `H`           | Chỉ hiện khi đang tạm dừng.                                                                                  |
-| **Thoát**                             | `Ctrl+Q`      | Tắt PixelLens trên tab này.                                                                                  |
+| **Thoát**                             | `Ctrl+Q`      | Tắt Pixmeter trên tab này.                                                                                   |
 
 Nút **Thêm công cụ** sáng lên khi một công cụ trong menu đang bật, và có chấm báo khi AI agent đang kết nối.
 
@@ -34,7 +34,7 @@ Nút **Thêm công cụ** sáng lên khi một công cụ trong menu đang bật
 | **Thứ tự focus bằng Tab** | `T`               | Đánh số các phần tử theo thứ tự phím Tab.                                                                                                          |
 | **Core Web Vitals**       | `W`               | Hiện LCP, CLS và INP theo thời gian thực.                                                                                                          |
 | **MCP**                   | —                 | Kết nối AI agent. Nhãn cho biết trạng thái: **Kết nối agent**, **Đang chờ agent**, **Đã kết nối MCP** hoặc **MCP đã lỗi thời**. Xem [MCP](mcp.md). |
-| **Tạm dừng**              | `H`               | Tạm dừng PixelLens.                                                                                                                                |
+| **Tạm dừng**              | `H`               | Tạm dừng Pixmeter.                                                                                                                                 |
 | **Lệnh & phím tắt**       | `Ctrl+K` hoặc `?` | Mở bảng lệnh.                                                                                                                                      |
 
 ## Bảng lệnh
@@ -73,7 +73,7 @@ Nhấn `Ctrl+K` (`Cmd+K` trên macOS) hoặc `?` để mở bảng **Lệnh**. B
 
 ### Sửa trang
 
-Các phím này tác động lên phần tử đang chọn khi PixelLens bật. Trên macOS dùng `Cmd` thay cho `Ctrl`.
+Các phím này tác động lên phần tử đang chọn khi Pixmeter bật. Trên macOS dùng `Cmd` thay cho `Ctrl`.
 
 | Phím                           | Tác dụng                                                                                                   |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
@@ -94,7 +94,7 @@ Xem [Chỉnh sửa](editing.md) để biết hoàn tác áp dụng cho những g
 
 ## Khi nào phím bị bỏ qua
 
-- Khi bạn đang gõ trong ô nhập, ô chọn hay vùng soạn thảo, PixelLens không bắt phím.
+- Khi bạn đang gõ trong ô nhập, ô chọn hay vùng soạn thảo, Pixmeter không bắt phím.
 - Khi tạm dừng, mọi phím đều chuyển cho trang, trừ `H` (tiếp tục) và `Ctrl+Q` (thoát). Trang giữ nguyên `Ctrl+K` và `?` của riêng nó.
 - Khi **Sửa văn bản** đang bật, trên dock chỉ còn dùng được **Trình kiểm tra**, **Bật/Tắt Bảng Bên** và **Thoát**.
 - Trong lúc chụp màn hình, phím chuyển cho công cụ chụp, trừ `Ctrl+Q`.

@@ -19,7 +19,7 @@ The dock groups its buttons by purpose. From left to right:
 | **More tools** (⋯)                   | `9`           | Opens the menu of less used tools.                                                                       |
 | **Toggle Side Panel**                | `0`           | Opens or closes the side panel. See [Side panel](side-panel.md).                                         |
 | **Resume**                           | `H`           | Shown only while paused.                                                                                 |
-| **Quit**                             | `Ctrl+Q`      | Turns PixelLens off for this tab.                                                                        |
+| **Quit**                             | `Ctrl+Q`      | Turns Pixmeter off for this tab.                                                                         |
 
 The **More tools** button lights up while one of its tools is on, and shows a dot while an AI agent is connected.
 
@@ -34,7 +34,7 @@ The **More tools** button lights up while one of its tools is on, and shows a do
 | **Tab focus order**      | `T`             | Numbers the elements in keyboard Tab order.                                                                                                             |
 | **Core Web Vitals**      | `W`             | Shows LCP, CLS and INP live.                                                                                                                            |
 | **MCP**                  | —               | Connects an AI agent. Its label shows the state: **Connect Agent**, **Waiting for agent**, **MCP connected** or **MCP out of date**. See [MCP](mcp.md). |
-| **Pause**                | `H`             | Pauses PixelLens.                                                                                                                                       |
+| **Pause**                | `H`             | Pauses Pixmeter.                                                                                                                                        |
 | **Commands & shortcuts** | `Ctrl+K` or `?` | Opens the command palette.                                                                                                                              |
 
 ## Command palette
@@ -73,7 +73,7 @@ Press `Ctrl+K` (`Cmd+K` on macOS) or `?` to open **Commands**. It lists every to
 
 ### Editing the page
 
-These work on the selected element while PixelLens is on. On macOS use `Cmd` instead of `Ctrl`.
+These work on the selected element while Pixmeter is on. On macOS use `Cmd` instead of `Ctrl`.
 
 | Key                            | Action                                                                                                         |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------- |
@@ -94,7 +94,7 @@ See [Editing](editing.md) for what undo covers.
 
 ## When keys are ignored
 
-- While you type in a text field, a select or an editable area, PixelLens leaves the keys alone.
+- While you type in a text field, a select or an editable area, Pixmeter leaves the keys alone.
 - While paused, every key goes to the page except `H` (resume) and `Ctrl+Q` (quit). The page keeps its own `Ctrl+K` and `?`.
 - While **Edit Text** is on, only **Inspector**, **Toggle Side Panel** and **Quit** stay usable.
 - During a capture, keys go to the capture tool, except `Ctrl+Q`.

@@ -30,13 +30,13 @@ interface SchemeState {
 
 declare global {
   interface Window {
-    __PIXELLENS_SCHEME__?: SchemeState;
+    __PIXMETER_SCHEME__?: SchemeState;
   }
 }
 
 // on the (isolated-world) window, not in the module: frames can run more than one copy of the
 // content script, and each must see the one emulation instead of saving the other's rewrites
-const S: SchemeState = (window.__PIXELLENS_SCHEME__ ??= {
+const S: SchemeState = (window.__PIXMETER_SCHEME__ ??= {
   current: null,
   restores: [],
   done: new WeakSet(),

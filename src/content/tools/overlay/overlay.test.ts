@@ -12,10 +12,10 @@ it('registers the overlay item and stopSession leaves the page clean (Review Foc
   expect([o.key, o.label]).toEqual(['o', 'dock.overlay']);
   addImage('data:image/png;base64,x', { width: 400, height: 300 });
   addImage('data:image/png;base64,y', { width: 400, height: 300 });
-  expect(document.querySelectorAll('img[data-pixellens]')).toHaveLength(2);
+  expect(document.querySelectorAll('img[data-pixmeter]')).toHaveLength(2);
   expect(ownNodes.size).toBe(2);
   stopSession();
-  expect(document.querySelectorAll('img[data-pixellens]')).toHaveLength(0);
+  expect(document.querySelectorAll('img[data-pixmeter]')).toHaveLength(0);
   expect(ownNodes.size).toBe(0);
 });
 
@@ -23,7 +23,7 @@ it('keeps at most MAX_IMAGES images', () => {
   initOverlay();
   for (let i = 0; i < MAX_IMAGES + 3; i++)
     addImage(`data:image/png;base64,${i}`, { width: 400, height: 300 });
-  expect(document.querySelectorAll('img[data-pixellens]')).toHaveLength(MAX_IMAGES);
+  expect(document.querySelectorAll('img[data-pixmeter]')).toHaveLength(MAX_IMAGES);
 });
 
 it('an image that finishes loading after stopSession is dropped', () => {
@@ -44,7 +44,7 @@ it('an image that finishes loading after stopSession is dropped', () => {
   stopSession();
   readers[0]!.onload!();
   vi.unstubAllGlobals();
-  expect(document.querySelectorAll('img[data-pixellens]')).toHaveLength(0);
+  expect(document.querySelectorAll('img[data-pixmeter]')).toHaveLength(0);
   expect(ownNodes.size).toBe(0);
 });
 
@@ -71,13 +71,13 @@ it('split shows a divider that clips the image and goes away on stop', async () 
   setPrefs({ split: true, splitPos: 50 });
   await new Promise((r) => requestAnimationFrame(r));
   await vi.waitFor(() =>
-    expect(document.querySelector('[role=separator][data-pixellens]')).not.toBeNull(),
+    expect(document.querySelector('[role=separator][data-pixmeter]')).not.toBeNull(),
   );
   expect(overlay.prefs.split).toBe(true);
-  expect(document.querySelector<HTMLImageElement>('img[data-pixellens]')!.style.clipPath).toMatch(
+  expect(document.querySelector<HTMLImageElement>('img[data-pixmeter]')!.style.clipPath).toMatch(
     /inset/,
   );
   stopSession();
-  expect(document.querySelector('[role=separator][data-pixellens]')).toBeNull();
+  expect(document.querySelector('[role=separator][data-pixmeter]')).toBeNull();
   expect(ownNodes.size).toBe(0);
 });

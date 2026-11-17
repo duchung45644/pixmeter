@@ -62,7 +62,7 @@ function hideFixed(): [HTMLElement, string, string][] {
 
 /** Cover kept up so the page jumping underneath is never seen. Pixel size: vh changes while enlarged. */
 async function showCover(snap: string): Promise<() => void> {
-  const ui = await mountUi(sessionCtx(), Cover as never, { snap }, { name: 'pixellens-cover' });
+  const ui = await mountUi(sessionCtx(), Cover as never, { snap }, { name: 'pixmeter-cover' });
   ui.host.dataset.theme = state.theme;
   ui.host.style.setProperty('--bd-cover-w', `${innerWidth}px`);
   ui.host.style.setProperty('--bd-cover-h', `${innerHeight}px`);
@@ -94,7 +94,7 @@ async function fullPageViaDebugger(): Promise<HTMLCanvasElement> {
   const x0 = scrollX,
     y0 = scrollY,
     s0 = el?.scrollTop ?? 0;
-  el?.setAttribute('data-pixellens-scroll', '');
+  el?.setAttribute('data-pixmeter-scroll', '');
   const ih = innerHeight;
   // the viewport grows to the page height below: keep 100vh heroes at one screen
   const unpin = pinViewportUnits([document, ...shadowRoots(document, isOwnHost)]);
@@ -120,7 +120,7 @@ async function fullPageViaDebugger(): Promise<HTMLCanvasElement> {
     // backup in case the background could not restore it
     if (el) {
       el.scrollTop = s0;
-      el.removeAttribute('data-pixellens-scroll');
+      el.removeAttribute('data-pixmeter-scroll');
     } else scrollTo({ left: x0, top: y0, behavior: 'instant' });
   }
 }

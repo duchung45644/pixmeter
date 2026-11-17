@@ -12,7 +12,7 @@ Nhấn `0` hoặc bấm **Bật/Tắt Bảng Bên** trên dock. Nếu trình duy
 - Nút bánh răng mở **Cài đặt**.
 - **Mở trong cửa sổ** chuyển bảng ra một cửa sổ riêng; **Chuyển về bảng bên** đưa nó trở lại.
 
-Mỗi mục đều thu gọn được bằng cách bấm vào tiêu đề. Ban đầu các mục đều đóng, và PixelLens nhớ những mục bạn đã mở.
+Mỗi mục đều thu gọn được bằng cách bấm vào tiêu đề. Ban đầu các mục đều đóng, và Pixmeter nhớ những mục bạn đã mở.
 
 ## Tab Phần tử
 
@@ -35,7 +35,7 @@ Khi đã chọn một phần tử, từ trên xuống dưới có:
 - **Tài nguyên**: ảnh, ảnh nền và SVG nội tuyến trong phần tử, có ảnh xem trước, nút **Tải về** cho từng cái và **Tải Tất cả**.
 - **Mã**: CSS của phần tử theo ba kiểu xem: **Đã tính** (computed), **Nguồn** (các rule khớp đúng như được viết) và **Tailwind** (class Tailwind chuyển từ CSS đã tính).
 
-Khi một số stylesheet đến từ nguồn khác, bảng sẽ cho biết bao nhiêu stylesheet bị ẩn và có nút **Cấp quyền truy cập** để PixelLens đọc được chúng. Xem [Quyền riêng tư và quyền truy cập](privacy-permissions.md).
+Khi một số stylesheet đến từ nguồn khác, bảng sẽ cho biết bao nhiêu stylesheet bị ẩn và có nút **Cấp quyền truy cập** để Pixmeter đọc được chúng. Xem [Quyền riêng tư và quyền truy cập](privacy-permissions.md).
 
 ## Tab Trang
 

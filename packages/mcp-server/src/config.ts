@@ -20,11 +20,12 @@ export function parseConfig(argv: string[], env: NodeJS.ProcessEnv): CliConfig {
   };
   const extensionId = arg('--extension-id') ?? '';
   if (!EXTENSION_ID_RE.test(extensionId))
-    throw new Error('--extension-id <32 letters a-p> is required (copy it from PixelLens).');
-  const token = env.PIXELLENS_MCP_TOKEN ?? '';
+    throw new Error('--extension-id <32 letters a-p> is required (copy it from Pixmeter).');
+  // PIXELLENS_MCP_TOKEN: the name before the rename to Pixmeter, still read for old configs
+  const token = env.PIXMETER_MCP_TOKEN ?? env.PIXELLENS_MCP_TOKEN ?? '';
   if (!TOKEN_RE.test(token))
     throw new Error(
-      'Environment variable PIXELLENS_MCP_TOKEN must hold the token copied from PixelLens.',
+      'Environment variable PIXMETER_MCP_TOKEN must hold the token copied from Pixmeter.',
     );
   const portRaw = arg('--port');
   const port = portRaw === undefined ? MCP_PORT : Number(portRaw);

@@ -39,7 +39,7 @@
           ><span class="text-subtle">// .mcp.json</span>
 &#123;
 <span class="text-accent-fg">"mcpServers"</span>: &#123;
-  <span class="text-accent-fg">"PixelLens"</span>: &#123;
+  <span class="text-accent-fg">"Pixmeter"</span>: &#123;
     <span class="text-accent-fg">"command"</span>: <span class="text-code-str">"node"</span>,
     <span class="text-accent-fg">"args"</span>: [
       <span class="text-code-str">"…/mcp-server/dist/cli.js"</span>,
@@ -47,7 +47,7 @@
       <span class="text-code-str">"{EXTENSION_ID}"</span>
     ],
     <span class="text-accent-fg">"env"</span>: &#123; <span class="text-accent-fg"
-            >"PIXELLENS_MCP_TOKEN"</span
+            >"PIXMETER_MCP_TOKEN"</span
           >: <span class="text-code-str">"…"</span> &#125;
   &#125;
 &#125;
