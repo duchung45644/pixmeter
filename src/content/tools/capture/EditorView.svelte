@@ -16,6 +16,7 @@
   import { attachEditor, setBackdrop, setTool } from './editor';
   import { capAction, closeCapture, copyCanvas, saveCanvas } from './session';
   import { cap } from './state.svelte';
+  import { untrack } from 'svelte';
 
   // Editor view, port of editor.js:24 (no fade, spec §9).
   const ICONS = { pen: Pencil, arrow: ArrowIcon, rect: Square, hl: Highlighter, text: Type };
@@ -30,7 +31,8 @@
   $effect(() => {
     const img = e.img;
     if (!img) return;
-    api = attachEditor(canvas, ed, img);
+    // untracked: attachEditor reads pad/backdrop, and re-attaching on a padding change wiped the markup
+    api = untrack(() => attachEditor(canvas, ed, img));
     return () => {
       api?.destroy();
       api = null;

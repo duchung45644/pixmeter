@@ -84,7 +84,7 @@ export function drawItem(c: Ctx, s: MarkItem, from = 1): void {
       c.fillRect(x, y, w, h);
     }
   } else if (s.tool === 'text' && s.text) {
-    c.font = `600 ${s.fs}px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif`;
+    c.font = textFont(s.fs!);
     c.textBaseline = 'middle';
     c.fillText(s.text, a[0], a[1]);
   }
@@ -103,6 +103,26 @@ export function hitArrowEnd(items: MarkItem[], p: Pt, r: number): { i: number; e
       const q = s.pts[end]!;
       if (Math.hypot(q[0] - p[0], q[1] - p[1]) <= r) return { i, end };
     }
+  }
+  return null;
+}
+
+const textFont = (fs: number) => `600 ${fs}px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif`;
+
+/** Topmost text item whose box (plus `r` image px) holds `p`; `c` measures the text width. */
+export function hitText(
+  items: MarkItem[],
+  p: Pt,
+  r: number,
+  c: Pick<CanvasRenderingContext2D, 'font' | 'measureText'>,
+): number | null {
+  for (let i = items.length - 1; i >= 0; i--) {
+    const s = items[i]!;
+    if (s.tool !== 'text' || !s.text || !s.fs) continue;
+    c.font = textFont(s.fs);
+    const w = c.measureText(s.text).width;
+    const [x, y] = s.pts[0]!;
+    if (p[0] >= x - r && p[0] <= x + w + r && Math.abs(p[1] - y) <= s.fs * 0.6 + r) return i;
   }
   return null;
 }

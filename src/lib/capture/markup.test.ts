@@ -3,6 +3,7 @@ import {
   drawItem,
   editorCanvasStyle,
   hitArrowEnd,
+  hitText,
   isTooSmall,
   textFontCss,
   type MarkItem,
@@ -109,4 +110,21 @@ it('hitArrowEnd finds the topmost arrow head or tail', () => {
   expect(hitArrowEnd([a, b], [101, 2], 10)).toEqual({ i: 1, end: 0 });
   expect(hitArrowEnd([a, b], [50, 0], 10)).toBeNull();
   expect(hitArrowEnd([r], [0, 0], 10)).toBeNull();
+});
+
+it('hitText finds the topmost text under the point', () => {
+  const c = { font: '', measureText: (t: string) => ({ width: t.length * 10 }) } as never;
+  const t = (x: number, y: number): MarkItem => ({
+    tool: 'text',
+    color: '#000',
+    size: 0,
+    k: 1,
+    pts: [[x, y]],
+    fs: 20,
+    text: 'abcd',
+  });
+  expect(hitText([t(0, 50), t(20, 50)], [45, 55], 0, c)).toBe(1);
+  expect(hitText([t(0, 50)], [10, 50], 0, c)).toBe(0);
+  expect(hitText([t(0, 50)], [10, 80], 0, c)).toBeNull();
+  expect(hitText([t(0, 50)], [55, 50], 0, c)).toBeNull();
 });

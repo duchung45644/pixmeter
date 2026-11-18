@@ -6,6 +6,7 @@ import {
   drawItem,
   editorCanvasStyle,
   hitArrowEnd,
+  hitText,
   isTooSmall,
   textFontCss,
   type MarkItem,
@@ -161,6 +162,55 @@ export function attachEditor(
     setTimeout(() => inp.focus());
   };
 
+  /** Drags a text item; previewed on a screen layer like shapes, redrawn into the image on release. */
+  const moveText = (
+    e: PointerEvent,
+    s: MarkItem,
+    pt: (ev: PointerEvent) => Pt,
+    b: DOMRect,
+    k: number,
+  ) => {
+    const start = pt(e);
+    const from = s.pts[0]!;
+    drawBase(ctx, img, frame);
+    items.forEach((x) => x !== s && drawItem(ctx, x));
+    canvas.setPointerCapture?.(e.pointerId);
+    const dpr = devicePixelRatio;
+    const prev = document.createElement('canvas');
+    const pctx = prev.getContext('2d')!;
+    prev.width = Math.round(innerWidth * dpr);
+    prev.height = Math.round(innerHeight * dpr);
+    prev.style.cssText = `position:fixed;left:0;top:0;width:${innerWidth}px;height:${innerHeight}px;pointer-events:none`;
+    ed.append(prev);
+    const preview = () => {
+      pctx.setTransform(1, 0, 0, 1, 0, 0);
+      pctx.clearRect(0, 0, prev.width, prev.height);
+      pctx.setTransform(dpr / k, 0, 0, dpr / k, b.left * dpr, b.top * dpr);
+      drawItem(pctx, s);
+    };
+    preview();
+    const drag = new AbortController();
+    const opts = { signal: AbortSignal.any([signal, drag.signal]) };
+    canvas.addEventListener(
+      'pointermove',
+      (ev) => {
+        const p = pt(ev);
+        s.pts = [[from[0] + p[0] - start[0], from[1] + p[1] - start[1]]];
+        preview();
+      },
+      opts,
+    );
+    canvas.addEventListener(
+      'pointerup',
+      () => {
+        drag.abort();
+        prev.remove();
+        paint();
+      },
+      opts,
+    );
+  };
+
   canvas.addEventListener(
     'pointerdown',
     (e) => {
@@ -171,6 +221,9 @@ export function attachEditor(
       const k = canvas.width / b.width;
       if (cap.editor.tool === 'text') return startText(e, b, k);
       const pt = (ev: PointerEvent): Pt => [(ev.clientX - b.left) * k, (ev.clientY - b.top) * k];
+      // grabbing a text (with any tool) drags it
+      const ti = hitText(items, pt(e), ARROW_GRAB * k, ctx);
+      if (ti !== null) return moveText(e, items[ti]!, pt, b, k);
       // grabbing an arrow's head or tail re-drags that end instead of drawing a new shape
       const hit = hitArrowEnd(items, pt(e), ARROW_GRAB * k);
       const s: MarkItem = hit
@@ -255,8 +308,11 @@ export function attachEditor(
       const b = canvas.getBoundingClientRect();
       const k = canvas.width / b.width;
       const p: Pt = [(e.clientX - b.left) * k, (e.clientY - b.top) * k];
+      const r = ARROW_GRAB * k;
       canvas.style.cursor =
-        cap.editor.marking && hitArrowEnd(items, p, ARROW_GRAB * k) ? 'move' : '';
+        cap.editor.marking && (hitArrowEnd(items, p, r) || hitText(items, p, r, ctx) !== null)
+          ? 'move'
+          : '';
     },
     { signal },
   );
