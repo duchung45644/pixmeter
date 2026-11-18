@@ -140,6 +140,8 @@ export interface ContentApi {
   apply_pending_rule_edits(edits: SerializedEdit[]): EditResult;
   /** Returns whether text editing is now on. */
   toggle_text_edit(): boolean;
+  /** Captures the selected element into the image editor; false when nothing is selected. */
+  capture_selected(): boolean;
   select_edited_element(id: string): boolean;
   select_rule_target(selector: string, scopeAddress: string | null): boolean;
   /** Sent to a responsive frame after injection: boot without dock / panel / settings writes. */

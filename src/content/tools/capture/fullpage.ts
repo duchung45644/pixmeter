@@ -42,7 +42,7 @@ function findScroller(): HTMLElement | null {
 }
 
 /** Fixed/sticky elements would repeat in every slice; hidden after the first one (:10). */
-function hideFixed(): [HTMLElement, string, string][] {
+export function hideFixed(): [HTMLElement, string, string][] {
   // all reads first: a write between getComputedStyle calls forces a style recalc each time
   const hits = [...(document.body?.getElementsByTagName('*') ?? [])].filter((el) => {
     const pos = getComputedStyle(el).position;

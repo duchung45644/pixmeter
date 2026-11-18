@@ -11,6 +11,8 @@ import { state } from '../core/state.svelte';
 import { bridge, elementById, sendElement, setEditHooks } from '../sidepanel/bridge.svelte';
 import { rootOf, rulesOf } from '../sidepanel/rules';
 import { selectElement } from '../tools/inspector';
+import { captureElement, captureFrameElement } from '../tools/capture/element';
+import { hasFrameSelection } from '../responsive/shell.svelte';
 import { isOwnHost } from '../../lib/dom/dom';
 import type { HtmlEditor } from './engine';
 import {
@@ -212,6 +214,19 @@ export const editHandlers: Handlers<ContentApi> = {
   toggle_text_edit() {
     toggleTextEdit();
     return state.textEditOn;
+  },
+  capture_selected() {
+    if (state.paused || state.capturing || state.inFrame) return false;
+    // responsive: the selection lives in a frame and the shell crops to it
+    if (state.responsiveOn) {
+      if (!hasFrameSelection()) return false;
+      void captureFrameElement();
+      return true;
+    }
+    const el = state.selected;
+    if (!el?.isConnected) return false;
+    void captureElement(el);
+    return true;
   },
   select_edited_element(id) {
     const el = elementById(id);

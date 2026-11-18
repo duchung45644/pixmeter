@@ -1,5 +1,6 @@
 <script lang="ts">
   import { i18n } from '#i18n';
+  import Camera from '@lucide/svelte/icons/camera';
   import ClipboardPaste from '@lucide/svelte/icons/clipboard-paste';
   import Copy from '@lucide/svelte/icons/copy';
   import CopyPlus from '@lucide/svelte/icons/copy-plus';
@@ -59,6 +60,15 @@
     aria-pressed={textOn}
     data-action="text"
     onclick={toggleText}><Type class="size-4" /></button
+  >
+  <button
+    type="button"
+    class={btn}
+    title={i18n.t('dock.capture')}
+    aria-label={i18n.t('dock.capture')}
+    disabled={textOn}
+    data-action="capture"
+    onclick={() => void toPage('capture_selected')}><Camera class="size-4" /></button
   >
   {#each actions as [cmd, label, Icon] (cmd)}
     <button
