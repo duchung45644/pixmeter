@@ -1,6 +1,6 @@
 # Edge Add-ons — nội dung đăng
 
-Gói: `corepack pnpm zip:edge` → `.output/pixmeter-<version>-edge.zip`.
+Gói: `corepack pnpm zip` → `.output/pixmeter-<version>.zip` (dùng chung cho Edge Add-ons và Chrome Web Store).
 
 Ảnh:
 - Logo store: `docs/store/logo-300.png` (300×300).

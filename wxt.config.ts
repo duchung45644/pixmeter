@@ -10,6 +10,8 @@ export default defineConfig({
   srcDir: 'src',
   modules: ['@wxt-dev/module-svelte', '@wxt-dev/i18n/module'],
   vite: () => ({ plugins: [tailwindcss()], css: { postcss: { plugins: [shadowDomCss()] } } }),
+  // one package for every Chromium store (Chrome Web Store, Edge Add-ons): the files are identical
+  zip: { artifactTemplate: '{{name}}-{{version}}.zip' },
   webExt: { disabled: true }, // không tự mở Chrome; load .output/chrome-mv3-dev vào Edge một lần, WXT tự reload
   manifest: {
     name: '__MSG_extName__',
