@@ -455,7 +455,7 @@ export async function initInspector(): Promise<void> {
       // inspector off: the selection stays (the side panel still uses it) but is not drawn
       const r = sel.getBoundingClientRect();
       // dashed alignment guides (drawGuides), port of drawAlignmentLines :45110
-      drawGuides(box, r.left, r.top, r.right - 1, r.bottom - 1, `background:${color};opacity:.5`);
+      drawGuides(box, r.left, r.top, r.right - 1, r.bottom - 1, color, 0.5);
       frame(box, r, color);
     }
     if (sel && state.boxPart) paintBoxPart(box, sel, state.boxPart);

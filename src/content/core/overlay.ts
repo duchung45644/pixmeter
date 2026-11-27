@@ -115,23 +115,26 @@ export function drawBoxes(
   parent.append(frag);
 }
 
-/** Four full-width / full-height 1px lines through the edges x1, y1, x2, y2 (alignment guides). */
+/**
+ * Four full-width / full-height dashed 1px lines through the edges x1, y1, x2, y2 (alignment
+ * guides). Dashed because they run past the element and must not read as part of its frame; the
+ * dashes are a gradient on the line itself.
+ */
 export function drawGuides(
   parent: ParentNode,
   x1: number,
   y1: number,
   x2: number,
   y2: number,
-  css: string,
+  color: string,
+  opacity: number,
 ): void {
-  // dashed: the guides run past the element, so they must not read as part of its frame
-  const dash = (deg: number) =>
-    `mask-image:repeating-linear-gradient(${deg}deg,#000 0 4px,transparent 4px 8px);` +
-    `-webkit-mask-image:repeating-linear-gradient(${deg}deg,#000 0 4px,transparent 4px 8px)`;
-  draw(parent, `left:0;right:0;top:${y1}px;height:1px;${css};${dash(90)}`);
-  draw(parent, `left:0;right:0;top:${y2}px;height:1px;${css};${dash(90)}`);
-  draw(parent, `top:0;bottom:0;left:${x1}px;width:1px;${css};${dash(180)}`);
-  draw(parent, `top:0;bottom:0;left:${x2}px;width:1px;${css};${dash(180)}`);
+  const dashes = (deg: number) =>
+    `background:repeating-linear-gradient(${deg}deg,${color} 0 4px,transparent 4px 8px);opacity:${opacity}`;
+  draw(parent, `left:0;right:0;top:${y1}px;height:1px;${dashes(90)}`);
+  draw(parent, `left:0;right:0;top:${y2}px;height:1px;${dashes(90)}`);
+  draw(parent, `top:0;bottom:0;left:${x1}px;width:1px;${dashes(180)}`);
+  draw(parent, `top:0;bottom:0;left:${x2}px;width:1px;${dashes(180)}`);
 }
 
 /** C-style number (spec §7): mono ~10px bold, no background; `tx`/`ty` = translate anchor. */

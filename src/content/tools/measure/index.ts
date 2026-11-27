@@ -142,9 +142,7 @@ export async function initMeasure(): Promise<void> {
     const w = r - l;
     const h = b - t;
     if (prefs.guides) {
-      // spec §7: solid lines, not the legacy dashed ones
-      const g = `background:${c};opacity:.7`;
-      drawGuides(layerBox, x, y, x + w, y + h, g);
+      drawGuides(layerBox, x, y, x + w, y + h, c, 0.7);
     }
     const m = draw(
       layerBox,
