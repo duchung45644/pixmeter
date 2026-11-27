@@ -45,6 +45,11 @@
 :host([data-capture='all']) {
   visibility: hidden !important;
 }
+/* The agent's screenshots keep what is drawn on the page (selection, guides, measurements) and
+   hide only the dock with its popovers (hideUi('dock')). */
+:host([data-capture='dock']) [data-dock] {
+  visibility: hidden !important;
+}
 /* Responsive (Q6): the frames are what gets captured; only the shell's chrome hides. */
 :host([data-capture='all']) [data-responsive-shell] {
   visibility: visible !important;

@@ -25,7 +25,7 @@ const ruleRef = { stylesheet: 'a.css', selector: '.x', wrappers: [], occ: 0, sco
 
 describe('commands', () => {
   it('has the 47 legacy names first, then the agent-control and measuring commands', () => {
-    expect(MCP_TYPES).toHaveLength(65);
+    expect(MCP_TYPES).toHaveLength(72);
     expect(MCP_TYPES.slice(0, 47)).toEqual(LEGACY_10_15);
     expect(MCP_TYPES.slice(47)).toEqual([
       'enable_tab',
@@ -46,6 +46,13 @@ describe('commands', () => {
       'find_by_text',
       'scroll_into_view',
       'wait_for',
+      'get_computed_styles',
+      'measure_alignment',
+      'compare_styles',
+      'get_element_at_point',
+      'check_text_overflow',
+      'hover_element',
+      'screenshot_at_breakpoints',
     ]);
     expect(isMcpType('get_page_info')).toBe(true);
     expect(isMcpType('toString')).toBe(false);
@@ -340,6 +347,32 @@ describe('validateCall', () => {
       false,
     );
   });
+  it('validates the inspection and breakpoint commands', () => {
+    const v = (t: string, p: object) => validateCall(t, { tabId: 1, ...p });
+    expect(
+      v('get_computed_styles', { elementIds: ['v-a'], properties: ['Font-Size', 'font-size'] }),
+    ).toMatchObject({ payload: { properties: ['font-size'] } });
+    expect(v('get_computed_styles', { elementIds: ['v-a'], properties: ['a;b'] }).ok).toBe(false);
+    expect(v('get_computed_styles', { elementIds: ['v-a'] }).ok).toBe(false);
+    expect(v('measure_alignment', { elementIds: ['v-a'] }).ok).toBe(false);
+    expect(v('measure_alignment', { elementIds: ['v-a', 'v-b'] })).toMatchObject({
+      payload: { tolerance: 0.5 },
+    });
+    expect(
+      v('compare_styles', {
+        elementId: 'v-a',
+        otherElementId: 'v-b',
+        properties: ['color'],
+        ignore: ['top'],
+      }).ok,
+    ).toBe(false);
+    expect(v('get_element_at_point', { x: 1 }).ok).toBe(false);
+    expect(v('hover_element', { elementId: 'v-a' })).toMatchObject({ payload: { hover: true } });
+    expect(v('screenshot_at_breakpoints', {})).toMatchObject({
+      payload: { widths: [375, 768, 1280], height: 800 },
+    });
+    expect(v('screenshot_at_breakpoints', { widths: [100] }).ok).toBe(false);
+  });
   it('accepts a valid payload for every command', () => {
     const base = { tabId: 1, elementId: 'v-a', selector: '.a', url: 'https://a.b/c.css' };
     const extra: Record<string, object> = {
@@ -364,6 +397,10 @@ describe('validateCall', () => {
       measure_point_to_point: { from: { x: 0, y: 0 }, to: { x: 3, y: 4 } },
       find_by_text: { text: 'Save' },
       wait_for: { selector: '.a' },
+      get_computed_styles: { elementIds: ['v-a'], properties: ['color'] },
+      measure_alignment: { elementIds: ['v-a', 'v-b'] },
+      compare_styles: { otherElementId: 'v-b' },
+      get_element_at_point: { x: 10, y: 20 },
     };
     for (const t of MCP_TYPES)
       expect(validateCall(t, { ...base, ...extra[t] }), t).toMatchObject({ ok: true });

@@ -174,7 +174,7 @@ describe('get_screenshot (10.14)', () => {
       height: 1000,
     } as never);
     expect(await run('get_screenshot')).toMatchObject({ ok: true, data: { width: 2000 } });
-    expect(vi.mocked(hideUi).mock.calls.map((c) => c[0])).toEqual(['all', null]);
+    expect(vi.mocked(hideUi).mock.calls.map((c) => c[0])).toEqual(['dock', null]);
     vi.mocked(hideUi).mockClear();
     vi.mocked(sendToBackground).mockRejectedValueOnce(new Error('boom'));
     expect(await run('get_screenshot')).toEqual({ ok: false, error: 'capture_failed' });

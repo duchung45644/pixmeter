@@ -4,6 +4,7 @@
  * `validateCall` before sending, so the validator stays the authority.
  */
 import {
+  ALIGN_TOLERANCE_MAX,
   ANNOTATION_TYPES,
   INSERT_POSITIONS,
   LIMITS,
@@ -537,6 +538,118 @@ const SPECS: Record<McpType, Spec> = {
       },
       quietMs: { type: 'integer', minimum: 0, maximum: 5000, default: LIMITS.quietDefault },
       viewportId,
+    },
+  ],
+  get_computed_styles: [
+    'Computed CSS values of chosen properties for many elements in one call (up to 50 elements, 50 properties), e.g. font-size, line-height, color, gap. ' +
+      'Prefer this to get_element_details when you only need some properties. A missing element gives an error entry, not a failed call.',
+    {
+      elementIds: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.elementIds,
+        items: elementIdS(),
+        description: 'Elements to read.',
+      },
+      properties: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.cssProps,
+        items: str(100, 'CSS property, e.g. "font-size" or "--brand".', 1),
+        description: 'Properties to read.',
+      },
+      viewportId,
+    },
+    ['elementIds', 'properties'],
+  ],
+  measure_alignment: [
+    'Check whether several elements line up: for the left, horizontal centre, right, top, vertical centre and bottom lines it gives the spread, whether they align within tolerance, ' +
+      'the median line and how far each off-line element is, plus whether widths and heights match. Use it for rows of cards, columns and centred items.',
+    {
+      elementIds: {
+        type: 'array',
+        minItems: 2,
+        maxItems: LIMITS.elementIds,
+        items: elementIdS(),
+        description: 'Two or more elements.',
+      },
+      tolerance: {
+        type: 'number',
+        minimum: 0,
+        maximum: ALIGN_TOLERANCE_MAX,
+        default: 0.5,
+        description: 'px of slack that still counts as aligned (default 0.5).',
+      },
+      viewportId,
+    },
+    ['elementIds'],
+  ],
+  compare_styles: [
+    'Compare the computed CSS of two elements and return only what differs (property, value of each). Pass properties to compare just those, or ignore to skip some; ' +
+      'with neither, every property is compared, and size and position differ whenever the boxes differ.',
+    {
+      ...EL,
+      otherElementId: elementIdS('The element to compare with.'),
+      properties: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.cssProps,
+        items: str(100, 'CSS property.', 1),
+        description: 'Compare only these properties.',
+      },
+      ignore: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.cssProps,
+        items: str(100, 'CSS property.', 1),
+        description: 'Compare everything except these (not with properties).',
+      },
+    },
+    ['elementId', 'otherElementId'],
+  ],
+  get_element_at_point: [
+    'The element at a point of the viewport (CSS px, like a mockup coordinate): the topmost element with its details, and the stack of elements under that point, top first.',
+    {
+      x: { type: 'number', description: 'Viewport x in CSS px.' },
+      y: { type: 'number', description: 'Viewport y in CSS px.' },
+      limit: { ...limit, maximum: 20, default: 20 },
+      viewportId,
+    },
+    ['x', 'y'],
+  ],
+  check_text_overflow: [
+    'Find text that is cut off or escapes its box: clipped (overflow hidden), shortened with an ellipsis, limited by line-clamp, or unwrapped text running past its box. ' +
+      'Scans an element and its descendants (default: the page); each issue has the hidden px and the element id.',
+    {
+      elementId: elementIdS('Root of the scan (default: the whole page).'),
+      limit,
+      viewportId,
+    },
+  ],
+  hover_element: [
+    'Hover an element: sends the pointer events a browser sends (mouseover, mouseenter, mousemove) so JS menus and tooltips open, and forces its :hover CSS. ' +
+      'Then measure or take a screenshot. Pass hover: false to leave. Sites that check event.isTrusted will not react.',
+    { ...EL, hover: { type: 'boolean', default: true, description: 'false leaves the element.' } },
+    ['elementId'],
+  ],
+  screenshot_at_breakpoints: [
+    'One screenshot of the page at several widths side by side (default 375, 768 and 1280), each in its own responsive frame, in one image. ' +
+      'Turns on responsive mode and leaves it on, so you can then measure each frame with viewportId; call exit_responsive_mode when done.',
+    {
+      widths: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.breakpointWidths,
+        items: { type: 'number', minimum: 200, maximum: 3840 },
+        description: 'Frame widths in CSS px, left to right.',
+      },
+      height: {
+        type: 'integer',
+        minimum: 300,
+        maximum: LIMITS.breakpointHeightMax,
+        default: LIMITS.breakpointHeightDefault,
+        description: 'Frame height in CSS px.',
+      },
     },
   ],
 };

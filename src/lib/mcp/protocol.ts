@@ -261,6 +261,13 @@ export const MCP_TYPES = [
   'find_by_text',
   'scroll_into_view',
   'wait_for',
+  'get_computed_styles',
+  'measure_alignment',
+  'compare_styles',
+  'get_element_at_point',
+  'check_text_overflow',
+  'hover_element',
+  'screenshot_at_breakpoints',
 ] as const;
 export type McpType = (typeof MCP_TYPES)[number];
 export const isMcpType = (v: unknown): v is McpType =>
@@ -282,6 +289,7 @@ export const SLOW_TYPES: readonly McpType[] = [
   'get_full_page_screenshot',
   'compare_screenshot',
   'wait_for',
+  'screenshot_at_breakpoints',
 ];
 export const SLOW_TIMEOUT_MS = 40_000;
 export const CALL_TIMEOUT_MS = 12_000;
@@ -349,7 +357,17 @@ export const LIMITS = {
   waitDefault: 5000,
   quietDefault: 300,
   scaleValues: 50,
+  /** get_computed_styles / compare_styles: property names per call, differences returned. */
+  cssProps: 50,
+  styleDiffs: 200,
+  /** screenshot_at_breakpoints: widths per call and the frame height. */
+  breakpointWidths: 6,
+  breakpointHeightMax: 3000,
+  breakpointHeightDefault: 800,
 } as const;
+
+export const ALIGN_TOLERANCE_MAX = 50;
+export const BREAKPOINT_WIDTHS = [375, 768, 1280] as const;
 
 export const INSERT_POSITIONS = ['before', 'after', 'prepend', 'append'] as const;
 export type McpInsertPosition = (typeof INSERT_POSITIONS)[number];
@@ -546,6 +564,14 @@ export interface McpPayloads {
       timeoutMs: number;
       quietMs: number;
     };
+  get_computed_styles: Tab & InFrame & { elementIds: string[]; properties: string[] };
+  measure_alignment: Tab & InFrame & { elementIds: string[]; tolerance: number };
+  compare_styles: El &
+    InFrame & { otherElementId: string; properties?: string[]; ignore?: string[] };
+  get_element_at_point: Tab & InFrame & { x: number; y: number; limit: number };
+  check_text_overflow: Tab & InFrame & { elementId?: string; limit: number };
+  hover_element: El & InFrame & { hover: boolean };
+  screenshot_at_breakpoints: Tab & { widths: number[]; height: number };
 }
 /** Commands that run in a tab (all but the background ones). */
 export type McpPageType = Exclude<McpType, (typeof BACKGROUND_TYPES)[number]>;
@@ -752,6 +778,25 @@ function annotation(t: string, v: unknown): McpAnnotation {
     default:
       return bad(`Unknown annotation type. Use ${ANNOTATION_TYPES.join(', ')}.`);
   }
+}
+
+/** A list of CSS property names (kebab-case or custom properties). */
+function cssProps(t: string, v: unknown, k: string, optional = false): string[] | undefined {
+  if (v === undefined || v === null) return optional ? undefined : bad(`${t} requires ${k}.`);
+  if (!Array.isArray(v) || !v.length || v.length > LIMITS.cssProps)
+    return bad(`${t} ${k} must be 1–${LIMITS.cssProps} CSS property names.`);
+  for (const n of v)
+    if (typeof n !== 'string' || !/^(--[\w-]+|-?[a-zA-Z][a-zA-Z-]*)$/.test(n) || n.length > 100)
+      return bad(`${t} ${k} has an invalid CSS property name.`);
+  return [...new Set((v as string[]).map((n) => (n.startsWith('--') ? n : n.toLowerCase())))];
+}
+
+function elementIdList(t: string, v: unknown, min: number): string[] {
+  if (!Array.isArray(v) || v.length < min)
+    return bad(`${t} requires elementIds with at least ${min} id${min > 1 ? 's' : ''}.`);
+  if (v.length > LIMITS.elementIds) return bad(`${t} takes at most ${LIMITS.elementIds} ids.`);
+  if (!v.every(isElementId)) return bad(`${t} requires elementIds like "v-abc123".`);
+  return v as string[];
 }
 
 const RULES: { [K in McpType]: (r: Reader, p: Record<string, unknown>, t: K) => McpPayloads[K] } = {
@@ -1065,6 +1110,52 @@ const RULES: { [K in McpType]: (r: Reader, p: Record<string, unknown>, t: K) => 
       timeoutMs: ms('timeoutMs', LIMITS.waitDefault, LIMITS.waitMax),
       quietMs: ms('quietMs', LIMITS.quietDefault, 5000),
     });
+  },
+  get_computed_styles: (r, p, t) => ({
+    ...tab(r),
+    ...frame(r),
+    elementIds: elementIdList(t, p.elementIds, 1),
+    properties: cssProps(t, p.properties, 'properties')!,
+  }),
+  measure_alignment(r, p, t) {
+    const tolerance = r.optNum('tolerance') ?? 0.5;
+    if (!(tolerance >= 0 && tolerance <= ALIGN_TOLERANCE_MAX))
+      return bad(`${t} tolerance must be between 0 and ${ALIGN_TOLERANCE_MAX} px.`);
+    return { ...tab(r), ...frame(r), elementIds: elementIdList(t, p.elementIds, 2), tolerance };
+  },
+  compare_styles(r, p, t) {
+    const otherElementId = r.el('otherElementId');
+    const out = defined({
+      ...el(r),
+      otherElementId,
+      properties: cssProps(t, p.properties, 'properties', true),
+      ignore: cssProps(t, p.ignore, 'ignore', true),
+    });
+    if (out.properties && out.ignore) return bad(`${t} takes properties or ignore, not both.`);
+    return out;
+  },
+  get_element_at_point: (r) => ({
+    ...tab(r),
+    ...frame(r),
+    x: r.num('x'),
+    y: r.num('y'),
+    limit: Math.min(r.limit(), 20),
+  }),
+  check_text_overflow: (r) => ({ ...tab(r), ...frame(r), elementId: r.optEl(), limit: r.limit() }),
+  hover_element: (r) => ({ ...el(r), hover: r.optBool('hover') ?? true }),
+  screenshot_at_breakpoints(r, p, t) {
+    const w = p.widths ?? [...BREAKPOINT_WIDTHS];
+    if (
+      !Array.isArray(w) ||
+      !w.length ||
+      w.length > LIMITS.breakpointWidths ||
+      !w.every((n) => isFiniteNum(n) && n >= 200 && n <= 3840)
+    )
+      return bad(`${t} widths must be 1–${LIMITS.breakpointWidths} numbers between 200 and 3840.`);
+    const height = r.optNum('height') ?? LIMITS.breakpointHeightDefault;
+    if (!(height >= 300 && height <= LIMITS.breakpointHeightMax))
+      return bad(`${t} height must be between 300 and ${LIMITS.breakpointHeightMax}.`);
+    return { ...tab(r), widths: (w as number[]).map(Math.round), height: Math.round(height) };
   },
 };
 

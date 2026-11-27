@@ -153,6 +153,13 @@ The server offers one tool per command, plus `ping`. Every command except `list_
 | `find_by_text`              | Finds elements by their text, alt, aria-label or placeholder                                  |
 | `scroll_into_view`          | Scrolls an element into view                                                                  |
 | `wait_for`                  | Waits for a selector, or for the page to settle                                               |
+| `get_computed_styles`       | Chosen CSS properties for many elements in one call                                           |
+| `measure_alignment`         | Whether elements line up (edges, centres) and by how many px they miss                        |
+| `compare_styles`            | Only the computed CSS that differs between two elements                                       |
+| `get_element_at_point`      | The element (and the stack) at a point of the viewport                                        |
+| `check_text_overflow`       | Text that is clipped, shortened or runs out of its box                                        |
+| `hover_element`             | Hovers an element: pointer events plus forced `:hover` CSS                                    |
+| `screenshot_at_breakpoints` | One screenshot of the page at several widths side by side                                     |
 
 The full payload of each command is in `docs/mcp-protocol.md` in the repository.
 

@@ -21,7 +21,7 @@ import { hideUi } from '../core/session';
 import { state } from '../core/state.svelte';
 import { fullPageCanvas } from '../tools/capture/fullpage';
 import { innerScroller, stitchElement, stitchInner } from '../tools/capture/element';
-import { frames, grabVisible, loadImg, withHiddenUi } from '../tools/capture/session';
+import { frames, grabVisible, loadImg, withHiddenUi, withUiMode } from '../tools/capture/session';
 import { setAnnotationsHidden } from './annotate';
 import { elementOf, fail, type Commands } from './command';
 
@@ -112,7 +112,7 @@ async function capturing<T>(annotations: boolean, fn: () => Promise<T>): Promise
   state.capturing = true;
   setAnnotationsHidden(!annotations);
   try {
-    return await fn();
+    return await withUiMode('dock', fn); // the inspect state stays in the shot; only the dock hides
   } finally {
     setAnnotationsHidden(false);
     state.capturing = false;
@@ -332,7 +332,9 @@ export const shotCommands: Commands = {
     // plain: the tab as the background grabs it, shrunk to 2000 px
     setAnnotationsHidden(true);
     try {
-      const r = await withHiddenUi(() => sendToBackground('capture_for_ai')).catch(() => null);
+      const r = await withUiMode('dock', () =>
+        withHiddenUi(() => sendToBackground('capture_for_ai')),
+      ).catch(() => null);
       if (!r) return fail('capture_failed');
       if (!r.ok) return fail(r.reason);
       const captureId = remember({ dataUrl: r.dataUrl, width: r.width, height: r.height });

@@ -11,9 +11,11 @@ import type { ContentApi, Handlers } from '../../lib/ext/messaging';
 import { state } from '../core/state.svelte';
 import { allFramesMcpCall, frameMcpCall } from '../responsive/shell.svelte';
 import { annotateCommands } from './annotate';
+import { breakpointCommands } from './breakpoints';
 import { McpFail, type Commands } from './command';
 import { editCommands } from './edits';
 import { elementCommands } from './elements';
+import { inspectCommands } from './inspect';
 import { interactCommands } from './interact';
 import { locateCommands } from './locate';
 import { measureCommands } from './measure';
@@ -33,6 +35,8 @@ const COMMANDS: Commands = {
   ...locateCommands,
   ...annotateCommands,
   ...shotCommands,
+  ...inspectCommands,
+  ...breakpointCommands,
 };
 
 /** Top page only (Ig + the screenshots and the annotation overlay, which belong to the whole tab). */
@@ -40,6 +44,7 @@ const TOP_ONLY = new Set<string>([
   ...Object.keys(responsiveCommands),
   ...Object.keys(shotCommands),
   ...Object.keys(annotateCommands),
+  ...Object.keys(breakpointCommands),
 ]);
 /** Page-level commands (Ag): always the top page, even when responsive. */
 const PAGE_LEVEL = new Set<string>([

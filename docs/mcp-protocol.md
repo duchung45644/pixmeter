@@ -79,7 +79,7 @@ Server → extension
 
 ## Commands
 
-`MCP_TYPES` lists the 65 command names (the 47 legacy ones, 5 agent-control ones, measure_distance and check_contrast, then 11 for annotating, comparing and measuring); `validateCall(command, payload)` is the schema. Every
+`MCP_TYPES` lists the 72 command names (the 47 legacy ones, 5 agent-control ones, measure_distance and check_contrast, then 11 for annotating, comparing and measuring, then 7 for inspecting); `validateCall(command, payload)` is the schema. Every
 command except `list_tabs` and `fetch_stylesheet` needs `tabId` (an integer from `list_tabs`);
 without it the error is "`<command>` requires a numeric tabId.". Unknown fields are dropped.
 An unknown command gives "Unknown action. Update the Pixmeter extension to the latest version.".
@@ -148,6 +148,13 @@ Common fields:
 | `find_by_text` | `text`, `exact?`, `caseSensitive?`, `limit?`, `rootId?`, `viewportId?` | own text, `alt`, `aria-label`, `title`, `placeholder`, button `value`; falls back to the innermost element whose whole text matches |
 | `scroll_into_view` | `elementId`, `block?` (`start`/`center`/`end`/`nearest`, default center) | `{scrollX, scrollY, rect, inViewport}` |
 | `wait_for` | `selector?`, `state?` (`attached`/`visible`/`hidden`/`detached`, default visible), `stable?` (default true without a selector), `timeoutMs?` (≤ 20 000, default 5000), `quietMs?` (default 300), `viewportId?` | `{found, waitedMs, …}`; a timeout is `{found: false, timedOut: true}`, not an error. 40 s command timeout |
+| `get_computed_styles` | `elementIds` (≤ 50), `properties` (≤ 50 names), `viewportId?` | `{properties, elements: [{id, tag, selector, styles}]}`; a gone id gives `{id, error}` |
+| `measure_alignment` | `elementIds` (2–50), `tolerance?` (px, default 0.5), `viewportId?` | `{items, edges: {left, centerX, right, top, centerY, bottom: {aligned, spread, at, offsets}}, alignedOn, sameWidth, sameHeight}` |
+| `compare_styles` | `elementId`, `otherElementId`, `properties?` or `ignore?`, `viewportId?` | `{identical, differences: [{property, a, b}], compared}` |
+| `get_element_at_point` | `x`, `y` (viewport CSS px), `limit?` (≤ 20), `viewportId?` | `{element, stack, total}` |
+| `check_text_overflow` | `elementId?`, `limit?`, `viewportId?` | `{scanned, issues: [{id, kinds, hiddenPx, client, scroll, text}]}`; kinds: `clipped-x`, `clipped-y`, `ellipsis`, `line-clamp`, `spills-x` |
+| `hover_element` | `elementId`, `hover?` (default true), `viewportId?` | `{success, hover, target}`; sends mouseover/mouseenter/mousemove and forces `:hover` CSS |
+| `screenshot_at_breakpoints` | `widths?` (1–6, default 375/768/1280), `height?` (300–3000, default 800) | one image with a frame per width, plus the viewports; stays in responsive mode. 40 s command timeout |
 | `check_contrast` | `elementId` | `{foreground, background, ratio, level: AAA\|AA\|fail, largeText, required, suggestedForeground?}`; `background: null` over an image |
 
 Agent input is synthetic (`isTrusted` is false): sites that check it ignore these events. Pixmeter's

@@ -30,8 +30,11 @@ export function setHideUiHook(fn: ((mode: 'all' | null) => void) | null): void {
   hideHook = fn;
 }
 
-export function hideUi(mode: 'all' | null): void {
-  hideHook?.(mode);
+/** `all`: the whole UI (the user's capture). `dock`: only the dock, so the inspect state shows. */
+export type HideMode = 'all' | 'dock';
+
+export function hideUi(mode: HideMode | null): void {
+  if (mode !== 'dock') hideHook?.(mode); // frames have no dock of their own
   if (!uiRef) return;
   if (mode) uiRef.host.dataset.capture = mode;
   else delete uiRef.host.dataset.capture;

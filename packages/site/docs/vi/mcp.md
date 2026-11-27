@@ -153,6 +153,13 @@ Máy chủ cung cấp mỗi lệnh một công cụ, cộng thêm `ping`. Mọi 
 | `find_by_text`              | Tìm phần tử theo chữ, alt, aria-label hoặc placeholder                                   |
 | `scroll_into_view`          | Cuộn tới một phần tử                                                                     |
 | `wait_for`                  | Chờ một selector xuất hiện, hoặc chờ trang ổn định                                       |
+| `get_computed_styles`       | Các thuộc tính CSS chọn trước của nhiều element trong một lần gọi                        |
+| `measure_alignment`         | Các element có thẳng hàng không (cạnh, tâm) và lệch bao nhiêu px                         |
+| `compare_styles`            | Chỉ những CSS computed khác nhau giữa hai element                                        |
+| `get_element_at_point`      | Element (và các lớp chồng) tại một điểm của viewport                                     |
+| `check_text_overflow`       | Chữ bị cắt, bị rút gọn hoặc tràn ra khỏi khung                                           |
+| `hover_element`             | Hover một element: gửi sự kiện chuột và ép CSS `:hover`                                  |
+| `screenshot_at_breakpoints` | Một ảnh chụp trang ở nhiều độ rộng cạnh nhau                                             |
 
 Cấu trúc tham số đầy đủ của từng lệnh có trong `docs/mcp-protocol.md` của repository.
 

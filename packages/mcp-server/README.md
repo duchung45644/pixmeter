@@ -61,6 +61,9 @@ claude mcp add Pixmeter -e PIXMETER_MCP_TOKEN=<token> -- npx -y @pixmeter/mcp-se
   viewports at once.
 - **Compare:** `compare_screenshot` diffs the page against an earlier capture or a mockup file
   (`referencePath`, under 600 KB) and returns the percentage and a diff image.
+- **Inspect:** `get_computed_styles` (chosen properties, many elements), `measure_alignment`,
+  `compare_styles`, `get_element_at_point`, `check_text_overflow`, `hover_element`, and
+  `screenshot_at_breakpoints` (one image, a frame per width).
 - **Find and wait:** `find_by_text`, `scroll_into_view`, and `wait_for` a selector or for the page to
   settle.
 - **Edit:** apply styles, add rules, change classes, text or HTML live, and revert every edit.

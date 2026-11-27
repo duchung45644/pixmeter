@@ -5,7 +5,7 @@ import { sendToBackground } from '../../../lib/ext/messaging';
 import { mountUi } from '../../../ui/mount';
 import { ownNodes } from '../../core/events';
 import { routeKey, setCaptureKeyHandler } from '../../core/keys';
-import { hideUi, onStop, sessionCtx, sessionSignal } from '../../core/session';
+import { hideUi, onStop, type HideMode, sessionCtx, sessionSignal } from '../../core/session';
 import { state } from '../../core/state.svelte';
 import CaptureRoot from './CaptureRoot.svelte';
 import { cap } from './state.svelte';
@@ -52,13 +52,29 @@ export async function grabVisible(): Promise<string> {
   return r.dataUrl;
 }
 
-/** Hide every extension UI (main host and capture host) while fn grabs the tab (capture.js:132). */
+let uiMode: HideMode = 'all';
+
+/** Run fn with every `withHiddenUi` inside hiding only `mode` (the agent's shots keep the inspect state). */
+export async function withUiMode<T>(mode: HideMode, fn: () => Promise<T>): Promise<T> {
+  const was = uiMode;
+  uiMode = mode;
+  try {
+    return await fn();
+  } finally {
+    uiMode = was;
+  }
+}
+
+/**
+ * Hide the extension UI (main host and capture host) while fn grabs the tab (capture.js:132): all
+ * of it, or just the dock inside {@link withUiMode}('dock').
+ */
 export async function withHiddenUi<T>(fn: () => Promise<T>): Promise<T> {
   // an attribute, not style.display: WXT's `:host { all: initial !important }` beats inline styles
   const host = ui?.host;
   const was = host?.dataset.capture;
-  if (host) host.dataset.capture = 'all';
-  hideUi('all');
+  if (host) host.dataset.capture = 'all'; // the capture editor never belongs in a shot
+  hideUi(uiMode);
   await settle();
   try {
     return await fn();

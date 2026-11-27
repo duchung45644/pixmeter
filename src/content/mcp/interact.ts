@@ -14,6 +14,7 @@ import { host } from '../core/overlay';
 import { buildElementSummary } from './ai-data';
 import { elementOf, fail, type Commands } from './command';
 import { elementId } from '../sidepanel/bridge.svelte';
+import { forceHoverState } from './elements';
 
 const mark = <E extends Event>(e: E): E => (agentEvents.add(e), e);
 
@@ -38,10 +39,10 @@ function topAt(el: Element, x: number, y: number): Element {
   return fail(`The element is covered by <${desc}> at its centre; close that first or click it.`);
 }
 
-const pointer = (type: string, x: number, y: number, buttons: number) =>
+const pointer = (type: string, x: number, y: number, buttons: number, bubbles = true) =>
   mark(
     new PointerEvent(type, {
-      bubbles: true,
+      bubbles,
       cancelable: true,
       composed: true,
       clientX: x,
@@ -53,10 +54,10 @@ const pointer = (type: string, x: number, y: number, buttons: number) =>
       buttons,
     }),
   );
-const mouse = (type: string, x: number, y: number, buttons: number, detail = 1) =>
+const mouse = (type: string, x: number, y: number, buttons: number, detail = 1, bubbles = true) =>
   mark(
     new MouseEvent(type, {
-      bubbles: true,
+      bubbles,
       cancelable: true,
       composed: true,
       clientX: x,
@@ -86,6 +87,38 @@ export function clickAt(target: Element, x: number, y: number, double = false): 
     target.dispatchEvent(mouse('click', x, y, 0, n));
   }
   if (double) target.dispatchEvent(mouse('dblclick', x, y, 0, 2));
+}
+
+/** The element the agent last hovered, so the next hover (or an un-hover) can leave it first. */
+let hovered: Element | null = null;
+
+/** The chain from the root down to `el`: `*enter` events go to each of them, outermost first. */
+const chain = (el: Element): Element[] => {
+  const out: Element[] = [];
+  for (let n: Element | null = el; n; n = n.parentElement) out.unshift(n);
+  return out;
+};
+
+/** What a browser fires when the pointer moves onto `target` (over → enter → move). */
+export function pointerEnter(target: Element, x: number, y: number): void {
+  target.dispatchEvent(pointer('pointerover', x, y, 0));
+  target.dispatchEvent(mouse('mouseover', x, y, 0, 0));
+  for (const n of chain(target)) {
+    n.dispatchEvent(pointer('pointerenter', x, y, 0, false));
+    n.dispatchEvent(mouse('mouseenter', x, y, 0, 0, false));
+  }
+  target.dispatchEvent(pointer('pointermove', x, y, 0));
+  target.dispatchEvent(mouse('mousemove', x, y, 0, 0));
+}
+
+/** …and when it leaves (out → leave), innermost first. */
+export function pointerLeave(target: Element, x: number, y: number): void {
+  target.dispatchEvent(pointer('pointerout', x, y, 0));
+  target.dispatchEvent(mouse('mouseout', x, y, 0, 0));
+  for (const n of chain(target).reverse()) {
+    n.dispatchEvent(pointer('pointerleave', x, y, 0, false));
+    n.dispatchEvent(mouse('mouseleave', x, y, 0, 0, false));
+  }
 }
 
 const isTextInput = (el: Element): el is HTMLInputElement | HTMLTextAreaElement =>
@@ -278,6 +311,35 @@ export const interactCommands: Commands = {
       clicked: summary(el),
       note: 'The page may navigate or change after a click. If a later command says Pixmeter is not active, the page navigated: call list_tabs.',
       url: before,
+    };
+  },
+  hover_element({ elementId: id, hover }) {
+    const el = elementOf(id);
+    if (hovered?.isConnected && hovered !== el) {
+      const r = hovered.getBoundingClientRect();
+      pointerLeave(hovered, r.left + r.width / 2, r.top + r.height / 2);
+    }
+    hovered = null;
+    if (!hover) {
+      const r = el.getBoundingClientRect();
+      pointerLeave(el, r.left + r.width / 2, r.top + r.height / 2);
+      forceHoverState(el, null);
+      return { success: true, hover: false, target: summary(el) };
+    }
+    const { x, y } = bringIntoView(el);
+    const target = pageElementAt(x, y, host()) ?? el;
+    pointerEnter(target, x, y);
+    hovered = target;
+    forceHoverState(el, ':hover');
+    return {
+      success: true,
+      hover: true,
+      at: { x: Math.round(x), y: Math.round(y) },
+      target: summary(el),
+      note:
+        "Pointer events were sent (mouseover, mouseenter, mousemove) so JS menus and tooltips can open, and the element's :hover CSS is forced. " +
+        'Pages cannot be made to see a real mouse, so a site that checks event.isTrusted will not react. ' +
+        'Call hover_element with hover: false to leave. Measure or screenshot now.',
     };
   },
   type_text({ elementId: id, text, clear, submit }) {

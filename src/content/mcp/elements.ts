@@ -44,6 +44,16 @@ export function matchedRulesFor(el: Element) {
   };
 }
 
+/** Force `:hover` on an element (or clear it when it is the forced one) and refresh the panel. */
+let hoverForced: Element | null = null;
+export function forceHoverState(el: Element, st: ':hover' | null): void {
+  if (st === null && hoverForced !== el) return; // someone else's forced state stays
+  hoverForced = st ? el : null;
+  if (state.selected !== el) selectElement(el);
+  stateForcer().forceState(el, st);
+  sendElement(el);
+}
+
 export const elementCommands: Commands = {
   get_selected_element() {
     const el = state.selected;
