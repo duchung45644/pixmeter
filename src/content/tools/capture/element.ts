@@ -54,7 +54,7 @@ const MAX_CANVAS = 32000;
  * Element taller than the screen: scroll it through the viewport (or its scroll container) and
  * stitch the visible slices. Fixed/sticky bars are hidden after the first slice so they do not repeat.
  */
-async function stitchElement(el: Element): Promise<HTMLCanvasElement | null> {
+export async function stitchElement(el: Element): Promise<HTMLCanvasElement | null> {
   const sc = scrollParent(el);
   const x0 = scrollX,
     y0 = scrollY,
@@ -128,7 +128,7 @@ async function stitchElement(el: Element): Promise<HTMLCanvasElement | null> {
 }
 
 /** The descendant (or the element itself) that hides the most content in its own vertical scroll. */
-function innerScroller(el: Element): HTMLElement | null {
+export function innerScroller(el: Element): HTMLElement | null {
   let best: HTMLElement | null = null,
     most = 1;
   for (const n of [el, ...el.querySelectorAll('*')] as HTMLElement[]) {
@@ -164,7 +164,7 @@ function hideStickyIn(root: HTMLElement): [HTMLElement, string, string][] {
  * Element that fits the screen but scrolls inside (a list, a table body): the parts above and
  * below the scroller as they are, the scroller's whole content stitched in between.
  */
-async function stitchInner(el: Element, sc: HTMLElement): Promise<HTMLCanvasElement | null> {
+export async function stitchInner(el: Element, sc: HTMLElement): Promise<HTMLCanvasElement | null> {
   const s0 = sc.scrollTop;
   let hidden: [HTMLElement, string, string][] = [];
   try {

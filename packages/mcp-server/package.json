@@ -1,6 +1,6 @@
 {
   "name": "@pixmeter/mcp-server",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Local MCP server for the Pixmeter browser extension (stdio MCP <-> WebSocket on 127.0.0.1).",
   "keywords": [
     "mcp",

@@ -25,7 +25,7 @@ const ruleRef = { stylesheet: 'a.css', selector: '.x', wrappers: [], occ: 0, sco
 
 describe('commands', () => {
   it('has the 47 legacy names first, then the agent-control and measuring commands', () => {
-    expect(MCP_TYPES).toHaveLength(54);
+    expect(MCP_TYPES).toHaveLength(65);
     expect(MCP_TYPES.slice(0, 47)).toEqual(LEGACY_10_15);
     expect(MCP_TYPES.slice(47)).toEqual([
       'enable_tab',
@@ -35,6 +35,17 @@ describe('commands', () => {
       'scroll_page',
       'measure_distance',
       'check_contrast',
+      'draw_annotations',
+      'clear_annotations',
+      'get_full_page_screenshot',
+      'compare_screenshot',
+      'get_box_model',
+      'measure_spacing',
+      'measure_point_to_point',
+      'check_spacing_scale',
+      'find_by_text',
+      'scroll_into_view',
+      'wait_for',
     ]);
     expect(isMcpType('get_page_info')).toBe(true);
     expect(isMcpType('toString')).toBe(false);
@@ -245,6 +256,90 @@ describe('validateCall', () => {
       payload: { deltaY: 100_000 },
     });
   });
+  it('checks get_screenshot options', () => {
+    expect(validateCall('get_screenshot', { tabId: 1 })).toEqual({
+      ok: true,
+      payload: { tabId: 1 },
+    });
+    const rect = { x: 1, y: 2, width: 30, height: 40 };
+    expect(
+      validateCall('get_screenshot', { tabId: 1, rect, padding: 8, scale: 2, annotations: true }),
+    ).toEqual({ ok: true, payload: { tabId: 1, rect, padding: 8, scale: 2, annotations: true } });
+    const bad = (extra: object) => validateCall('get_screenshot', { tabId: 1, ...extra }).ok;
+    expect(bad({ elementId: 'v-a', rect })).toBe(false);
+    expect(bad({ scale: 0 })).toBe(false);
+    expect(bad({ scale: 9 })).toBe(false);
+    expect(bad({ padding: -1 })).toBe(false);
+    expect(bad({ rect: { x: 0, y: 0, width: -1, height: 2 } })).toBe(false);
+  });
+  it('checks draw_annotations', () => {
+    const ok = (annotations: unknown) =>
+      validateCall('draw_annotations', { tabId: 1, annotations });
+    expect(
+      ok([{ type: 'arrow', from: { x: 0, y: 0 }, to: { x: 5, y: 5 }, color: '#ff0000' }]),
+    ).toMatchObject({
+      ok: true,
+      payload: { replace: true },
+    });
+    expect(ok([{ type: 'distance', elementId: 'v-a', toElementId: 'v-b' }]).ok).toBe(true);
+    expect(ok([{ type: 'distance', from: { x: 0, y: 0 }, to: { x: 1, y: 1 } }]).ok).toBe(true);
+    expect(ok([]).ok).toBe(false);
+    expect(ok([{ type: 'box' }]).ok).toBe(false); // needs an element or a rect
+    expect(ok([{ type: 'distance', elementId: 'v-a', from: { x: 0, y: 0 } }]).ok).toBe(false);
+    expect(ok([{ type: 'star' }]).ok).toBe(false);
+    expect(ok([{ type: 'label', text: 'x', at: { x: 1, y: 1 }, color: 'red;}' }]).ok).toBe(false);
+    expect(
+      ok(Array.from({ length: 101 }, () => ({ type: 'label', text: 'x', at: { x: 0, y: 0 } }))).ok,
+    ).toBe(false);
+  });
+  it('checks compare_screenshot', () => {
+    const v = (extra: object) => validateCall('compare_screenshot', { tabId: 1, ...extra });
+    expect(v({ referenceCaptureId: 'shot-2' })).toMatchObject({
+      ok: true,
+      payload: { threshold: 0.1, tolerancePercent: 0, diffImage: true, fullPage: false },
+    });
+    expect(v({}).ok).toBe(false);
+    expect(v({ referenceCaptureId: 'a', referenceDataUrl: 'data:image/png;base64,AA' }).ok).toBe(
+      false,
+    );
+    expect(v({ referenceDataUrl: 'data:text/html;base64,AA' }).ok).toBe(false);
+    expect(v({ referenceDataUrl: 'data:image/png;base64,AA' }).ok).toBe(true);
+    expect(v({ referenceCaptureId: 'a', threshold: 2 }).ok).toBe(false);
+    expect(v({ referenceCaptureId: 'a', fullPage: true, elementId: 'v-a' }).ok).toBe(false);
+  });
+  it('checks the measuring and waiting payloads', () => {
+    expect(
+      validateCall('measure_point_to_point', { tabId: 1, from: { x: 0 }, to: { x: 1, y: 1 } }).ok,
+    ).toBe(false);
+    expect(validateCall('check_spacing_scale', { tabId: 1 })).toMatchObject({
+      ok: true,
+      payload: { base: 4, tolerance: 0.05 },
+    });
+    expect(validateCall('check_spacing_scale', { tabId: 1, values: [4, 8, 12] })).toMatchObject({
+      ok: true,
+      payload: { values: [4, 8, 12] },
+    });
+    expect(validateCall('check_spacing_scale', { tabId: 1, values: [4], base: 8 }).ok).toBe(false);
+    expect(validateCall('check_spacing_scale', { tabId: 1, values: [-4] }).ok).toBe(false);
+    expect(validateCall('wait_for', { tabId: 1 })).toMatchObject({
+      ok: true,
+      payload: { stable: true },
+    });
+    expect(validateCall('wait_for', { tabId: 1, selector: '.a' })).toMatchObject({
+      ok: true,
+      payload: { state: 'visible', stable: false, timeoutMs: 5000 },
+    });
+    expect(
+      validateCall('wait_for', { tabId: 1, selector: '.a', stable: false, timeoutMs: 99_999 }).ok,
+    ).toBe(false);
+    expect(validateCall('wait_for', { tabId: 1, selector: '.a', state: 'gone' }).ok).toBe(false);
+    expect(validateCall('scroll_into_view', { tabId: 1, elementId: 'v-a' })).toMatchObject({
+      payload: { block: 'center' },
+    });
+    expect(validateCall('scroll_into_view', { tabId: 1, elementId: 'v-a', block: 'top' }).ok).toBe(
+      false,
+    );
+  });
   it('accepts a valid payload for every command', () => {
     const base = { tabId: 1, elementId: 'v-a', selector: '.a', url: 'https://a.b/c.css' };
     const extra: Record<string, object> = {
@@ -264,6 +359,11 @@ describe('validateCall', () => {
       type_text: { text: 'hi' },
       press_key: { key: 'Enter' },
       scroll_page: { deltaY: 300 },
+      draw_annotations: { annotations: [{ type: 'box', elementId: 'v-a' }] },
+      compare_screenshot: { referenceCaptureId: 'shot-1' },
+      measure_point_to_point: { from: { x: 0, y: 0 }, to: { x: 3, y: 4 } },
+      find_by_text: { text: 'Save' },
+      wait_for: { selector: '.a' },
     };
     for (const t of MCP_TYPES)
       expect(validateCall(t, { ...base, ...extra[t] }), t).toMatchObject({ ok: true });

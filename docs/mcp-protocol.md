@@ -79,7 +79,7 @@ Server → extension
 
 ## Commands
 
-`MCP_TYPES` lists the 54 command names (the 47 legacy ones, 5 agent-control ones, then measure_distance and check_contrast); `validateCall(command, payload)` is the schema. Every
+`MCP_TYPES` lists the 65 command names (the 47 legacy ones, 5 agent-control ones, measure_distance and check_contrast, then 11 for annotating, comparing and measuring); `validateCall(command, payload)` is the schema. Every
 command except `list_tabs` and `fetch_stylesheet` needs `tabId` (an integer from `list_tabs`);
 without it the error is "`<command>` requires a numeric tabId.". Unknown fields are dropped.
 An unknown command gives "Unknown action. Update the Pixmeter extension to the latest version.".
@@ -124,7 +124,7 @@ Common fields:
 | `set_inner_html` | `elementId`, `html` | sanitized in the page |
 | `insert_html` | `elementId`, `html`, `position` (`before`/`after`/`prepend`/`append`) | sanitized |
 | `select_element` | `elementId` | selects it in the inspector |
-| `get_screenshot` | — | PNG data URL, longest side ≤ 2000 px |
+| `get_screenshot` | `elementId?` or `rect?` (`{x,y,width,height}`, viewport CSS px), `padding?` (0–500), `scale?` (0.1–8), `annotations?` | no options: PNG data URL of the visible tab, longest side ≤ 2000 px. With `elementId` (scrolled into view; stitched when taller than the screen) or `rect`: just that area plus `padding`, zoomed by `scale` (nearest-neighbour above 1×, longest side ≤ 4000 px). `annotations: true` keeps the overlay. Result: `{dataUrl, width, height, mimeType, captureId, region?, …}`. A PNG over the frame budget (`FRAME_DATA_BUDGET`, 900 000 chars) becomes a JPEG, then shrinks; `reduced` says so |
 | `apply_styles` | `styles`, and `ruleRef` or `elementId`; `state?`, `media?`, `pseudo?` | ruleRef edits that rule, else the inline style |
 | `add_rule` | `selector`, `wrappers?`, `styles?`, `elementId?` | |
 | `set_rule_selector` | `ruleRef`, `selector` | |
@@ -137,6 +137,17 @@ Common fields:
 | `press_key` | `key` (one character or a name such as `Enter`), `elementId?`, `shift?` `ctrl?` `alt?` `meta?` | on the focused element; Enter submits a form, Tab moves focus |
 | `scroll_page` | `elementId?` or `to?` (`top`/`bottom`) or `deltaX?`/`deltaY?` | returns `{scrollX, scrollY, scrollHeight, viewportHeight}` |
 | `measure_distance` | `elementId`, `toElementId?` (default: the parent) | `{from, to, relation: apart\|overlapping\|inside\|contains, gap{horizontal,vertical} or insets{top,right,bottom,left}, direction}` in CSS px |
+| `draw_annotations` | `annotations` (1–100 of `box` / `distance` / `arrow` / `label`), `replace?` (default true) | overlay in its own shadow host (`pixmeter-annotations`), `pointer-events: none`, page DOM untouched; element shapes follow scroll / resize; top page only. `{shown, note}` |
+| `clear_annotations` | — | `{cleared}` |
+| `get_full_page_screenshot` | — | whole page height (debugger route, else scroll-and-stitch); same size rules as `get_screenshot`; has a `captureId`. 40 s timeout |
+| `compare_screenshot` | the `get_screenshot` options or `fullPage?`; one of `referenceCaptureId` (an earlier `captureId`; the last 6 are kept in the page) or `referenceDataUrl` (PNG / JPEG / WebP ≤ 800 000 chars); `threshold?` (0–1, default 0.1), `tolerancePercent?` (default 0), `diffImage?` (default true) | `{diffPercent, differentPixels, totalPixels, match, differenceBounds, reference, resized?, aspectMismatch?, current{captureId}, dataUrl}` — `dataUrl` is the diff image, differences in red. The MCP server turns its own `referencePath` (a local file) into `referenceDataUrl` |
+| `get_box_model` | `elementId`, `viewportId?` | `{margin, border, padding}` sides in px, `boxes{margin, border, padding, content}` as `{x,y,width,height}`, `boxSizing`, `transformed` |
+| `measure_spacing` | `elementId`, `limit?`, `viewportId?` | `{container, layout, children, gaps[{from,to,relation,gap,direction}], distinctGaps[{value,count}], insets, truncated}`; out-of-flow children are skipped |
+| `measure_point_to_point` | `from`, `to` (`{x,y}`) | `{dx, dy, distance, angle, page{from,to}}`; runs in the top page |
+| `check_spacing_scale` | `elementId?`, `base?` (default 4) or `values?` (≤ 50), `tolerance?` (default 0.05), `limit?`, `viewportId?` | off-scale margin / padding / gap grouped by value: `{offenders[{value,count,nearest,properties,examples}], offScaleValues, checkedElements}` |
+| `find_by_text` | `text`, `exact?`, `caseSensitive?`, `limit?`, `rootId?`, `viewportId?` | own text, `alt`, `aria-label`, `title`, `placeholder`, button `value`; falls back to the innermost element whose whole text matches |
+| `scroll_into_view` | `elementId`, `block?` (`start`/`center`/`end`/`nearest`, default center) | `{scrollX, scrollY, rect, inViewport}` |
+| `wait_for` | `selector?`, `state?` (`attached`/`visible`/`hidden`/`detached`, default visible), `stable?` (default true without a selector), `timeoutMs?` (≤ 20 000, default 5000), `quietMs?` (default 300), `viewportId?` | `{found, waitedMs, …}`; a timeout is `{found: false, timedOut: true}`, not an error. 40 s command timeout |
 | `check_contrast` | `elementId` | `{foreground, background, ratio, level: AAA\|AA\|fail, largeText, required, suggestedForeground?}`; `background: null` over an image |
 
 Agent input is synthetic (`isTrusted` is false): sites that check it ignore these events. Pixmeter's
@@ -172,7 +183,9 @@ build copies `src/lib/mcp/protocol.ts` to `src/protocol.gen.ts`, so frames, limi
 
 - One MCP tool per command (same name, JSON Schema mirroring `validateCall`), plus `ping`.
   The server runs `validateCall` before sending, so a bad call never reaches the extension.
-- Results are JSON text; `get_screenshot` comes back as an MCP image block.
+- Results are JSON text; a result with a `dataUrl` (screenshots, the compare diff) comes back as an MCP image block.
+- `compare_screenshot` also takes `referencePath`, a mockup file on the server's machine: the server reads it
+  (PNG / JPEG / WebP by magic bytes, under 600 KB, since it must fit one frame) and sends it as `referenceDataUrl`.
 - When the agent initializes, the server sends `client` (or puts it in `welcome`).
 - A newer authenticated extension socket replaces the old one; pending calls fail with
   `ERR.disconnected`. The server waits the extension timeout + 5 s before failing a call itself.

@@ -250,6 +250,17 @@ export const MCP_TYPES = [
   'scroll_page',
   'measure_distance',
   'check_contrast',
+  'draw_annotations',
+  'clear_annotations',
+  'get_full_page_screenshot',
+  'compare_screenshot',
+  'get_box_model',
+  'measure_spacing',
+  'measure_point_to_point',
+  'check_spacing_scale',
+  'find_by_text',
+  'scroll_into_view',
+  'wait_for',
 ] as const;
 export type McpType = (typeof MCP_TYPES)[number];
 export const isMcpType = (v: unknown): v is McpType =>
@@ -268,6 +279,9 @@ export const SLOW_TYPES: readonly McpType[] = [
   'enter_responsive_mode',
   'exit_responsive_mode',
   'set_viewport',
+  'get_full_page_screenshot',
+  'compare_screenshot',
+  'wait_for',
 ];
 export const SLOW_TIMEOUT_MS = 40_000;
 export const CALL_TIMEOUT_MS = 12_000;
@@ -319,6 +333,22 @@ export const LIMITS = {
   key: 20,
   /** scroll_page: pixels per call. */
   scroll: 100_000,
+  /** draw_annotations: shapes per call, label length. */
+  annotations: 100,
+  label: 200,
+  /** get_screenshot: margin around the shot in CSS px, zoom factor. */
+  padding: 500,
+  scaleMin: 0.1,
+  scaleMax: 8,
+  /** compare_screenshot: a mockup travels in one frame, so it must stay well under MAX_FRAME_BYTES. */
+  referenceDataUrl: 800_000,
+  captureId: 40,
+  /** find_by_text / wait_for. */
+  findText: 500,
+  waitMax: 20_000,
+  waitDefault: 5000,
+  quietDefault: 300,
+  scaleValues: 50,
 } as const;
 
 export const INSERT_POSITIONS = ['before', 'after', 'prepend', 'append'] as const;
@@ -357,6 +387,46 @@ interface El extends Tab {
 interface InFrame {
   /** Responsive mode: run in this viewport's frame instead of the selected one. */
   viewportId?: number;
+}
+
+/** A point in viewport CSS px (the coordinates every measuring result uses). */
+export interface McpPoint {
+  x: number;
+  y: number;
+}
+export interface McpRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+/** One shape of draw_annotations. */
+export type McpAnnotation =
+  | { type: 'box'; elementId?: string; rect?: McpRect; label?: string; color?: string }
+  | {
+      type: 'distance';
+      elementId?: string;
+      toElementId?: string;
+      from?: McpPoint;
+      to?: McpPoint;
+      label?: string;
+      color?: string;
+    }
+  | { type: 'arrow'; from: McpPoint; to: McpPoint; label?: string; color?: string }
+  | { type: 'label'; text: string; at?: McpPoint; elementId?: string; color?: string };
+export const ANNOTATION_TYPES = ['box', 'distance', 'arrow', 'label'] as const;
+export const SCROLL_BLOCKS = ['start', 'center', 'end', 'nearest'] as const;
+export const WAIT_STATES = ['attached', 'visible', 'hidden', 'detached'] as const;
+/** What part of the tab a screenshot covers, and how it is rendered. */
+export interface ShotOptions {
+  elementId?: string;
+  rect?: McpRect;
+  /** CSS px of margin around the element / rect. */
+  padding?: number;
+  /** Zoom of the output relative to the captured pixels. */
+  scale?: number;
+  /** Keep the draw_annotations overlay in the shot. */
+  annotations?: boolean;
 }
 
 /** Validated payload of every command (what the extension acts on). */
@@ -400,7 +470,7 @@ export interface McpPayloads {
   set_inner_html: El & InFrame & { html: string };
   insert_html: El & InFrame & { html: string; position: McpInsertPosition };
   select_element: El & InFrame;
-  get_screenshot: Tab;
+  get_screenshot: Tab & ShotOptions;
   apply_styles: Tab &
     InFrame & {
       elementId?: string;
@@ -434,6 +504,48 @@ export interface McpPayloads {
     };
   scroll_page: Tab &
     InFrame & { elementId?: string; deltaX?: number; deltaY?: number; to?: 'top' | 'bottom' };
+  draw_annotations: Tab & { annotations: McpAnnotation[]; replace: boolean };
+  clear_annotations: Tab;
+  get_full_page_screenshot: Tab;
+  compare_screenshot: Tab &
+    ShotOptions & {
+      fullPage: boolean;
+      referenceCaptureId?: string;
+      referenceDataUrl?: string;
+      /** Per-pixel colour tolerance, 0–1 (default 0.1). */
+      threshold: number;
+      /** Differences up to this percent still count as a match. */
+      tolerancePercent: number;
+      diffImage: boolean;
+    };
+  get_box_model: El & InFrame;
+  measure_spacing: El & InFrame & { limit: number };
+  measure_point_to_point: Tab & { from: McpPoint; to: McpPoint };
+  check_spacing_scale: Tab &
+    InFrame & {
+      elementId?: string;
+      base?: number;
+      values?: number[];
+      tolerance: number;
+      limit: number;
+    };
+  find_by_text: Tab &
+    InFrame & {
+      text: string;
+      exact: boolean;
+      caseSensitive: boolean;
+      limit: number;
+      rootId?: string;
+    };
+  scroll_into_view: El & InFrame & { block: (typeof SCROLL_BLOCKS)[number] };
+  wait_for: Tab &
+    InFrame & {
+      selector?: string;
+      state: (typeof WAIT_STATES)[number];
+      stable: boolean;
+      timeoutMs: number;
+      quietMs: number;
+    };
 }
 /** Commands that run in a tab (all but the background ones). */
 export type McpPageType = Exclude<McpType, (typeof BACKGROUND_TYPES)[number]>;
@@ -443,6 +555,7 @@ export type Validated<K extends McpType = McpType> =
 
 // ---------------------------------------------------------------- validators
 
+const isFiniteNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const ELEMENT_ID_RE = /^v-[a-z0-9]{1,16}$/;
 export const isElementId = (v: unknown): v is string =>
   typeof v === 'string' && ELEMENT_ID_RE.test(v);
@@ -486,6 +599,34 @@ function reader(t: string, p: Record<string, unknown>) {
       return p[k] as string;
     },
     optEl: (k = 'elementId') => (has(k) ? r.el(k) : undefined),
+    point(k: string): McpPoint {
+      const v = p[k];
+      if (!isObj(v) || !isFiniteNum(v.x) || !isFiniteNum(v.y))
+        return bad(`${t} requires ${k} as {x, y} in viewport CSS px.`);
+      return { x: v.x, y: v.y };
+    },
+    optPoint: (k: string) => (has(k) ? r.point(k) : undefined),
+    rect(k: string): McpRect {
+      const v = p[k];
+      if (
+        !isObj(v) ||
+        !isFiniteNum(v.x) ||
+        !isFiniteNum(v.y) ||
+        !isFiniteNum(v.width) ||
+        !isFiniteNum(v.height) ||
+        v.width < 0 ||
+        v.height < 0
+      )
+        return bad(`${t} requires ${k} as {x, y, width, height} in viewport CSS px.`);
+      return { x: v.x, y: v.y, width: v.width, height: v.height };
+    },
+    optRect: (k: string) => (has(k) ? r.rect(k) : undefined),
+    /** A CSS colour: letters, digits and the few symbols of hex / rgb() / hsl(). */
+    optColor(k: string): string | undefined {
+      if (!has(k)) return undefined;
+      const v = r.str(k, 40);
+      return /^[#a-zA-Z0-9(),.%\s/-]+$/.test(v) ? v : bad(`${k} must be a CSS colour.`);
+    },
     /** `limit`: clamped, not rejected (legacy behaviour). */
     limit(): number {
       const v = Number(p.limit);
@@ -544,6 +685,74 @@ const frame = (r: Reader) => {
 const el = (r: Reader) => ({ ...tab(r), elementId: r.el(), ...frame(r) });
 const defined = <T extends object>(o: T): T =>
   Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as T;
+
+/** get_screenshot / compare_screenshot: what to cover and how to render it. */
+function shotOptions(r: Reader, t: string): ShotOptions {
+  const scale = r.optNum('scale');
+  if (scale !== undefined && !(scale >= LIMITS.scaleMin && scale <= LIMITS.scaleMax))
+    return bad(`${t} scale must be between ${LIMITS.scaleMin} and ${LIMITS.scaleMax}.`);
+  const padding = r.optNum('padding');
+  if (padding !== undefined && !(padding >= 0 && padding <= LIMITS.padding))
+    return bad(`${t} padding must be between 0 and ${LIMITS.padding} CSS px.`);
+  const out = defined({
+    elementId: r.optEl(),
+    rect: r.optRect('rect'),
+    padding,
+    scale,
+    annotations: r.optBool('annotations'),
+  });
+  if (out.elementId && out.rect) return bad(`${t} takes elementId or rect, not both.`);
+  return out;
+}
+
+function annotation(t: string, v: unknown): McpAnnotation {
+  if (!isObj(v)) return bad(`${t} annotations must be objects.`);
+  const r = reader(t, v);
+  const type = v.type;
+  const label = () =>
+    v.label === undefined || v.label === null
+      ? undefined
+      : r.str('label', LIMITS.label, { empty: true });
+  const color = r.optColor('color');
+  switch (type) {
+    case 'box': {
+      const elementId = r.optEl();
+      const rect = r.optRect('rect');
+      if (!elementId === !rect)
+        return bad(`A box annotation needs exactly one of elementId or rect.`);
+      return defined({ type, elementId, rect, label: label(), color });
+    }
+    case 'distance': {
+      const elementId = r.optEl();
+      const from = r.optPoint('from');
+      const to = r.optPoint('to');
+      if (elementId ? from || to : !(from && to))
+        return bad(
+          'A distance annotation needs elementId (with optional toElementId) or from and to points.',
+        );
+      return defined({
+        type,
+        elementId,
+        toElementId: r.optEl('toElementId'),
+        from,
+        to,
+        label: label(),
+        color,
+      });
+    }
+    case 'arrow':
+      return defined({ type, from: r.point('from'), to: r.point('to'), label: label(), color });
+    case 'label': {
+      const elementId = r.optEl();
+      const at = r.optPoint('at');
+      if (!elementId === !at)
+        return bad('A label annotation needs exactly one of at or elementId.');
+      return defined({ type, text: r.str('text', LIMITS.label), at, elementId, color });
+    }
+    default:
+      return bad(`Unknown annotation type. Use ${ANNOTATION_TYPES.join(', ')}.`);
+  }
+}
 
 const RULES: { [K in McpType]: (r: Reader, p: Record<string, unknown>, t: K) => McpPayloads[K] } = {
   list_tabs: () => ({}),
@@ -648,7 +857,7 @@ const RULES: { [K in McpType]: (r: Reader, p: Record<string, unknown>, t: K) => 
     };
   },
   select_element: el,
-  get_screenshot: tab,
+  get_screenshot: (r, _p, t) => ({ ...tab(r), ...shotOptions(r, t) }),
   apply_styles(r, p, t) {
     const ruleRef = p.ruleRef === undefined || p.ruleRef === null ? undefined : r.ruleRef();
     const elementId = r.optEl();
@@ -746,6 +955,116 @@ const RULES: { [K in McpType]: (r: Reader, p: Record<string, unknown>, t: K) => 
     )
       return bad(`${t} requires elementId, to, deltaX or deltaY.`);
     return out;
+  },
+  draw_annotations(r, p, t) {
+    const list = p.annotations;
+    if (!Array.isArray(list) || !list.length)
+      return bad(`${t} requires a non-empty annotations list.`);
+    if (list.length > LIMITS.annotations)
+      return bad(`${t} takes at most ${LIMITS.annotations} annotations per call.`);
+    return {
+      ...tab(r),
+      annotations: list.map((a) => annotation(t, a)),
+      replace: r.optBool('replace') ?? true,
+    };
+  },
+  clear_annotations: tab,
+  get_full_page_screenshot: tab,
+  compare_screenshot(r, p, t) {
+    const referenceCaptureId = r.optStr('referenceCaptureId', LIMITS.captureId);
+    const referenceDataUrl = r.optStr('referenceDataUrl', LIMITS.referenceDataUrl);
+    if (!referenceCaptureId === !referenceDataUrl)
+      return bad(
+        `${t} requires exactly one of referenceCaptureId (an earlier capture) or a reference image.`,
+      );
+    if (referenceDataUrl && !/^data:image\/(png|jpeg|webp);base64,/.test(referenceDataUrl))
+      return bad(`${t} reference image must be a PNG, JPEG or WebP data URL.`);
+    const unit = (k: string, dflt: number, max: number) => {
+      const v = r.optNum(k) ?? dflt;
+      return v >= 0 && v <= max ? v : bad(`${t} ${k} must be between 0 and ${max}.`);
+    };
+    const fullPage = r.optBool('fullPage') ?? false;
+    const opts = shotOptions(r, t);
+    if (fullPage && (opts.elementId || opts.rect))
+      return bad(`${t} fullPage cannot be combined with elementId or rect.`);
+    return defined({
+      ...tab(r),
+      ...opts,
+      fullPage,
+      referenceCaptureId,
+      referenceDataUrl,
+      threshold: unit('threshold', 0.1, 1),
+      tolerancePercent: unit('tolerancePercent', 0, 100),
+      diffImage: r.optBool('diffImage') ?? true,
+    });
+  },
+  get_box_model: el,
+  measure_spacing: (r) => ({ ...el(r), limit: r.limit() }),
+  measure_point_to_point: (r) => ({ ...tab(r), from: r.point('from'), to: r.point('to') }),
+  check_spacing_scale(r, p, t) {
+    const values = p.values;
+    if (values !== undefined && values !== null) {
+      if (
+        !Array.isArray(values) ||
+        !values.length ||
+        values.length > LIMITS.scaleValues ||
+        !values.every((v) => isFiniteNum(v) && v >= 0)
+      )
+        return bad(`${t} values must be 1–${LIMITS.scaleValues} non-negative numbers (px).`);
+    }
+    const base = r.optNum('base');
+    if (base !== undefined && !(base > 0 && base <= 1000))
+      return bad(`${t} base must be a positive number.`);
+    if (values && base !== undefined) return bad(`${t} takes base or values, not both.`);
+    const tolerance = r.optNum('tolerance') ?? 0.05;
+    if (!(tolerance >= 0 && tolerance <= 4))
+      return bad(`${t} tolerance must be between 0 and 4 px.`);
+    return defined({
+      ...tab(r),
+      ...frame(r),
+      elementId: r.optEl(),
+      base: values ? undefined : (base ?? 4),
+      values: values as number[] | undefined,
+      tolerance,
+      limit: r.limit(),
+    });
+  },
+  find_by_text: (r) =>
+    defined({
+      ...tab(r),
+      ...frame(r),
+      text: r.str('text', LIMITS.findText),
+      exact: r.optBool('exact') ?? false,
+      caseSensitive: r.optBool('caseSensitive') ?? false,
+      limit: r.limit(),
+      rootId: r.optEl('rootId'),
+    }),
+  scroll_into_view(r, p, t) {
+    const block = p.block ?? 'center';
+    if (!(SCROLL_BLOCKS as readonly unknown[]).includes(block))
+      return bad(`${t} block must be one of ${SCROLL_BLOCKS.join(', ')}.`);
+    return { ...el(r), block: block as (typeof SCROLL_BLOCKS)[number] };
+  },
+  wait_for(r, p, t) {
+    const state = p.state ?? 'visible';
+    if (!(WAIT_STATES as readonly unknown[]).includes(state))
+      return bad(`${t} state must be one of ${WAIT_STATES.join(', ')}.`);
+    const selector = r.optStr('selector', LIMITS.selector);
+    const stable = r.optBool('stable') ?? !selector;
+    if (!selector && !stable) return bad(`${t} requires a selector or stable: true.`);
+    const ms = (k: string, dflt: number, max: number) => {
+      const v = r.optNum(k) ?? dflt;
+      return v >= 0 && v <= max ? Math.round(v) : bad(`${t} ${k} must be between 0 and ${max} ms.`);
+    };
+    return defined({
+      ...tab(r),
+      ...frame(r),
+      selector,
+      state: state as (typeof WAIT_STATES)[number],
+      stable,
+      timeoutMs: ms('timeoutMs', LIMITS.waitDefault, LIMITS.waitMax),
+      quietMs: ms('quietMs', LIMITS.quietDefault, 5000),
+    });
   },
 };
 

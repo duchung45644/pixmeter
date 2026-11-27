@@ -3,7 +3,16 @@
  * `validateCall` (protocol.gen.ts, copied from the extension) accepts; the server still runs
  * `validateCall` before sending, so the validator stays the authority.
  */
-import { INSERT_POSITIONS, LIMITS, MCP_STATES, MCP_TYPES, type McpType } from './protocol.gen.ts';
+import {
+  ANNOTATION_TYPES,
+  INSERT_POSITIONS,
+  LIMITS,
+  MCP_STATES,
+  MCP_TYPES,
+  SCROLL_BLOCKS,
+  WAIT_STATES,
+  type McpType,
+} from './protocol.gen.ts';
 
 type Schema = Record<string, unknown>;
 export interface ToolDef {
@@ -59,6 +68,76 @@ const ruleRef: Schema = {
   required: ['stylesheet', 'selector', 'wrappers', 'occ', 'scopeAddress'],
 };
 const selector = str(LIMITS.selector, 'CSS selector.', 1);
+const num = (description: string): Schema => ({ type: 'number', description });
+const point = (description: string): Schema => ({
+  type: 'object',
+  description,
+  properties: { x: num('Viewport x, CSS px.'), y: num('Viewport y, CSS px.') },
+  required: ['x', 'y'],
+});
+const rectS = (description: string): Schema => ({
+  type: 'object',
+  description,
+  properties: {
+    x: num('Left, viewport CSS px.'),
+    y: num('Top, viewport CSS px.'),
+    width: num('Width, CSS px.'),
+    height: num('Height, CSS px.'),
+  },
+  required: ['x', 'y', 'width', 'height'],
+});
+const colorS: Schema = {
+  type: 'string',
+  maxLength: 40,
+  description: 'CSS colour, e.g. "#ff3b30" or "rgb(10 20 30)". Optional.',
+};
+const labelS: Schema = { type: 'string', maxLength: LIMITS.label, description: 'Optional text.' };
+/** The region / zoom / overlay options shared by get_screenshot and compare_screenshot. */
+const shotProps: Record<string, Schema> = {
+  elementId: elementIdS(
+    'Capture just this element (scrolled into view first; stitched if taller than the screen).',
+  ),
+  rect: rectS(
+    'Capture just this area, in viewport CSS px (as in measure_* results). Not with elementId.',
+  ),
+  padding: {
+    type: 'number',
+    minimum: 0,
+    maximum: LIMITS.padding,
+    description: 'CSS px of margin around the element or rect (cut at the screen edge).',
+  },
+  scale: {
+    type: 'number',
+    minimum: LIMITS.scaleMin,
+    maximum: LIMITS.scaleMax,
+    description:
+      'Zoom of the output over the captured pixels, e.g. 2 or 4 (pixels stay crisp, nothing is smoothed). Longest side is capped at 4000 px.',
+  },
+  annotations: {
+    type: 'boolean',
+    description: 'Keep the draw_annotations overlay in the shot (default: it is hidden).',
+  },
+};
+const annotationS: Schema = {
+  type: 'object',
+  description:
+    'One shape. type "box": frame an element (elementId) or area (rect) with optional label. ' +
+    'type "distance": measure between elements (elementId + optional toElementId, default the parent: draws the gaps or insets with px labels) or between two points (from + to). ' +
+    'type "arrow": from → to with optional label. type "label": text at a point (at) or at an element\'s top-left (elementId).',
+  properties: {
+    type: { type: 'string', enum: [...ANNOTATION_TYPES] },
+    elementId: elementIdS(),
+    toElementId: elementIdS('distance: the other element; omit to use the parent.'),
+    rect: rectS('box: the area.'),
+    from: point('distance / arrow: start.'),
+    to: point('distance / arrow: end.'),
+    at: point('label: where.'),
+    text: str(LIMITS.label, 'label: the text.', 1),
+    label: labelS,
+    color: colorS,
+  },
+  required: ['type'],
+};
 const wrappers: Schema = {
   type: 'array',
   maxItems: LIMITS.wrappers,
@@ -209,7 +288,13 @@ const SPECS: Record<McpType, Spec> = {
     ['elementId', 'html', 'position'],
   ],
   select_element: ["Select an element in Pixmeter's inspector.", EL, ['elementId']],
-  get_screenshot: ['Screenshot of the visible tab (PNG, longest side ≤ 2000 px).'],
+  get_screenshot: [
+    'Screenshot of the visible tab as an image. Plain: the whole visible tab (longest side ≤ 2000 px). ' +
+      'With elementId or rect: just that element or area, optionally with padding (CSS px around it) and scale (zoom 2×, 4×); ' +
+      'annotations: true keeps the draw_annotations overlay in the shot. The result has a captureId for compare_screenshot. ' +
+      'Images are PNG, or JPEG / shrunk when a PNG would not fit the connection limit (the result says so).',
+    shotProps,
+  ],
   apply_styles: [
     'Set CSS: with ruleRef edits that rule, else the inline style of elementId. Joins undo and is saved per site.',
     {
@@ -305,6 +390,152 @@ const SPECS: Record<McpType, Spec> = {
       to: { type: 'string', enum: ['top', 'bottom'] },
       deltaX: { type: 'number' },
       deltaY: { type: 'number' },
+      viewportId,
+    },
+  ],
+  draw_annotations: [
+    'Draw an overlay on the page: measuring arrows with px labels, element frames, arrows and text labels. ' +
+      'It lives in its own layer and changes nothing in the page. Coordinates are viewport CSS px. ' +
+      'Shapes tied to an element follow it on scroll. See it with get_screenshot annotations: true; remove it with clear_annotations. ' +
+      'Replaces the previous overlay unless replace is false.',
+    {
+      annotations: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.annotations,
+        items: annotationS,
+      },
+      replace: {
+        type: 'boolean',
+        default: true,
+        description: 'Replace the current overlay (default) instead of adding to it.',
+      },
+    },
+    ['annotations'],
+  ],
+  clear_annotations: ['Remove the draw_annotations overlay.'],
+  get_full_page_screenshot: [
+    'Screenshot of the whole page, including the part you have to scroll to. Shrunk or JPEG-compressed when a PNG would not fit ' +
+      'the connection limit; for detail on a long page use get_screenshot with elementId or rect. Has a captureId.',
+  ],
+  compare_screenshot: [
+    'Compare the page (same options as get_screenshot, or fullPage) with a reference image: an earlier capture (referenceCaptureId from a ' +
+      'previous get_screenshot / get_full_page_screenshot / compare_screenshot) or a mockup file (referencePath, a PNG/JPEG/WebP under 600 KB). ' +
+      'Returns diffPercent, differentPixels, the bounds of the difference and a diff image (differences in red). ' +
+      'The reference is resized to the capture; aspectMismatch warns when the shapes differ.',
+    {
+      ...shotProps,
+      fullPage: {
+        type: 'boolean',
+        description: 'Compare the whole page (not with elementId or rect).',
+      },
+      referenceCaptureId: str(
+        LIMITS.captureId,
+        'captureId of an earlier capture (the last 6 are kept).',
+      ),
+      referencePath: str(4096, 'Local path of a mockup image (PNG, JPEG or WebP, under 600 KB).'),
+      threshold: {
+        type: 'number',
+        minimum: 0,
+        maximum: 1,
+        default: 0.1,
+        description: 'Per-pixel colour tolerance (0 strict – 1 lax).',
+      },
+      tolerancePercent: {
+        type: 'number',
+        minimum: 0,
+        maximum: 100,
+        default: 0,
+        description: 'Differences up to this percent still count as a match.',
+      },
+      diffImage: { type: 'boolean', default: true, description: 'Return the diff image.' },
+    },
+  ],
+  get_box_model: [
+    'Margin, border, padding and content of an element in one call: each side in px, and the four boxes (x, y, width, height) in viewport coordinates.',
+    EL,
+    ['elementId'],
+  ],
+  measure_spacing: [
+    'Every spacing between the direct children of an element in one call: the gap between each neighbouring pair, the distinct gap values with counts, ' +
+      "the children's inset from the container's edges, and the container's padding / gap CSS. Out-of-flow children are left out.",
+    { ...EL, limit },
+    ['elementId'],
+  ],
+  measure_point_to_point: [
+    'Distance between two arbitrary points (viewport CSS px, no element needed): dx, dy, length, angle, and the same points in page coordinates.',
+    { from: point('Start point.'), to: point('End point.') },
+    ['from', 'to'],
+  ],
+  check_spacing_scale: [
+    "Find margin, padding and gap values that are not on the design's spacing scale (a base grid like 4 px, or a token list). " +
+      'Scans an element and its descendants (default: the page), groups off-scale values with counts and example elements, and gives the nearest scale value.',
+    {
+      elementId: elementIdS('Root of the scan (default: the whole page).'),
+      base: {
+        type: 'number',
+        exclusiveMinimum: 0,
+        default: 4,
+        description: 'On-scale values are multiples of this many px (default 4). Not with values.',
+      },
+      values: {
+        type: 'array',
+        minItems: 1,
+        maxItems: LIMITS.scaleValues,
+        items: { type: 'number', minimum: 0 },
+        description: 'Or an explicit list of allowed px values (design tokens).',
+      },
+      tolerance: {
+        type: 'number',
+        minimum: 0,
+        maximum: 4,
+        default: 0.05,
+        description: 'px of rounding slack (default 0.05).',
+      },
+      limit,
+      viewportId,
+    },
+  ],
+  find_by_text: [
+    'Find elements by what they show: their own text, or alt / aria-label / title / placeholder / button value. Case-insensitive substring by default. ' +
+      'Text split across inline children is found too (the innermost element holding it). Returns element ids.',
+    {
+      text: str(LIMITS.findText, 'Text to look for.', 1),
+      exact: {
+        type: 'boolean',
+        default: false,
+        description: 'Whole text must equal it (spaces collapsed).',
+      },
+      caseSensitive: { type: 'boolean', default: false },
+      limit,
+      rootId: elementIdS('Search inside this element (optional).'),
+      viewportId,
+    },
+    ['text'],
+  ],
+  scroll_into_view: [
+    'Scroll an element into view (block: start / center / end / nearest, default center). Returns the scroll position, its rect and whether it is fully on screen.',
+    { ...EL, block: { type: 'string', enum: [...SCROLL_BLOCKS], default: 'center' } },
+    ['elementId'],
+  ],
+  wait_for: [
+    'Wait before measuring or capturing: for a selector to be attached / visible / hidden / detached, and/or for the page to settle (stable: no DOM change or resize for quietMs, document loaded). ' +
+      'With no selector it waits for the page to settle. A timeout is a normal result (found: false, timedOut: true), not an error.',
+    {
+      selector: str(LIMITS.selector, 'CSS selector to wait for (optional).', 1),
+      state: { type: 'string', enum: [...WAIT_STATES], default: 'visible' },
+      stable: {
+        type: 'boolean',
+        description:
+          'Also wait for the page to go quiet (default: true when there is no selector).',
+      },
+      timeoutMs: {
+        type: 'integer',
+        minimum: 0,
+        maximum: LIMITS.waitMax,
+        default: LIMITS.waitDefault,
+      },
+      quietMs: { type: 'integer', minimum: 0, maximum: 5000, default: LIMITS.quietDefault },
       viewportId,
     },
   ],

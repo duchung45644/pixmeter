@@ -10,13 +10,17 @@ import { ERR, type CallOutcome, type McpPageType } from '../../lib/mcp/protocol'
 import type { ContentApi, Handlers } from '../../lib/ext/messaging';
 import { state } from '../core/state.svelte';
 import { allFramesMcpCall, frameMcpCall } from '../responsive/shell.svelte';
+import { annotateCommands } from './annotate';
 import { McpFail, type Commands } from './command';
 import { editCommands } from './edits';
 import { elementCommands } from './elements';
 import { interactCommands } from './interact';
+import { locateCommands } from './locate';
 import { measureCommands } from './measure';
 import { pageCommands } from './page';
 import { responsiveCommands } from './responsive';
+import { shotCommands } from './shot';
+import { spacingCommands } from './spacing';
 
 const COMMANDS: Commands = {
   ...pageCommands,
@@ -25,10 +29,18 @@ const COMMANDS: Commands = {
   ...responsiveCommands,
   ...interactCommands,
   ...measureCommands,
+  ...spacingCommands,
+  ...locateCommands,
+  ...annotateCommands,
+  ...shotCommands,
 };
 
-/** Top page only (Ig + the screenshot). */
-const TOP_ONLY = new Set<string>([...Object.keys(responsiveCommands)]);
+/** Top page only (Ig + the screenshots and the annotation overlay, which belong to the whole tab). */
+const TOP_ONLY = new Set<string>([
+  ...Object.keys(responsiveCommands),
+  ...Object.keys(shotCommands),
+  ...Object.keys(annotateCommands),
+]);
 /** Page-level commands (Ag): always the top page, even when responsive. */
 const PAGE_LEVEL = new Set<string>([
   'get_page_info',
@@ -40,9 +52,12 @@ const PAGE_LEVEL = new Set<string>([
   'calculate_specificity',
   'detect_technologies',
   'get_a11y_issues',
+  'measure_point_to_point',
 ]);
 /** Shell → frame call budget; the background gives up at 12s. */
 const FRAME_MS = 10_000;
+/** wait_for may wait up to LIMITS.waitMax; the background allows 40s for it. */
+const WAIT_FRAME_MS = 30_000;
 
 async function runHere(type: McpPageType, payload: unknown): Promise<CallOutcome> {
   const run = COMMANDS[type] as ((p: unknown) => unknown) | undefined;
@@ -90,7 +105,7 @@ async function inFrames(type: McpPageType, payload: Record<string, unknown>): Pr
     if (m) return frameMcpCall(type, { ...payload, changeId: m[2] }, Number(m[1]), FRAME_MS);
   }
   const vp = typeof payload.viewportId === 'number' ? payload.viewportId : undefined;
-  return frameMcpCall(type, payload, vp, FRAME_MS);
+  return frameMcpCall(type, payload, vp, type === 'wait_for' ? WAIT_FRAME_MS : FRAME_MS);
 }
 
 /** Run one validated command; every outcome is an answer, never a throw. */

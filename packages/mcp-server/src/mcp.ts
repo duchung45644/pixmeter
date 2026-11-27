@@ -7,6 +7,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { NOT_CONNECTED, type Bridge } from './bridge.ts';
 import { isMcpType, validateCall, ERR } from './protocol.gen.ts';
+import { readReference } from './reference.ts';
 import { COMMAND_TOOLS, PING_TOOL } from './schemas.ts';
 
 const text = (t: string, isError = false): CallToolResult => ({
@@ -41,7 +42,9 @@ export function createMcpServer(bridge: Bridge, version: string): Server {
       capabilities: { tools: {} },
       instructions:
         'Inspect and edit pages open in the Pixmeter browser extension. Start with list_tabs to get a tabId; ' +
-        'element ids (v-…) come from results such as query_selector or get_selected_element.',
+        'element ids (v-…) come from results such as query_selector or get_selected_element. ' +
+        'Measuring results and annotations use viewport CSS px; get_screenshot (elementId / rect / padding / scale) ' +
+        'and draw_annotations show what you measured.',
     },
   );
   server.oninitialized = () => {
@@ -62,7 +65,14 @@ export function createMcpServer(bridge: Bridge, version: string): Server {
         : text(NOT_CONNECTED, true);
     }
     if (!isMcpType(name)) return text(ERR.unknown, true);
-    const v = validateCall(name, args ?? {});
+    let input = args ?? {};
+    if (name === 'compare_screenshot' && typeof input.referencePath === 'string') {
+      // a mockup file: read here, since the extension cannot see this machine's disk
+      const ref = await readReference(input.referencePath);
+      if ('error' in ref) return text(ref.error, true);
+      input = { ...input, referencePath: undefined, referenceDataUrl: ref.dataUrl };
+    }
+    const v = validateCall(name, input);
     if (!v.ok) return text(v.error, true);
     const r = await bridge.call(name, v.payload);
     return r.ok ? toContent(r.data) : text(r.error, true);

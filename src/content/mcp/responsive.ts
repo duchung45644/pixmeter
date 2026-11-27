@@ -5,7 +5,6 @@
 import { ERR } from '../../lib/mcp/protocol';
 import { clampSize, nextId, MAX_VIEWPORTS, type Viewport } from '../../lib/responsive/viewports';
 import { ZOOM_MAX, ZOOM_MIN } from '../../lib/responsive/zoom';
-import { sendToBackground } from '../../lib/ext/messaging';
 import { runItem } from '../core/keys';
 import { state } from '../core/state.svelte';
 import {
@@ -17,7 +16,6 @@ import {
   setZoom,
   shell,
 } from '../responsive/shell.svelte';
-import { withHiddenUi } from '../tools/capture/session';
 import { fail, type Commands } from './command';
 
 const DEFAULT_SIZE = { width: 390, height: 844 };
@@ -119,15 +117,5 @@ export const responsiveCommands: Commands = {
       else return fail(ERR.noBreakpoints);
     }
     return described();
-  },
-  /**
-   * Hide every Pixmeter UI for one settled frame, grab the visible tab (frames included when
-   * responsive), show it again — also when the grab fails.
-   */
-  async get_screenshot() {
-    const r = await withHiddenUi(() => sendToBackground('capture_for_ai')).catch(() => null);
-    if (!r) return fail('capture_failed');
-    if (!r.ok) return fail(r.reason);
-    return { dataUrl: r.dataUrl, width: r.width, height: r.height, mimeType: 'image/png' };
   },
 };

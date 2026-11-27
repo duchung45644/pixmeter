@@ -133,7 +133,7 @@ Máy chủ cung cấp mỗi lệnh một công cụ, cộng thêm `ping`. Mọi 
 | `set_inner_html`            | Thay HTML bên trong một phần tử (đã được làm sạch)                                       |
 | `insert_html`               | Chèn HTML trước, sau hoặc bên trong một phần tử (đã được làm sạch)                       |
 | `select_element`            | Chọn một phần tử trong trình kiểm tra                                                    |
-| `get_screenshot`            | Ảnh chụp tab dạng PNG (cạnh dài nhất tối đa 2000 px)                                     |
+| `get_screenshot`            | Ảnh chụp tab, một phần tử hoặc một vùng, có lề, phóng 2×/4× và lớp phủ tuỳ chọn          |
 | `apply_styles`              | Đặt CSS lên một rule khớp hoặc lên style nội tuyến của phần tử                           |
 | `add_rule`                  | Thêm một rule CSS                                                                        |
 | `set_rule_selector`         | Đổi bộ chọn của một rule                                                                 |
@@ -142,6 +142,17 @@ Máy chủ cung cấp mỗi lệnh một công cụ, cộng thêm `ping`. Mọi 
 | `set_element_classes`       | Đặt class cho một phần tử                                                                |
 | `delete_element`            | Xoá một phần tử                                                                          |
 | `duplicate_element`         | Nhân bản một phần tử                                                                     |
+| `draw_annotations`          | Vẽ mũi tên đo, khung phần tử và nhãn lên một lớp phủ (không đổi trang)                   |
+| `clear_annotations`         | Xoá lớp phủ đó                                                                           |
+| `get_full_page_screenshot`  | Ảnh chụp cả trang, kể cả phần phải cuộn mới thấy                                         |
+| `compare_screenshot`        | So trang với một lần chụp trước hoặc ảnh mockup: phần trăm sai lệch và ảnh diff          |
+| `get_box_model`             | Margin, border, padding và content của một phần tử trong một lần gọi                     |
+| `measure_spacing`           | Mọi khoảng cách và lề giữa các phần tử con trong một lần gọi                             |
+| `measure_point_to_point`    | Khoảng cách giữa hai toạ độ tuỳ ý                                                        |
+| `check_spacing_scale`       | Liệt kê margin, padding, gap lệch khỏi thang khoảng cách của thiết kế                    |
+| `find_by_text`              | Tìm phần tử theo chữ, alt, aria-label hoặc placeholder                                   |
+| `scroll_into_view`          | Cuộn tới một phần tử                                                                     |
+| `wait_for`                  | Chờ một selector xuất hiện, hoặc chờ trang ổn định                                       |
 
 Cấu trúc tham số đầy đủ của từng lệnh có trong `docs/mcp-protocol.md` của repository.
 

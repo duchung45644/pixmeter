@@ -222,3 +222,22 @@ export async function captureFullPage(snap: string): Promise<void> {
   if (c) await openCaptureEditor(c, false, note);
   else closeCapture();
 }
+
+/**
+ * The whole page as one canvas, without opening the capture editor (for the agent): the debugger
+ * route first, scroll-and-stitch when that fails. Hides our UI itself; `note` says why the fast
+ * route was not used.
+ */
+export async function fullPageCanvas(): Promise<{
+  canvas: HTMLCanvasElement | null;
+  via: 'debugger' | 'stitch';
+  note: string | null;
+}> {
+  let note: string | null = null;
+  const fast = await withHiddenUi(fullPageViaDebugger).catch((e: Error) => {
+    note = e.message;
+    return null;
+  });
+  if (fast) return { canvas: fast, via: 'debugger', note };
+  return { canvas: await stitchFullPage(), via: 'stitch', note };
+}
